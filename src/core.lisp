@@ -260,7 +260,7 @@
                      (when route
                        (push (cons current-path (or (route-title route) (route-name route)))
                              breadcrumbs))))))))
-    
+    (nreverse breadcrumbs))
     (nreverse breadcrumbs)))
 
 (defun find-matching-route (url)
