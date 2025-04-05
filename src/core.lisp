@@ -101,7 +101,7 @@
             (setf regex-pattern (concatenate 'string regex-pattern regex))
             
             ;; Update start position
-            (setf start (1+ param-end)))))))
+            (setf start (1+ param-end))))))
     
     ;; Ensure the pattern ends with $
     (setf regex-pattern (concatenate 'string regex-pattern "$"))
