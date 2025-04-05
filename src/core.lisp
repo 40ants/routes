@@ -206,18 +206,27 @@
             do (error "Missing required parameter ~A for route ~A"
                       param-name name))
       
-      ;; Generate the URL by replacing parameters
-      (let ((url url-pattern))
-        (loop for (param-name param-type) in params
-              for value = (getf args param-name)
-              for regex = (cond
-                            ((string= param-type "string") "([^/]+)")
-                            ((string= param-type "int") "(\\d+)")
-                            (t (error "Unknown parameter type: ~A" param-type)))
-              do (setf url (regex-replace regex url (princ-to-string value))))
+      ;; Generate the URL
+      (let* ((pattern-parts (split-sequence #\/ url-pattern :remove-empty-subseqs t))
+             (result-parts nil))
         
-        ;; Remove ^ and $ from the beginning and end
-        (let ((path (subseq url 1 (1- (length url)))))
+        ;; Process each part of the pattern
+        (dolist (part pattern-parts)
+          (let ((processed-part part))
+            ;; Check if this part contains a parameter
+            (loop for (param-name param-type) in params
+                  for placeholder = (cond
+                                      ((string= param-type "string") "([^/]+)")
+                                      ((string= param-type "int") "(\\d+)")
+                                      (t (error "Unknown parameter type: ~A" param-type)))
+                  when (search placeholder part)
+                  do (setf processed-part (princ-to-string (getf args param-name))))
+            
+            ;; Add the processed part to the result
+            (push processed-part result-parts)))
+        
+        ;; Construct the final URL
+        (let ((path (format nil "/~{~A~^/~}" (nreverse result-parts))))
           ;; Add namespace prefix if it's not the root namespace
           (if (string= ns "app")
               path
@@ -242,12 +251,12 @@
 ;; Breadcrumbs generation
 (defun get-breadcrumbs (url)
   "Generate breadcrumbs for a URL."
-  (let ((breadcrumbs nil)
+  (let ((result nil)
         (parts (split-sequence #\/ url :remove-empty-subseqs t))
         (current-path ""))
     
     ;; Add root
-    (push (cons "/" "Home") breadcrumbs)
+    (push (cons "/" "Home") result)
     
     ;; If there are parts, the first part is the namespace
     (when parts
@@ -261,7 +270,7 @@
                                     :test #'string=)))
               (when index-route
                 (push (cons current-path (or (route-title index-route) namespace))
-                      breadcrumbs)))))
+                      result)))))
         
         ;; Add the rest of the parts
         (loop for part in (rest parts)
@@ -270,8 +279,8 @@
                    (let ((route (find-matching-route current-path)))
                      (when route
                        (push (cons current-path (or (route-title route) (route-name route)))
-                             breadcrumbs))))))))
-    (nreverse breadcrumbs))
+                             result)))))))
+    (nreverse result))
 
 (defun find-matching-route (url)
   "Find a route that matches the given URL."
