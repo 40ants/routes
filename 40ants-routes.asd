@@ -9,5 +9,7 @@
   :class :40ants-asdf-system
   :defsystem-depends-on ("40ants-asdf-system")
   :pathname "src"
-  :depends-on ("40ants-routes/core")
+  :depends-on ("40ants-routes/core"
+               "cl-ppcre"
+               "split-sequence")
   :in-order-to ((test-op (test-op "40ants-routes-tests"))))

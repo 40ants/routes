@@ -7,7 +7,11 @@
   :source-control (:git "https://github.com/40ants/routes")
   :bug-tracker "https://github.com/40ants/routes/issues"
   :pathname "t"
-  :depends-on ("40ants-routes-tests/core")
+  :depends-on ("40ants-routes-tests/core"
+               "40ants-routes"
+               "rove"
+               "cl-ppcre"
+               "split-sequence")
   :perform (test-op (op c)
-                    (unless (symbol-call :rove :run c)
-                      (error "Tests failed"))))
+                   (unless (symbol-call :rove :run c)
+                     (error "Tests failed"))))
