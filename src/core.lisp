@@ -183,7 +183,8 @@
       (error "Route not found: ~A in namespace ~A" name current-ns))
     
     (let ((url-pattern (route-pattern route))
-          (params (route-parameters route)))
+          (params (route-parameters route))
+          (ns (route-namespace route)))
       
       ;; Remove namespace from args
       (remf args :namespace)
@@ -205,7 +206,11 @@
               do (setf url (regex-replace regex url (princ-to-string value))))
         
         ;; Remove ^ and $ from the beginning and end
-        (subseq url 1 (1- (length url)))))))
+        (let ((path (subseq url 1 (1- (length url)))))
+          ;; Add namespace prefix if it's not the root namespace
+          (if (string= ns "app")
+              path
+              (concatenate 'string "/" ns path)))))))
 
 (defun find-route (name namespace)
   "Find a route by name in the given namespace hierarchy."
@@ -233,21 +238,50 @@
     ;; Add root
     (push (cons "/" "Home") breadcrumbs)
     
-    ;; Build paths and find matching routes
-    (loop for part in parts
-          do (progn
-               (setf current-path (concatenate 'string current-path "/" part))
-               (let ((route (find-matching-route current-path)))
-                 (when route
-                   (push (cons current-path (or (route-title route) (route-name route)))
-                         breadcrumbs)))))
+    ;; If there are parts, the first part is the namespace
+    (when parts
+      (let ((namespace (first parts)))
+        ;; Add namespace
+        (setf current-path (concatenate 'string current-path "/" namespace))
+        (let ((collection (gethash namespace *routes-registry*)))
+          (when collection
+            (let ((index-route (find "index" (collection-routes collection)
+                                    :key #'route-name
+                                    :test #'string=)))
+              (when index-route
+                (push (cons current-path (or (route-title index-route) namespace))
+                      breadcrumbs)))))
+        
+        ;; Add the rest of the parts
+        (loop for part in (rest parts)
+              do (progn
+                   (setf current-path (concatenate 'string current-path "/" part))
+                   (let ((route (find-matching-route current-path)))
+                     (when route
+                       (push (cons current-path (or (route-title route) (route-name route)))
+                             breadcrumbs))))))))
     
     (nreverse breadcrumbs)))
 
 (defun find-matching-route (url)
   "Find a route that matches the given URL."
-  (loop for collection being the hash-values of *routes-registry*
-        for routes = (collection-routes collection)
-        thereis (find-if (lambda (route)
-                           (match-url route url))
-                         routes)))
+  (let ((parts (split-sequence #\/ url :remove-empty-subseqs t)))
+    (if (null parts)
+        ;; Root URL
+        (loop for collection being the hash-values of *routes-registry*
+              for routes = (collection-routes collection)
+              for namespace = (collection-namespace collection)
+              when (string= namespace "app")
+              thereis (find-if (lambda (route)
+                                 (and (string= (route-name route) "index")
+                                      (string= (route-namespace route) "app")))
+                               routes))
+        ;; Non-root URL
+        (let ((namespace (first parts)))
+          (loop for collection being the hash-values of *routes-registry*
+                for routes = (collection-routes collection)
+                for coll-namespace = (collection-namespace collection)
+                when (string= coll-namespace namespace)
+                thereis (find-if (lambda (route)
+                                   (match-url route url))
+                                 routes))))))
