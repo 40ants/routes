@@ -13,7 +13,18 @@
            #:with-routes-context
            #:*current-namespace*
            #:find-route
-           #:get-breadcrumbs))
+           #:get-breadcrumbs
+           #:route
+           #:route-name
+           #:route-pattern
+           #:route-handler
+           #:route-namespace
+           #:route-parameters
+           #:route-title
+           #:route-collection
+           #:collection-routes
+           #:collection-namespace
+           #:collection-parent))
 (in-package #:40ants-routes)
 
 ;; Global variables to store routes
