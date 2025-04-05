@@ -260,27 +260,41 @@
                      (when route
                        (push (cons current-path (or (route-title route) (route-name route)))
                              breadcrumbs))))))))
-    (nreverse breadcrumbs)))
+    (nreverse breadcrumbs))
 
 (defun find-matching-route (url)
   "Find a route that matches the given URL."
   (let ((parts (split-sequence #\/ url :remove-empty-subseqs t)))
-    (if (null parts)
-        ;; Root URL
-        (loop for collection being the hash-values of *routes-registry*
-              for routes = (collection-routes collection)
-              for namespace = (collection-namespace collection)
-              when (string= namespace "app")
-              thereis (find-if (lambda (route)
-                                 (and (string= (route-name route) "index")
-                                      (string= (route-namespace route) "app")))
-                               routes))
-        ;; Non-root URL
-        (let ((namespace (first parts)))
-          (loop for collection being the hash-values of *routes-registry*
-                for routes = (collection-routes collection)
-                for coll-namespace = (collection-namespace collection)
-                when (string= coll-namespace namespace)
-                thereis (find-if (lambda (route)
-                                   (match-url route url))
-                                 routes))))))
+    (cond
+      ((null parts)
+       ;; Root URL - find the app index route
+       (let ((result nil))
+         (maphash (lambda (namespace collection)
+                    (declare (ignore namespace))
+                    (let ((routes (collection-routes collection))
+                          (coll-namespace (collection-namespace collection)))
+                      (when (string= coll-namespace "app")
+                        (let ((route (find-if (lambda (r)
+                                                (and (string= (route-name r) "index")
+                                                     (string= (route-namespace r) "app")))
+                                              routes)))
+                          (when route
+                            (setf result route))))))
+                  *routes-registry*)
+         result))
+      (t
+       ;; Non-root URL - find a route in the namespace
+       (let ((namespace (first parts))
+             (result nil))
+         (maphash (lambda (ns collection)
+                    (declare (ignore ns))
+                    (let ((routes (collection-routes collection))
+                          (coll-namespace (collection-namespace collection)))
+                      (when (string= coll-namespace namespace)
+                        (let ((route (find-if (lambda (r)
+                                                (match-url r url))
+                                              routes)))
+                          (when route
+                            (setf result route))))))
+                  *routes-registry*)
+         result)))))
