@@ -1,6 +1,11 @@
 (uiop:define-package #:40ants-routes
   (:use #:cl)
   (:nicknames #:40ants-routes/core)
+  (:import-from #:cl-ppcre
+                #:scan-to-strings
+                #:regex-replace)
+  (:import-from #:split-sequence
+                #:split-sequence)
   (:export #:defroutes
            #:url
            #:include
@@ -113,7 +118,7 @@
   (let ((pattern (route-pattern route))
         (params (route-parameters route)))
     (multiple-value-bind (match-p matches)
-        (cl-ppcre:scan-to-strings pattern url)
+        (scan-to-strings pattern url)
       (when match-p
         (let ((param-values nil))
           (loop for i from 0 below (length matches)
@@ -197,7 +202,7 @@
                             ((string= param-type "string") "([^/]+)")
                             ((string= param-type "int") "(\\d+)")
                             (t (error "Unknown parameter type: ~A" param-type)))
-              do (setf url (cl-ppcre:regex-replace regex url (princ-to-string value))))
+              do (setf url (regex-replace regex url (princ-to-string value))))
         
         ;; Remove ^ and $ from the beginning and end
         (subseq url 1 (1- (length url)))))))
@@ -222,7 +227,7 @@
 (defun get-breadcrumbs (url)
   "Generate breadcrumbs for a URL."
   (let ((breadcrumbs nil)
-        (parts (split-sequence:split-sequence #\/ url :remove-empty-subseqs t))
+        (parts (split-sequence #\/ url :remove-empty-subseqs t))
         (current-path ""))
     
     ;; Add root
@@ -230,11 +235,12 @@
     
     ;; Build paths and find matching routes
     (loop for part in parts
-          do (setf current-path (concatenate 'string current-path "/" part))
-          for route = (find-matching-route current-path)
-          when route
-          do (push (cons current-path (or (route-title route) (route-name route)))
-                   breadcrumbs))
+          do (progn
+               (setf current-path (concatenate 'string current-path "/" part))
+               (let ((route (find-matching-route current-path)))
+                 (when route
+                   (push (cons current-path (or (route-title route) (route-name route)))
+                         breadcrumbs)))))
     
     (nreverse breadcrumbs)))
 
