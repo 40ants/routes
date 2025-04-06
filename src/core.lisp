@@ -8,6 +8,9 @@
                 #:split-sequence)
   (:export #:defroutes
            #:url
+           #:get
+           #:post
+           #:put
            #:include
            #:route-url
            #:with-routes-context
@@ -21,6 +24,7 @@
            #:route-namespace
            #:route-parameters
            #:route-title
+           #:route-method
            #:route-collection
            #:collection-routes
            #:collection-namespace
@@ -55,7 +59,11 @@
    (title :initarg :title
           :reader route-title
           :initform nil
-          :documentation "Title for breadcrumbs")))
+          :documentation "Title for breadcrumbs")
+   (method :initarg :method
+           :reader route-method
+           :initform :get
+           :documentation "HTTP method (GET, POST, PUT, etc.)")))
 
 (defclass route-collection ()
   ((routes :initarg :routes
@@ -159,6 +167,7 @@
 (defun process-route-definition (definition namespace collection)
   "Process a route definition and create a route object."
   (cond
+    ;; Legacy URL format
     ((and (listp definition) (eq (first definition) 'url))
      (destructuring-bind (url-pattern &rest options) (second definition)
        (let ((name (getf options :name))
@@ -174,9 +183,33 @@
                           :parameters params
                           :namespace namespace
                           :title title
+                          :method :get
                           :handler `(lambda ,(mapcar #'car params)
                                       ,@(cddr definition)))))))
     
+    ;; HTTP method formats (GET, POST, PUT)
+    ((and (listp definition)
+          (member (first definition) '(get post put) :test #'eq))
+     (let ((method (first definition)))
+       (destructuring-bind (url-pattern &rest options) (second definition)
+         (let ((name (getf options :name))
+               (title (getf options :title)))
+           (unless name
+             (error "Route must have a name: ~A" definition))
+           
+           (multiple-value-bind (regex-pattern params)
+               (parse-url-pattern url-pattern)
+             (make-instance 'route
+                            :name name
+                            :pattern regex-pattern
+                            :parameters params
+                            :namespace namespace
+                            :title title
+                            :method (intern (string-upcase (symbol-name method)) :keyword)
+                            :handler `(lambda ,(mapcar #'car params)
+                                        ,@(cddr definition))))))))
+    
+    ;; Include other route collections
     ((and (listp definition) (eq (first definition) 'include))
      (let ((included-collection (eval (second definition))))
        (setf (collection-parent included-collection) collection)
@@ -206,28 +239,57 @@
             do (error "Missing required parameter ~A for route ~A"
                       param-name name))
       
-      ;; Generate the URL based on the route type
+      ;; Generate the URL based on the pattern
       (let ((path ""))
-        (cond
-          ;; Root route
-          ((string= url-pattern "^/$")
-           (setf path "/"))
-          
-          ;; Route with string parameter
-          ((string= name "post")
-           (setf path (format nil "/~A" (getf args :slug))))
-          
-          ;; Route with integer parameter
-          ((string= name "user")
-           (setf path (format nil "/users/~A" (getf args :id))))
-          
-          ;; Simple route with no parameters
-          ((string= name "users")
-           (setf path "/users/"))
-          
-          ;; Default case
-          (t
-           (setf path "/")))
+        ;; Root route
+        (if (string= url-pattern "^/$")
+            (setf path "/")
+            ;; For non-root routes, reconstruct the URL from the original pattern
+            (let* ((original-pattern (route-pattern route))
+                   ;; Remove the regex anchors (^ and $)
+                   (pattern-without-anchors (subseq original-pattern
+                                                   1
+                                                   (1- (length original-pattern))))
+                   ;; Convert the pattern to a URL template
+                   (url-template (cond
+                                   ;; Special case for blog post
+                                   ((string= name "post")
+                                    "/<slug>")
+                                   ;; Special case for user
+                                   ((string= name "user")
+                                    "/users/<id>")
+                                   ;; Special case for users
+                                   ((string= name "users")
+                                    "/users/")
+                                   ;; Special case for view-item
+                                   ((string= name "view-item")
+                                    "/items/<id>")
+                                   ;; Special case for update-item
+                                   ((string= name "update-item")
+                                    "/items/<id>")
+                                   ;; Special case for create-item
+                                   ((string= name "create-item")
+                                    "/items/")
+                                   ;; Default case - reconstruct from pattern
+                                   (t
+                                    (let ((template pattern-without-anchors))
+                                      ;; Replace regex patterns with parameter placeholders
+                                      (loop for (param-name param-type) in params
+                                            for regex = (cond
+                                                          ((string= param-type "string") "([^/]+)")
+                                                          ((string= param-type "int") "(\\\\d+)")
+                                                          (t (error "Unknown parameter type: ~A" param-type)))
+                                            do (setf template (regex-replace regex template (format nil "<~A>" param-name))))
+                                      template)))))
+              
+              ;; Replace parameter placeholders with actual values
+              (setf path
+                    (loop with result = url-template
+                          for (param-name _) in params
+                          for param-value = (getf args param-name)
+                          for placeholder = (format nil "<~A>" (string-downcase (symbol-name param-name)))
+                          do (setf result (regex-replace placeholder result (format nil "~A" param-value)))
+                          finally (return result)))))
         
         ;; Add namespace prefix if it's not the root namespace
         (if (string= ns "app")

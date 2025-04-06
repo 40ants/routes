@@ -8,33 +8,39 @@
   (:import-from #:40ants-routes
                 #:defroutes
                 #:url
+                #:get
+                #:post
+                #:put
                 #:include
                 #:route-url
                 #:with-routes-context
                 #:*current-namespace*
                 #:find-route
-                #:get-breadcrumbs))
+                #:get-breadcrumbs
+                #:route-method))
 (in-package #:40ants-routes-tests/core)
 
 ;; Define test routes for a blog library
 (defroutes (*blog-routes* :namespace "blog")
-  (url ("/" :name "index" :title "Blog")
+  (get ("/" :name "index" :title "Blog")
        (format nil "Blog index"))
-  (url ("/<string:slug>" :name "post" :title "Post")
+  (get ("/<string:slug>" :name "post" :title "Post")
        (format nil "Blog post: ~A" slug)))
 
 ;; Define test routes for an admin library
 (defroutes (*admin-routes* :namespace "admin")
-  (url ("/" :name "index" :title "Admin")
+  (get ("/" :name "index" :title "Admin")
        (format nil "Admin index"))
-  (url ("/users/" :name "users" :title "Users")
+  (post ("/users/" :name "users" :title "Users")
        (format nil "Users list"))
-  (url ("/users/<int:id>" :name "user" :title "User Profile")
-       (format nil "User profile: ~A" id)))
+  (get ("/users/<int:id>" :name "user" :title "User Profile")
+       (format nil "User profile: ~A" id))
+  (put ("/users/<int:id>" :name "user-update" :title "Update User")
+       (format nil "Update user profile: ~A" id)))
 
 ;; Define test routes for an application
 (defroutes (*app-routes* :namespace "app")
-  (url ("/" :name "index" :title "Main Page")
+  (get ("/" :name "index" :title "Main Page")
        (format nil "App index"))
   (include *blog-routes*)
   (include *admin-routes*))
@@ -43,7 +49,13 @@
   (testing "Route collections are created correctly"
     (ok *blog-routes* "Blog routes collection exists")
     (ok *admin-routes* "Admin routes collection exists")
-    (ok *app-routes* "App routes collection exists")))
+    (ok *app-routes* "App routes collection exists"))
+  
+  (testing "HTTP methods are set correctly"
+    (ok (eq (route-method (find-route "index" "blog")) :get) "Blog index route is GET")
+    (ok (eq (route-method (find-route "users" "admin")) :post) "Admin users route is POST")
+    (ok (eq (route-method (find-route "user" "admin")) :get) "Admin user route is GET")
+    (ok (eq (route-method (find-route "user-update" "admin")) :put) "Admin user update route is PUT")))
 
 (deftest test-url-generation ()
   (testing "Basic URL generation"
