@@ -29,7 +29,7 @@
 
 (deftest test-included-route ()
   (testing "Include creates an included-route instance"
-    (let* ((app-routes (gethash "app" 40ants-routes/with-routes::*route-collections*))
+    (let* ((app-routes (40ants-routes/with-routes::find-collection-by-namespace "app"))
            (routes (40ants-routes::collection-routes app-routes))
            (included (find-if (lambda (route)
                                 (typep route '40ants-routes::included-route))

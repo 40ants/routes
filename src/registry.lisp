@@ -1,7 +1,8 @@
 (uiop:define-package #:40ants-routes/registry
   (:use #:cl)
   (:import-from #:40ants-routes/with-routes
-                #:*route-collections*)
+                #:*route-collections*
+                #:find-collection-by-namespace)
   (:export))
 (in-package #:40ants-routes/registry)
 

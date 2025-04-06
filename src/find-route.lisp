@@ -2,7 +2,8 @@
   (:use #:cl)
   (:import-from #:40ants-routes/with-routes
                 #:*current-routes*
-                #:*route-collections*)
+                #:*route-collections*
+                #:find-collection-by-namespace)
   (:import-from #:40ants-routes/route
                 #:route-name)
   (:import-from #:40ants-routes/route-collection
@@ -21,7 +22,7 @@
 
 (defun find-route (name namespace)
   "Find a route by name in the given namespace hierarchy."
-  (let ((collection (gethash namespace *route-collections*)))
+  (let ((collection (find-collection-by-namespace namespace)))
     (when collection
       (or
        ;; First, try to find the route directly in the collection's routes
@@ -43,33 +44,23 @@
     (cond
       ((null parts)
        ;; Root URL - find the app index route
-       (let ((result nil))
-         (maphash (lambda (namespace collection)
-                    (declare (ignore namespace))
-                    (let ((routes (collection-routes collection))
-                          (coll-namespace (collection-namespace collection)))
-                      (when (string= coll-namespace "app")
-                        (let ((route (find-if (lambda (r)
-                                                (and (string= (route-name r) "index")
-                                                     (string= (route-namespace r) "app")))
-                                              routes)))
-                          (when route
-                            (setf result route))))))
-                  *route-collections*)
+       (let ((result nil)
+             (app-collection (find-collection-by-namespace "app")))
+         (when app-collection
+           (let ((routes (collection-routes app-collection)))
+             (setf result (find-if (lambda (r)
+                                     (and (string= (route-name r) "index")
+                                          (string= (route-namespace r) "app")))
+                                   routes))))
          result))
       (t
        ;; Non-root URL - find a route in the namespace
        (let ((namespace (first parts))
-             (result nil))
-         (maphash (lambda (ns collection)
-                    (declare (ignore ns))
-                    (let ((routes (collection-routes collection))
-                          (coll-namespace (collection-namespace collection)))
-                      (when (string= coll-namespace namespace)
-                        (let ((route (find-if (lambda (r)
-                                                (match-url r url))
-                                              routes)))
-                          (when route
-                            (setf result route))))))
-                  *route-collections*)
+             (result nil)
+             (namespace-collection (find-collection-by-namespace namespace)))
+         (when namespace-collection
+           (let ((routes (collection-routes namespace-collection)))
+             (setf result (find-if (lambda (r)
+                                     (match-url r url))
+                                   routes))))
          result)))))
