@@ -22,9 +22,9 @@
 
 (defun find-route (name namespace)
   "Find a route by name in the given namespace hierarchy."
-  (let ((routes (gethash namespace *route-collections*)))
-    (when routes
-      (with-routes (routes)
+  (let ((routes-collection (gethash namespace *route-collections*)))
+    (when routes-collection
+      (with-routes (routes-collection)
         (or
          ;; First, try to find the route directly in the collection's routes
          (find name (collection-routes *current-routes*)
