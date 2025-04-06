@@ -1,7 +1,7 @@
 (uiop:define-package #:40ants-routes/defroutes
   (:use #:cl)
-  (:import-from #:40ants-routes/registry
-                #:*routes-registry*)
+  (:import-from #:40ants-routes/with-routes
+                #:register-routes)
   (:import-from #:40ants-routes/route
                 #:route)
   (:import-from #:40ants-routes/route-collection
@@ -29,7 +29,7 @@
          (setf (collection-routes collection)
                (list ,@(loop for def in route-definitions
                              collect `(process-route-definition ',def ,namespace collection))))
-         (setf (gethash ,namespace *routes-registry*) collection)
+         (register-routes collection)
          collection))
      ,var-name))
 
