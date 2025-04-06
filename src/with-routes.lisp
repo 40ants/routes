@@ -2,8 +2,7 @@
   (:use #:cl)
   (:import-from #:40ants-routes/route-collection
                 #:collection-namespace)
-  (:export #:with-routes
-           #:*current-namespace*))
+  (:export #:with-routes))
 (in-package #:40ants-routes/with-routes)
 
 ;; Global variable to store current namespace
