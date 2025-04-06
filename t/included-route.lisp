@@ -29,15 +29,16 @@
 
 (deftest test-included-route ()
   (testing "Include creates an included-route instance"
-    (40ants-routes:with-routes ((gethash "app" 40ants-routes/with-routes::*route-collections*))
-      (let* ((routes (40ants-routes::collection-routes 40ants-routes:*current-routes*))
-             (included (find-if (lambda (route)
-                                  (typep route '40ants-routes::included-route))
-                                routes)))
-        (ok included "An included-route instance was created")
-        (when included
-          (ok (eq (40ants-routes::included-route-original-collection included) *blog-routes*)
-              "The original-collection is correctly set"))))))
+    (let ((app-routes (gethash "app" 40ants-routes/with-routes::*route-collections*)))
+      (40ants-routes:with-routes (app-routes)
+        (let* ((routes (40ants-routes::collection-routes 40ants-routes:*current-routes*))
+               (included (find-if (lambda (route)
+                                    (typep route '40ants-routes::included-route))
+                                  routes)))
+          (ok included "An included-route instance was created")
+          (when included
+            (ok (eq (40ants-routes::included-route-original-collection included) *blog-routes*)
+                "The original-collection is correctly set")))))))
 
 (deftest test-route-resolution ()
   (testing "Routes can be found through included-route"
