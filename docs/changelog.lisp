@@ -10,7 +10,8 @@
                               "HTTP"))
   (0.3.0 2025-04-06
          "Changes:
-          * Renamed `with-routes-context` to `with-routes` and modified it to take a routes object as an argument instead of a namespace string")
+          * Renamed `with-routes-context` to `with-routes` and modified it to take a routes object as an argument instead of a namespace string
+          * Refactored the codebase by splitting `core.lisp` into multiple files for better organization and maintainability")
   
   (0.2.0 2025-04-06
          "Changes:
