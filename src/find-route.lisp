@@ -38,7 +38,7 @@
                                                  :key #'route-name
                                                  :test #'string=)))
                            found-route))
-               return it))))))
+               return found-route))))))
 
 (defun find-matching-route (url)
   "Find a route that matches the given URL."
