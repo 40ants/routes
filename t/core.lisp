@@ -13,7 +13,7 @@
                 #:put
                 #:include
                 #:route-url
-                #:with-routes-context
+                #:with-routes
                 #:*current-namespace*
                 #:find-route
                 #:get-breadcrumbs
@@ -70,13 +70,13 @@
 
 (deftest test-namespace-context ()
   (testing "URL generation with namespace context"
-    (with-routes-context "app"
+    (with-routes (*app-routes*)
       (ok (string= (route-url "index") "/")
           "App index URL is correct in app context")
       (ok (string= (route-url "index" :namespace "blog") "/blog/")
           "Blog index URL is correct in app context"))
     
-    (with-routes-context "blog"
+    (with-routes (*blog-routes*)
       (ok (string= (route-url "index") "/blog/")
           "Blog index URL is correct in blog context")
       (ok (string= (route-url "post" :slug "hello-world") "/blog/hello-world")

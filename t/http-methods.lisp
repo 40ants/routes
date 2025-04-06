@@ -12,7 +12,7 @@
                 #:put
                 #:include
                 #:route-url
-                #:with-routes-context
+                #:with-routes
                 #:*current-namespace*
                 #:find-route
                 #:route-method))

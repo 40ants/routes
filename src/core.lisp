@@ -13,7 +13,7 @@
            #:put
            #:include
            #:route-url
-           #:with-routes-context
+           #:with-routes
            #:*current-namespace*
            #:find-route
            #:get-breadcrumbs
@@ -329,9 +329,9 @@
              return it)))))
 
 ;; Context management
-(defmacro with-routes-context (namespace &body body)
-  "Execute body with the given namespace as the current namespace."
-  `(let ((*current-namespace* ,namespace))
+(defmacro with-routes ((routes) &body body)
+  "Execute body with the namespace from the given routes object as the current namespace."
+  `(let ((*current-namespace* (collection-namespace ,routes)))
      ,@body))
 
 ;; Breadcrumbs generation

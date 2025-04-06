@@ -60,10 +60,10 @@ URLs can be generated using the `route-url` function:
 
 ### Setting Context
 
-The current namespace can be set using the `with-routes-context` macro:
+The current namespace can be set using the `with-routes` macro:
 
 ```lisp
-(with-routes-context "app"
+(with-routes (*app-routes*)
   (route-url "index"))  ; => "/"
 ```
 

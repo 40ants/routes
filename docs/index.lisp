@@ -8,7 +8,7 @@
                 #:url
                 #:include
                 #:route-url
-                #:with-routes-context
+                #:with-routes
                 #:*current-namespace*
                 #:find-route
                 #:get-breadcrumbs)
@@ -84,10 +84,10 @@ URLs can be generated using the `route-url` function:
 
 ### Setting Context
 
-The current namespace can be set using the `with-routes-context` macro:
+The current namespace can be set using the `with-routes` macro:
 
 ```lisp
-(with-routes-context \"app\"
+(with-routes (*app-routes*)
   (route-url \"index\"))  ; => \"/\"
 ```
 
@@ -170,10 +170,10 @@ URLs can be generated using the `route-url` function:
 
 ### Setting Context
 
-The current namespace can be set using the `with-routes-context` macro:
+The current namespace can be set using the `with-routes` macro:
 
 ```lisp
-(with-routes-context \"app\"
+(with-routes (*app-routes*)
   (route-url \"index\"))  ; => \"/\"
 ```
 
@@ -191,7 +191,7 @@ Breadcrumbs can be generated using the `get-breadcrumbs` function:
   (url macro)
   (include macro)
   (route-url function)
-  (with-routes-context macro)
+  (with-routes macro)
   (*current-namespace* variable)
   (find-route function)
   (get-breadcrumbs function))

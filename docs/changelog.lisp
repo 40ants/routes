@@ -8,6 +8,10 @@
 (defchangelog (:ignore-words ("URL"
                               "ASDF"
                               "HTTP"))
+  (0.3.0 2025-04-06
+         "Changes:
+          * Renamed `with-routes-context` to `with-routes` and modified it to take a routes object as an argument instead of a namespace string")
+  
   (0.2.0 2025-04-06
          "Changes:
           * Modified `include` to create an `included-route` proxy object instead of modifying the parent of the included collection
