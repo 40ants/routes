@@ -28,7 +28,9 @@
            #:route-collection
            #:collection-routes
            #:collection-namespace
-           #:collection-parent))
+           #:collection-parent
+           #:included-route
+           #:included-route-original-collection))
 (in-package #:40ants-routes)
 
 ;; Global variables to store routes
@@ -77,6 +79,22 @@
            :accessor collection-parent
            :initform nil
            :documentation "Parent collection")))
+
+(defclass included-route ()
+  ((original-collection :initarg :original-collection
+                        :reader included-route-original-collection
+                        :documentation "The original collection that was included")
+   (parent :initarg :parent
+           :accessor collection-parent
+           :initform nil
+           :documentation "Parent collection")))
+
+;; Proxy methods for included-route
+(defmethod collection-routes ((included included-route))
+  (collection-routes (included-route-original-collection included)))
+
+(defmethod collection-namespace ((included included-route))
+  (collection-namespace (included-route-original-collection included)))
 
 ;; URL pattern parsing
 (defun parse-url-pattern (pattern)
@@ -211,9 +229,10 @@
     
     ;; Include other route collections
     ((and (listp definition) (eq (first definition) 'include))
-     (let ((included-collection (eval (second definition))))
-       (setf (collection-parent included-collection) collection)
-       included-collection))
+     (let ((original-collection (eval (second definition))))
+       (make-instance 'included-route
+                      :original-collection original-collection
+                      :parent collection)))
     
     (t (error "Unknown route definition: ~A" definition))))
 
@@ -300,11 +319,23 @@
   "Find a route by name in the given namespace hierarchy."
   (let ((collection (gethash namespace *routes-registry*)))
     (when collection
-      (or (find name (collection-routes collection)
-                :key #'route-name
-                :test #'string=)
-          (when (collection-parent collection)
-            (find-route name (collection-namespace (collection-parent collection))))))))
+      (or
+       ;; First, try to find the route directly in the collection's routes
+       (find name (collection-routes collection)
+             :key #'route-name
+             :test #'string=)
+       
+       ;; Next, check if any of the routes is an included-route
+       (loop for route in (collection-routes collection)
+             when (and (typep route 'included-route)
+                       (find name (collection-routes (included-route-original-collection route))
+                             :key #'route-name
+                             :test #'string=))
+             return it)
+       
+       ;; Finally, check the parent collection
+       (when (collection-parent collection)
+         (find-route name (collection-namespace (collection-parent collection))))))))
 
 ;; Context management
 (defmacro with-routes-context (namespace &body body)

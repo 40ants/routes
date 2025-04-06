@@ -9,6 +9,7 @@
   :pathname "t"
   :depends-on ("40ants-routes-tests/core"
                "40ants-routes-tests/http-methods"
+               "40ants-routes-tests/included-route"
                "40ants-routes"
                "rove"
                "cl-ppcre"

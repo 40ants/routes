@@ -8,6 +8,11 @@
 (defchangelog (:ignore-words ("URL"
                               "ASDF"
                               "HTTP"))
+  (0.2.0 2025-04-06
+         "Changes:
+          * Modified `include` to create an `included-route` proxy object instead of modifying the parent of the included collection
+          * Added `included-route-original-collection` accessor to get the original collection from an included route")
+  
   (0.1.0 2023-04-05
          "Initial version:
           * Define routes with namespaces
