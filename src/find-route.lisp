@@ -2,7 +2,8 @@
   (:use #:cl)
   (:import-from #:40ants-routes/with-routes
                 #:*current-routes*
-                #:*route-collections*)
+                #:*route-collections*
+                #:with-routes)
   (:import-from #:40ants-routes/route
                 #:route-name
                 #:route-namespace)
