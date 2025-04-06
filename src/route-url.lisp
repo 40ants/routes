@@ -1,7 +1,8 @@
 (uiop:define-package #:40ants-routes/route-url
   (:use #:cl)
   (:import-from #:40ants-routes/with-routes
-                #:*current-namespace*)
+                #:*current-namespace*
+                #:*current-routes*)
   (:import-from #:40ants-routes/find-route
                 #:find-route)
   (:import-from #:40ants-routes/route

@@ -1,11 +1,13 @@
 (uiop:define-package #:40ants-routes/find-route
   (:use #:cl)
-  (:import-from #:40ants-routes/registry
-                #:*routes-registry*)
+  (:import-from #:40ants-routes/with-routes
+                #:*current-routes*
+                #:*route-collections*)
   (:import-from #:40ants-routes/route
                 #:route-name)
   (:import-from #:40ants-routes/route-collection
-                #:collection-routes)
+                #:collection-routes
+                #:collection-namespace)
   (:import-from #:40ants-routes/included-route
                 #:included-route
                 #:included-route-original-collection)
@@ -19,7 +21,7 @@
 
 (defun find-route (name namespace)
   "Find a route by name in the given namespace hierarchy."
-  (let ((collection (gethash namespace *routes-registry*)))
+  (let ((collection (gethash namespace *route-collections*)))
     (when collection
       (or
        ;; First, try to find the route directly in the collection's routes
@@ -53,7 +55,7 @@
                                               routes)))
                           (when route
                             (setf result route))))))
-                  *routes-registry*)
+                  *route-collections*)
          result))
       (t
        ;; Non-root URL - find a route in the namespace
@@ -69,5 +71,5 @@
                                               routes)))
                           (when route
                             (setf result route))))))
-                  *routes-registry*)
+                  *route-collections*)
          result)))))

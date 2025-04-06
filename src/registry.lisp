@@ -1,8 +1,9 @@
 (uiop:define-package #:40ants-routes/registry
   (:use #:cl)
-  (:export #:*routes-registry*))
+  (:import-from #:40ants-routes/with-routes
+                #:*route-collections*)
+  (:export))
 (in-package #:40ants-routes/registry)
 
-;; Global variable to store routes
-(defvar *routes-registry* (make-hash-table :test 'equal)
-  "Global registry of all route collections.")
+;; This file is kept for backward compatibility
+;; The registry functionality has been moved to with-routes.lisp
