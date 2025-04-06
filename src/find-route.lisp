@@ -34,9 +34,10 @@
          ;; Next, check if any of the routes is an included-route
          (loop for route in (collection-routes *current-routes*)
                when (and (typep route 'included-route)
-                         (find name (collection-routes (included-route-original-collection route))
-                               :key #'route-name
-                               :test #'string=))
+                         (let ((found-route (find name (collection-routes (included-route-original-collection route))
+                                                 :key #'route-name
+                                                 :test #'string=)))
+                           found-route))
                return it))))))
 
 (defun find-matching-route (url)

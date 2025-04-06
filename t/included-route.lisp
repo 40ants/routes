@@ -33,11 +33,11 @@
       (40ants-routes:with-routes (app-routes)
         (let* ((routes (40ants-routes::collection-routes 40ants-routes:*current-routes*))
                (included (find-if (lambda (route)
-                                    (typep route '40ants-routes::included-route))
+                                    (typep route '40ants-routes:included-route))
                                   routes)))
           (ok included "An included-route instance was created")
           (when included
-            (ok (eq (40ants-routes::included-route-original-collection included) *blog-routes*)
+            (ok (eq (40ants-routes:included-route-original-collection included) *blog-routes*)
                 "The original-collection is correctly set")))))))
 
 (deftest test-route-resolution ()
