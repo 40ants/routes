@@ -7,8 +7,7 @@
            #:*current-namespace*
            #:*current-routes*
            #:*route-collections*
-           #:register-routes
-           #:find-collection-by-namespace))
+           #:register-routes))
 (in-package #:40ants-routes/with-routes)
 
 ;; Dynamic variables to store current context
@@ -27,10 +26,6 @@
   (setf (gethash (collection-namespace routes) *route-collections*)
         routes)
   routes)
-
-(defun find-collection-by-namespace (namespace)
-  "Find a route collection by namespace in the global registry."
-  (gethash namespace *route-collections*))
 
 ;; Context management
 (defmacro with-routes ((routes) &body body)
