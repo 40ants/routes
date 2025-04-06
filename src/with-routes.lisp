@@ -18,25 +18,23 @@
 (defvar *current-routes* nil
   "Current route collection for route resolution.")
 
-;; Dynamic variable to store route collections in the current environment
-(defvar *route-collections* nil
-  "List of route collections in the current environment.")
+;; Global registry of route collections
+(defvar *route-collections* (make-hash-table :test 'equal)
+  "Registry of all route collections, keyed by namespace.")
 
 (defun register-routes (routes)
-  "Register a route collection for the current environment."
-  (pushnew routes *route-collections*)
+  "Register a route collection in the global registry."
+  (setf (gethash (collection-namespace routes) *route-collections*)
+        routes)
   routes)
 
 (defun find-collection-by-namespace (namespace)
-  "Find a route collection by namespace in the current environment."
-  (find namespace *route-collections* 
-        :key #'collection-namespace 
-        :test #'string=))
+  "Find a route collection by namespace in the global registry."
+  (gethash namespace *route-collections*))
 
 ;; Context management
 (defmacro with-routes ((routes) &body body)
   "Execute body with the given routes object as the current routes context."
   `(let ((*current-namespace* (collection-namespace ,routes))
-         (*current-routes* ,routes)
-         (*route-collections* (cons ,routes *route-collections*)))
+         (*current-routes* ,routes))
      ,@body))
