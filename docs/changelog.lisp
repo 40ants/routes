@@ -11,7 +11,8 @@
   (0.2.0 2025-04-06
          "Changes:
           * Modified `include` to create an `included-route` proxy object instead of modifying the parent of the included collection
-          * Added `included-route-original-collection` accessor to get the original collection from an included route")
+          * Added `included-route-original-collection` accessor to get the original collection from an included route
+          * Removed the `parent` slot from the `route-collection` class as it's no longer needed")
   
   (0.1.0 2023-04-05
          "Initial version:

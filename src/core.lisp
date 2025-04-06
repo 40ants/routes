@@ -28,7 +28,6 @@
            #:route-collection
            #:collection-routes
            #:collection-namespace
-           #:collection-parent
            #:included-route
            #:included-route-original-collection))
 (in-package #:40ants-routes)
@@ -74,11 +73,7 @@
            :documentation "List of routes in this collection")
    (namespace :initarg :namespace
               :reader collection-namespace
-              :documentation "Namespace of this collection")
-   (parent :initarg :parent
-           :accessor collection-parent
-           :initform nil
-           :documentation "Parent collection")))
+              :documentation "Namespace of this collection")))
 
 (defclass included-route ()
   ((original-collection :initarg :original-collection
@@ -331,11 +326,7 @@
                        (find name (collection-routes (included-route-original-collection route))
                              :key #'route-name
                              :test #'string=))
-             return it)
-       
-       ;; Finally, check the parent collection
-       (when (collection-parent collection)
-         (find-route name (collection-namespace (collection-parent collection))))))))
+             return it)))))
 
 ;; Context management
 (defmacro with-routes-context (namespace &body body)
