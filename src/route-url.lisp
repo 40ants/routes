@@ -73,7 +73,7 @@
                 ;; Join all parts to form the final path
                 (setf path (apply #'concatenate 'string (nreverse result)))
                 ;; Remove any double slashes
-                (setf path (cl-ppcre:regex-replace-all "//" path "/"))))))
+                (setf path (cl-ppcre:regex-replace-all "//" path "/")))))
         
         ;; Add namespace prefix if it's not the root namespace
         (if (string= ns "app")
