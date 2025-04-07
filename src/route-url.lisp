@@ -40,28 +40,37 @@
         ;; Root route
         (if (string= url-pattern "^/$")
             (setf path "/")
-            ;; For non-root routes, reconstruct the URL from the original pattern
-            (let* ((original-pattern (route-pattern route))
-                   ;; Remove the regex anchors (^ and $)
-                   (pattern-without-anchors (subseq original-pattern
-                                                   1
-                                                   (1- (length original-pattern)))))
+            ;; For non-root routes, reconstruct the URL from the pattern
+            (let* ((pattern-parts (cl-ppcre:split "/" url-pattern))
+                   (url-parts '()))
               
-              ;; Extract the URL template from the pattern
-              (setf path pattern-without-anchors)
+              ;; Process each part of the URL pattern
+              (loop for part in pattern-parts
+                    when (and part (not (string= part "")))
+                    do (let ((processed-part part))
+                         ;; Check if this part contains a parameter
+                         (loop for (param-name param-type) in params
+                               for param-value = (getf args param-name)
+                               for param-regex = (cond
+                                                  ((string= param-type "string") "\\([^/]+\\)")
+                                                  ((string= param-type "int") "\\(\\\\d\\+\\)")
+                                                  (t (error "Unknown parameter type: ~A" param-type)))
+                               when (cl-ppcre:scan param-regex processed-part)
+                               do (setf processed-part (format nil "~A" param-value)))
+                         
+                         ;; Remove regex anchors and escapes
+                         (setf processed-part (cl-ppcre:regex-replace-all "\\^|\\$|\\\\|\\(|\\)" processed-part ""))
+                         
+                         ;; Add to URL parts
+                         (push processed-part url-parts)))
               
-              ;; Replace parameter placeholders with actual values
-              (loop for (param-name param-type) in params
-                    for param-value = (getf args param-name)
-                    for regex = (cond
-                                  ((string= param-type "string") "([^/]+)")
-                                  ((string= param-type "int") "(\\\\d+)")
-                                  (t (error "Unknown parameter type: ~A" param-type)))
-                    do (setf path (cl-ppcre:regex-replace regex path (format nil "~A" param-value))))
+              ;; Construct the final path
+              (setf path (format nil "/~{~A/~}" (nreverse url-parts)))
               
-              ;; Ensure the path starts with a slash
-              (unless (char= (char path 0) #\/)
-                (setf path (concatenate 'string "/" path)))))
+              ;; Remove trailing slash for non-root paths
+              (when (and (> (length path) 1)
+                         (char= (char path (1- (length path))) #\/))
+                (setf path (subseq path 0 (1- (length path)))))))
         
         ;; Add namespace prefix if it's not the root namespace
         (if (string= ns "app")
