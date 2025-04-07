@@ -23,7 +23,7 @@
   (get ("/" :name "index" :title "Test Index")
        (format nil "Test index page"))
   (post ("/items/" :name "create-item" :title "Create Item")
-       (format nil "Create a new item"))
+        (format nil "Create a new item"))
   (get ("/items/<int:id>" :name "view-item" :title "View Item")
        (format nil "View item: ~A" id))
   (put ("/items/<int:id>" :name "update-item" :title "Update Item")
@@ -50,3 +50,4 @@
         "View item URL is correct")
     (ok (string= (route-url "update-item" :namespace "test" :id 456) "/test/items/456")
         "Update item URL is correct")))
+

@@ -47,3 +47,41 @@
         "Can generate URL for included route")
     (ok (string= (route-url "post" :namespace "blog" :slug "hello-world") "/blog/hello-world")
         "Can generate URL for included route with parameters")))
+
+
+;; Define a reusable route collection for entities
+(defroutes (*entity-routes* :namespace "entity")
+  (get ("/" :name "index" :title "All Entities")
+       (format nil "List of all entities"))
+  (get ("/<string:id>" :name "show" :title "Entity Details")
+       (format nil "Entity details: ~A" id)))
+
+;; Define routes that include the entity routes twice with different prefixes and namespaces
+(defroutes (*multi-include-routes* :namespace "app")
+  (get ("/" :name "index" :title "Application")
+       (format nil "Application index"))
+  (include *entity-routes* :prefix "/users" :namespace "users")
+  (include *entity-routes* :prefix "/posts" :namespace "posts"))
+
+(deftest test-multiple-inclusion ()
+  (testing "Same routes can be included multiple times with different namespaces"
+    ;; Test that both inclusions created separate routes
+    (ok (find-route "index" "users") "Can find users index route")
+    (ok (find-route "index" "posts") "Can find posts index route")
+    
+    ;; Test URL generation for the first inclusion (users)
+    (ok (string= (route-url "index" :namespace "users") "/users/")
+        "Can generate URL for users index")
+    (ok (string= (route-url "show" :namespace "users" :id "123") "/users/123")
+        "Can generate URL for users show with parameters")
+    
+    ;; Test URL generation for the second inclusion (posts)
+    (ok (string= (route-url "index" :namespace "posts") "/posts/")
+        "Can generate URL for posts index")
+    (ok (string= (route-url "show" :namespace "posts" :id "article-1") "/posts/article-1")
+        "Can generate URL for posts show with parameters")
+    
+    ;; Verify the routes are distinct despite having the same original source
+    (ng (string= (route-url "show" :namespace "users" :id "123") 
+                (route-url "show" :namespace "posts" :id "123"))
+        "URLs for the same route name in different namespaces are different")))

@@ -80,9 +80,14 @@
     
     ;; Include other route collections
     ((and (listp definition) (eq (first definition) 'include))
-     (let ((original-collection (eval (second definition))))
+     (let* ((original-collection (eval (second definition)))
+            (options (cddr definition))
+            (prefix (getf options :prefix ""))
+            (namespace (getf options :namespace nil)))
        (make-instance 'included-route
                       :original-collection original-collection
-                      :parent collection)))
+                      :parent collection
+                      :prefix prefix
+                      :namespace namespace)))
     
     (t (error "Unknown route definition: ~A" definition))))

@@ -61,7 +61,80 @@
               (unless (char= (char path 0) #\/)
                 (setf path (concatenate 'string "/" path)))))
         
-        ;; Add namespace prefix if it's not the root namespace
-        (if (string= ns "app")
-            path
-            (concatenate 'string "/" ns path))))))
+        ;; Add namespace prefix
+        (let ((namespace-path (get-namespace-path ns)))
+          (if namespace-path
+              (concatenate 'string namespace-path path)
+              path))))))
+
+(defun get-namespace-path (namespace)
+  "Get the full path for a namespace, handling nested namespaces."
+  (cond
+    ;; Root namespace
+    ((string= namespace "app")
+     "")
+    ;; Check if this is a nested namespace
+    (t
+     (let ((parent-namespace (find-parent-namespace namespace)))
+       (if parent-namespace
+           (let ((prefix (get-namespace-prefix namespace parent-namespace)))
+             (if prefix
+                 ;; If there's a custom prefix, use it
+                 (concatenate 'string 
+                              (get-namespace-path parent-namespace)
+                              prefix)
+                 ;; Otherwise use the default namespace-based path
+                 (concatenate 'string 
+                              (get-namespace-path parent-namespace) 
+                              "/" namespace)))
+           (let ((prefix (get-namespace-prefix namespace nil)))
+             (if prefix
+                 prefix
+                 (concatenate 'string "/" namespace))))))))
+
+(defun find-parent-namespace (namespace)
+  "Find the parent namespace for a given namespace."
+  (loop for ns being the hash-keys of 40ants-routes/with-routes:*route-collections*
+        using (hash-value collection)
+        do (40ants-routes/with-routes:with-routes (collection)
+             (let ((routes (40ants-routes/route-collection:collection-routes 
+                            40ants-routes/with-routes:*current-routes*)))
+               (when (find-if (lambda (route)
+                                (and (typep route '40ants-routes/included-route:included-route)
+                                     (or 
+                                      ;; Match by original namespace
+                                      (and (null (40ants-routes/included-route:included-route-namespace route))
+                                           (string= (40ants-routes/route-collection:collection-namespace
+                                                     (40ants-routes/included-route:included-route-original-collection route))
+                                                    namespace))
+                                      ;; Match by custom namespace
+                                      (and (slot-boundp route 'namespace)
+                                           (slot-value route 'namespace)
+                                           (string= (slot-value route 'namespace)
+                                                    namespace)))))
+                              routes)
+                 (return ns))))))
+
+(defun get-namespace-prefix (namespace parent-namespace)
+  "Get the custom prefix for a namespace if it exists."
+  (when parent-namespace
+    (let ((parent-collection (gethash parent-namespace 40ants-routes/with-routes:*route-collections*)))
+      (40ants-routes/with-routes:with-routes (parent-collection)
+        (let ((routes (40ants-routes/route-collection:collection-routes 
+                       40ants-routes/with-routes:*current-routes*)))
+          (loop for route in routes
+                when (and (typep route '40ants-routes/included-route:included-route)
+                          (or 
+                           ;; Match by original namespace
+                           (and (null (40ants-routes/included-route:included-route-namespace route))
+                                (string= (40ants-routes/route-collection:collection-namespace
+                                          (40ants-routes/included-route:included-route-original-collection route))
+                                         namespace))
+                           ;; Match by custom namespace
+                           (and (slot-boundp route 'namespace)
+                                (slot-value route 'namespace)
+                                (string= (slot-value route 'namespace)
+                                         namespace))))
+                return (if (slot-boundp route 'prefix)
+                          (slot-value route 'prefix)
+                          "")))))))

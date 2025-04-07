@@ -30,6 +30,8 @@
 ;; Context management
 (defmacro with-routes ((routes) &body body)
   "Execute body with the given routes object as the current routes context."
-  `(let ((*current-namespace* (collection-namespace ,routes))
-         (*current-routes* ,routes))
-     ,@body))
+  (let ((routes-var (gensym "ROUTES")))
+    `(let* ((,routes-var ,routes)
+            (*current-namespace* (collection-namespace ,routes-var))
+            (*current-routes* ,routes-var))
+       ,@body)))
