@@ -61,7 +61,7 @@
               
               ;; Ensure the path starts with a slash
               (unless (char= (char path 0) #\/)
-                (setf path (concatenate 'string "/" path))))))
+                (setf path (concatenate 'string "/" path)))))
         
         ;; Add namespace prefix if it's not the root namespace
         (if (string= ns "app")
