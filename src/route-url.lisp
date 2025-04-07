@@ -57,7 +57,7 @@
                                   ((string= param-type "string") "([^/]+)")
                                   ((string= param-type "int") "(\\\\d+)")
                                   (t (error "Unknown parameter type: ~A" param-type)))
-                    do (setf path (regex-replace regex path (format nil "~A" param-value))))
+                    do (setf path (cl-ppcre:regex-replace regex path (format nil "~A" param-value))))
               
               ;; Ensure the path starts with a slash
               (unless (char= (char path 0) #\/)
