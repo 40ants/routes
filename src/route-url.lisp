@@ -45,35 +45,23 @@
                    ;; Remove the regex anchors (^ and $)
                    (pattern-without-anchors (subseq original-pattern
                                                    1
-                                                   (1- (length original-pattern))))
-                   ;; Convert the pattern to a URL template
-                   (url-template (let ((template pattern-without-anchors))
-                                   ;; For each parameter, replace the regex pattern with a simple placeholder
-                                   (loop for (param-name param-type) in params
-                                         for regex = (cond
-                                                      ((string= param-type "string") "([^/]+)")
-                                                      ((string= param-type "int") "(\\\\d+)")
-                                                      (t (error "Unknown parameter type: ~A" param-type)))
-                                         do (setf template (regex-replace regex template "")))
-                                   template)))
+                                                   (1- (length original-pattern)))))
               
-              ;; Build the path by inserting parameter values in the correct positions
-              (let ((parts (cl-ppcre:split "/" url-template))
-                    (result '()))
-                (dolist (part parts)
-                  (push "/" result)
-                  (unless (string= part "")
-                    (push part result)))
-                
-                ;; Now insert the parameter values
-                (loop for (param-name _) in params
-                      for param-value = (getf args param-name)
-                      do (push (format nil "~A" param-value) result))
-                
-                ;; Join all parts to form the final path
-                (setf path (apply #'concatenate 'string (nreverse result)))
-                ;; Remove any double slashes
-                (setf path (cl-ppcre:regex-replace-all "//" path "/")))))
+              ;; Extract the URL template from the pattern
+              (setf path pattern-without-anchors)
+              
+              ;; Replace parameter placeholders with actual values
+              (loop for (param-name param-type) in params
+                    for param-value = (getf args param-name)
+                    for regex = (cond
+                                  ((string= param-type "string") "([^/]+)")
+                                  ((string= param-type "int") "(\\\\d+)")
+                                  (t (error "Unknown parameter type: ~A" param-type)))
+                    do (setf path (regex-replace regex path (format nil "~A" param-value))))
+              
+              ;; Ensure the path starts with a slash
+              (unless (char= (char path 0) #\/)
+                (setf path (concatenate 'string "/" path))))))
         
         ;; Add namespace prefix if it's not the root namespace
         (if (string= ns "app")
