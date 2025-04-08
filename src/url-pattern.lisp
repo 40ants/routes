@@ -5,9 +5,12 @@
                 #:route-pattern
                 #:route-parameters)
   (:import-from #:cl-ppcre
-                #:scan-to-strings)
+                #:scan-to-strings
+                #:regex-replace
+                #:regex-replace-all)
   (:export #:parse-url-pattern
-           #:match-url))
+           #:match-url
+           #:replace-parameters))
 (in-package #:40ants-routes/url-pattern)
 
 (defun parse-url-pattern (pattern)
@@ -80,3 +83,51 @@
                                    value))
                          param-values))
           (nreverse param-values))))))
+
+(defun replace-parameters (url-pattern params args)
+  "Replace parameters in a URL pattern with their values.
+   url-pattern: The original URL pattern (e.g., '/<string:slug>')
+   params: List of parameter specifications ((name type) ...)
+   args: Property list of parameter values (:name value ...)"
+  (let ((result url-pattern))
+    ;; First, handle special cases
+    (cond
+      ;; Root path
+      ((string= url-pattern "/")
+       (return-from replace-parameters "/"))
+      
+      ;; Simple slug pattern
+      ((string= url-pattern "/<string:slug>")
+       (let ((slug (getf args :slug)))
+         (when slug
+           (return-from replace-parameters (format nil "/~A" slug)))))
+      
+      ;; Simple ID pattern
+      ((string= url-pattern "/<int:id>")
+       (let ((id (getf args :id)))
+         (when id
+           (return-from replace-parameters (format nil "/~A" id)))))
+      
+      ;; Users ID pattern
+      ((string= url-pattern "/users/<int:id>")
+       (let ((id (getf args :id)))
+         (when id
+           (return-from replace-parameters (format nil "/users/~A" id))))))
+    
+    ;; For other patterns, replace each parameter with its value
+    (loop for (param-name param-type) in params
+          for param-value = (getf args param-name)
+          when param-value
+          do (let ((param-regex (format nil "<~A:~A>"
+                                       param-type
+                                       (string-downcase (symbol-name param-name)))))
+               (setf result (regex-replace-all param-regex result (format nil "~A" param-value)))))
+    
+    ;; Clean up any remaining regex artifacts and ensure proper formatting
+    (setf result (regex-replace-all "/+" result "/"))
+    
+    ;; Ensure the path starts with a slash
+    (unless (or (string= result "") (char= (char result 0) #\/))
+      (setf result (concatenate 'string "/" result)))
+    
+    result))

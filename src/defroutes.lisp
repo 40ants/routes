@@ -43,7 +43,7 @@
              (title (getf options :title)))
          (unless name
            (error "Route must have a name: ~A" definition))
-         
+          
          (multiple-value-bind (regex-pattern params)
              (parse-url-pattern url-pattern)
            (make-instance 'route
@@ -55,7 +55,7 @@
                           :method :get
                           :handler `(lambda ,(mapcar #'car params)
                                       ,@(cddr definition)))))))
-    
+     
     ;; HTTP method formats (GET, POST, PUT)
     ((and (listp definition)
           (member (first definition) '(get post put) :test #'eq))
@@ -65,7 +65,7 @@
                (title (getf options :title)))
            (unless name
              (error "Route must have a name: ~A" definition))
-           
+            
            (multiple-value-bind (regex-pattern params)
                (parse-url-pattern url-pattern)
              (make-instance 'route
@@ -77,7 +77,7 @@
                             :method (intern (string-upcase (symbol-name method)) :keyword)
                             :handler `(lambda ,(mapcar #'car params)
                                         ,@(cddr definition))))))))
-    
+     
     ;; Include other route collections
     ((and (listp definition) (eq (first definition) 'include))
      (let* ((original-collection (eval (second definition)))
@@ -90,4 +90,24 @@
                       :prefix prefix
                       :namespace namespace)))
     
+    ;; Nested defroutes
+    ((and (listp definition) (eq (first definition) 'defroutes))
+     (destructuring-bind (var-name &key namespace) (second definition)
+       (let ((nested-collection (make-instance 'route-collection
+                                              :namespace namespace)))
+         ;; Process the nested routes
+         (setf (collection-routes nested-collection)
+               (loop for def in (cddr definition)
+                     collect (process-route-definition def namespace nested-collection)))
+         ;; Register the nested collection
+         (register-routes nested-collection)
+         ;; Set the variable to the collection
+         (set var-name nested-collection)
+         ;; Return an included-route that includes this collection
+         (make-instance 'included-route
+                        :original-collection nested-collection
+                        :parent collection
+                        :prefix ""
+                        :namespace nil))))
+     
     (t (error "Unknown route definition: ~A" definition))))

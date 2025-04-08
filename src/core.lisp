@@ -9,6 +9,7 @@
                  #:40ants-routes/find-route
                  #:40ants-routes/defroutes
                  #:40ants-routes/route-url
+                 #:40ants-routes/route-name
                  #:40ants-routes/breadcrumbs))
 (in-package #:40ants-routes/core)
 

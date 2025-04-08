@@ -1,5 +1,8 @@
 (uiop:define-package #:40ants-routes/route
   (:use #:cl)
+  (:import-from #:40ants-routes/route-collection
+                #:route-collection
+                #:collection-namespace)
   (:export #:route
            #:route-name
            #:route-pattern
