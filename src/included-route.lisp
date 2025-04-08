@@ -37,13 +37,28 @@
 
 ;; Proxy methods for included-route
 (defmethod collection-routes ((included included-route))
-  (collection-routes (included-route-original-collection included)))
+  (let ((original (included-route-original-collection included)))
+    (if (typep original 'included-route)
+      ;; If the original is itself an included-route, get its routes
+      (collection-routes original)
+      ;; Otherwise, get the routes directly
+      (collection-routes original))))
 
 (defmethod collection-namespace ((included included-route))
   (let ((custom-namespace (included-route-namespace included)))
     (if custom-namespace
         custom-namespace
         (collection-namespace (included-route-original-collection included)))))
+
+;; Store the original collection directly without any proxying
+(defmethod included-route-original-collection :around ((included included-route))
+  (let ((original (call-next-method)))
+    (if (and (typep original 'included-route)
+             (slot-boundp original 'original-collection))
+        ;; If the original is itself an included-route, get its original collection
+        (included-route-original-collection original)
+        ;; Otherwise, return the original
+        original)))
 
 ;; Add route-name method for included-route
 (defmethod route-name ((included included-route))

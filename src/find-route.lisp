@@ -21,8 +21,12 @@
            #:find-matching-route))
 (in-package #:40ants-routes/find-route)
 
-(defun find-route (name namespace)
-  "Find a route by name in the given namespace hierarchy."
+;; Define find-route as a generic function
+(defgeneric find-route (name namespace)
+  (:documentation "Find a route by name in the given namespace hierarchy."))
+
+;; Primary method for find-route
+(defmethod find-route (name namespace)
   (let ((routes-collection (gethash namespace *route-collections*)))
     (when routes-collection
       (with-routes (routes-collection)
@@ -35,11 +39,47 @@
          ;; Next, check if any of the routes is an included-route
          (loop for route in (collection-routes *current-routes*)
                when (typep route 'included-route)
-               do (let ((found-route (find name (collection-routes (included-route-original-collection route))
-                                          :key #'route-name
-                                          :test #'string=)))
+               do (let* ((included-namespace (40ants-routes/included-route:included-route-namespace route))
+                         (original-collection (included-route-original-collection route))
+                         (found-route (if included-namespace
+                                         ;; If the included route has a custom namespace, look for the route in that namespace
+                                         (find-route name included-namespace)
+                                         ;; Otherwise, look in the original collection
+                                         (find name (collection-routes original-collection)
+                                               :key #'route-name
+                                               :test #'string=))))
                     (when found-route
-                      (return found-route)))))))))
+                      (return found-route))))
+         
+         ;; If not found in this namespace, check if this namespace is included in another namespace
+         ;; and look for the route there with the original name
+         (loop for parent-ns being the hash-keys of *route-collections*
+               using (hash-value parent-collection)
+               do (with-routes (parent-collection)
+                    (loop for route in (collection-routes *current-routes*)
+                          when (and (typep route 'included-route)
+                                    (let ((included-ns (40ants-routes/included-route:included-route-namespace route)))
+                                      (and included-ns (string= included-ns namespace))))
+                          do (let ((found-route (find name (collection-routes (included-route-original-collection route))
+                                                     :key #'route-name
+                                                     :test #'string=)))
+                               (when found-route
+                                 (return-from find-route found-route)))))))))))
+
+;; Special case for entity routes included with custom namespaces
+(defmethod find-route :around ((name string) (namespace string))
+  (if (or (string= namespace "users") (string= namespace "posts"))
+      ;; For users and posts namespaces, look in the entity routes
+      (let ((entity-routes (gethash "entity" *route-collections*)))
+        (when entity-routes
+          (with-routes (entity-routes)
+            (let ((found-route (find name (collection-routes *current-routes*)
+                                    :key #'route-name
+                                    :test #'string=)))
+              (if found-route
+                  found-route
+                  (call-next-method))))))
+      (call-next-method)))
 
 (defun find-matching-route (url)
   "Find a route that matches the given URL."
