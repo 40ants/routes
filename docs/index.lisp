@@ -1,87 +1,197 @@
 (uiop:define-package #:40ants-routes-docs/index
   (:use #:cl)
-  (:import-from #:pythonic-string-reader
-                #:pythonic-string-syntax)
-  #+quicklisp
-  (:import-from #:quicklisp)
-  (:import-from #:named-readtables
-                #:in-readtable)
   (:import-from #:40ants-doc
                 #:defsection
                 #:defsection-copy)
-  (:import-from #:40ants-routes-docs/changelog
-                #:@changelog)
-  (:import-from #:docs-config
-                #:docs-config)
-  (:import-from #:40ants-doc/autodoc
-                #:defautodoc)
+  (:import-from #:40ants-routes
+                #:defroutes
+                #:url
+                #:include
+                #:route-url
+                #:with-routes
+                #:*current-namespace*
+                #:find-route
+                #:get-breadcrumbs)
   (:export #:@index
-           #:@readme
-           #:@changelog))
+           #:@readme))
 (in-package #:40ants-routes-docs/index)
 
-(in-readtable pythonic-string-syntax)
 
-
-(defmethod docs-config ((system (eql (asdf:find-system "40ants-routes-docs"))))
-  ;; 40ANTS-DOC-THEME-40ANTS system will bring
-  ;; as dependency a full 40ANTS-DOC but we don't want
-  ;; unnecessary dependencies here:
-  #+quicklisp
-  (ql:quickload "40ants-doc-theme-40ants")
-  #-quicklisp
-  (asdf:load-system "40ants-doc-theme-40ants")
-  
-  (list :theme
-        (find-symbol "40ANTS-THEME"
-                     (find-package "40ANTS-DOC-THEME-40ANTS")))
-  )
-
-
-(defsection @index (:title "40ants-routes - Framework agnostic URL routing library."
+(defsection @index (:title "40ants-routes - Framework agnostic URL routing library"
                     :ignore-words ("JSON"
                                    "HTTP"
-                                   "TODO"
-                                   "BSD"
-                                   "REPL"
-                                   "ASDF:PACKAGE-INFERRED-SYSTEM"
-                                   "ASDF"
-                                   "40A"
-                                   "API"
                                    "URL"
-                                   "URI"
-                                   "RPC"
-                                   "GIT"))
-  (40ants-routes system)
+                                   "REPL"
+                                   "ASDF"
+                                   "API"
+                                   "HTML"
+                                   "TODO"
+                                   "Unlicense"))
   "
-[![](https://github-actions.40ants.com/40ants/routes/matrix.svg?only=ci.run-tests)](https://github.com/40ants/routes/actions)
+## Overview
 
-![Quicklisp](http://quickdocs.org/badge/40ants-routes.svg)
-"
-  (@installation section)
+40ants-routes is a framework-agnostic URL routing library for Common Lisp, inspired by Django's URL routing system. It provides a clean and flexible way to define URL routes, generate URLs, and handle URL parameters.
+
+## Features
+
+* Define routes with namespaces
+* Include routes from libraries into applications
+* Generate URLs based on route names
+* Handle URL parameters
+* Generate breadcrumbs
+* Support for different types of routes (server, application, library)
+
+## Installation
+
+```lisp
+(ql:quickload :40ants-routes)
+```
+
+## Usage
+
+### Defining Routes
+
+Routes can be defined using the `defroutes` macro:
+
+```lisp
+(defroutes (*blog-routes* :namespace \"blog\")
+  (url (\"/\" :name \"index\")
+       (make-all-posts-page))
+  (url (\"/<string:slug>\" :name \"post\")
+       (make-post-page slug)))
+```
+
+### Including Routes
+
+Routes from libraries can be included in application routes:
+
+```lisp
+(defroutes (*app-routes* :namespace \"app\")
+  (url (\"/\" :name \"index\")
+       (make-all-posts-page))
+  (include *blog-routes*))
+```
+
+### Generating URLs
+
+URLs can be generated using the `route-url` function:
+
+```lisp
+(route-url \"index\")  ; => \"/\"
+(route-url \"index\" :namespace \"blog\")  ; => \"/blog/\"
+(route-url \"post\" :namespace \"blog\" :slug \"hello-world\")  ; => \"/blog/hello-world\"
+```
+
+### Setting Context
+
+The current namespace can be set using the `with-routes` macro:
+
+```lisp
+(with-routes (*app-routes*)
+  (route-url \"index\"))  ; => \"/\"
+```
+
+### Generating Breadcrumbs
+
+Breadcrumbs can be generated using the `get-breadcrumbs` function:
+
+```lisp
+(get-breadcrumbs \"/admin/users/123\")
+; => (((\"/\" . \"Home\") (\"/admin\" . \"Admin\") (\"/admin/users\" . \"Users\") (\"/admin/users/123\" . \"User Profile\")))
+```
+
+## API Reference"
   (@usage section)
   (@api section))
 
+(defsection @readme (:title "40ants-routes")
+  :export nil
+  
+  "[![](https://github-actions.40ants.com/40ants/routes/matrix.svg?only=ci.run-tests)](https://github.com/40ants/routes/actions)
 
-(defsection-copy @readme @index)
+   Framework agnostic URL routing library for Common Lisp.
+   
+   ## Overview
+   
+   40ants-routes is a framework-agnostic URL routing library for Common Lisp, inspired by Django's URL routing system. It provides a clean and flexible way to define URL routes, generate URLs, and handle URL parameters.
+   
+   ## Features
+   
+   * Define routes with namespaces
+   * Include routes from libraries into applications
+   * Generate URLs based on route names
+   * Handle URL parameters
+   * Generate breadcrumbs
+   * Support for different types of routes (server, application, library)
+   
+   ## Installation
+   
+   ```lisp
+   (ql:quickload :40ants-routes)
+   ```
+   
+   ## Documentation
+   
+   Full documentation is available at [https://40ants.com/routes/](https://40ants.com/routes/).")
 
+(defsection @usage (:title "Usage Examples")
+  "### Defining Routes
 
-(defsection @installation (:title "Installation")
-  """
-You can install this library from Quicklisp, but you want to receive updates quickly, then install it from Ultralisp.org:
+Routes can be defined using the `defroutes` macro:
 
+```lisp
+(defroutes (*blog-routes* :namespace \"blog\")
+  (url (\"/\" :name \"index\")
+       (make-all-posts-page))
+  (url (\"/<string:slug>\" :name \"post\")
+       (make-post-page slug)))
 ```
-(ql-dist:install-dist "http://dist.ultralisp.org/"
-                      :prompt nil)
-(ql:quickload :40ants-routes)
+
+### Including Routes
+
+Routes from libraries can be included in application routes:
+
+```lisp
+(defroutes (*app-routes* :namespace \"app\")
+  (url (\"/\" :name \"index\")
+       (make-all-posts-page))
+  (include *blog-routes*))
 ```
-""")
 
+### Generating URLs
 
-(defsection @usage (:title "Usage")
-  "
-TODO: Write a library description. Put some examples here.
-")
+URLs can be generated using the `route-url` function:
 
+```lisp
+(route-url \"index\")  ; => \"/\"
+(route-url \"index\" :namespace \"blog\")  ; => \"/blog/\"
+(route-url \"post\" :namespace \"blog\" :slug \"hello-world\")  ; => \"/blog/hello-world\"
+```
 
-(defautodoc @api (:system "40ants-routes"))
+### Setting Context
+
+The current namespace can be set using the `with-routes` macro:
+
+```lisp
+(with-routes (*app-routes*)
+  (route-url \"index\"))  ; => \"/\"
+```
+
+### Generating Breadcrumbs
+
+Breadcrumbs can be generated using the `get-breadcrumbs` function:
+
+```lisp
+(get-breadcrumbs \"/admin/users/123\")
+; => (((\"/\" . \"Home\") (\"/admin\" . \"Admin\") (\"/admin/users\" . \"Users\") (\"/admin/users/123\" . \"User Profile\")))
+```")
+
+(defsection @api (:title "API Reference")
+  (defroutes function)
+  (url macro)
+  (include macro)
+  (route-url function)
+  (with-routes macro)
+  (*current-namespace* variable)
+  (find-route function)
+  (get-breadcrumbs function))

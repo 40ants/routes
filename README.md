@@ -1,101 +1,85 @@
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-40README-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+# 40ants-routes
 
-# 40ants-routes - Framework agnostic URL routing library.
+[![](https://github-actions.40ants.com/40ants/routes/matrix.svg?only=ci.run-tests)](https://github.com/40ants/routes/actions)
 
-<a id="40-ants-routes-asdf-system-details"></a>
+Framework agnostic URL routing library for Common Lisp.
 
-## 40ANTS-ROUTES ASDF System Details
+## Overview
 
-* Description: Framework agnostic `URL` routing library.
-* Licence: Unlicense
-* Author: Alexander Artemenko <svetlyak.40wt@gmail.com>
-* Homepage: [https://40ants.com/routes][7261]
-* Bug tracker: [https://github.com/40ants/routes/issues][54bf]
-* Source control: [GIT][6959]
+40ants-routes is a framework-agnostic URL routing library for Common Lisp, inspired by Django's URL routing system. It provides a clean and flexible way to define URL routes, generate URLs, and handle URL parameters.
 
-[![](https://github-actions.40ants.com/40ants/routes/matrix.svg?only=ci.run-tests)][dc66]
+## Features
 
-![](http://quickdocs.org/badge/40ants-routes.svg)
-
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-40INSTALLATION-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+* Define routes with namespaces
+* Include routes from libraries into applications
+* Generate URLs based on route names
+* Handle URL parameters
+* Generate breadcrumbs
+* Support for different types of routes (server, application, library)
 
 ## Installation
 
-You can install this library from Quicklisp, but you want to receive updates quickly, then install it from Ultralisp.org:
-
-```
-(ql-dist:install-dist "http://dist.ultralisp.org/"
-                      :prompt nil)
+```lisp
 (ql:quickload :40ants-routes)
 ```
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-40USAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
 ## Usage
 
-`TODO`: Write a library description. Put some examples here.
+### Defining Routes
 
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-40API-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+Routes can be defined using the `defroutes` macro:
 
-## API
+```lisp
+(defroutes (*blog-routes* :namespace "blog")
+  (url ("/" :name "index")
+       (make-all-posts-page))
+  (url ("/<string:slug>" :name "post")
+       (make-post-page slug)))
+```
 
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+### Including Routes
 
-### 40ANTS-ROUTES
+Routes from libraries can be included in application routes:
 
-<a id="x-28-23A-28-2813-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-22-29-20PACKAGE-29"></a>
+```lisp
+(defroutes (*app-routes* :namespace "app")
+  (url ("/" :name "index")
+       (make-all-posts-page))
+  (include *blog-routes*))
+```
 
-#### [package](9cc4) `40ants-routes`
+### Generating URLs
 
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+URLs can be generated using the `route-url` function:
 
-#### Classes
+```lisp
+(route-url "index")  ; => "/"
+(route-url "index" :namespace "blog")  ; => "/blog/"
+(route-url "post" :namespace "blog" :slug "hello-world")  ; => "/blog/hello-world"
+```
 
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-24HELLO-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+### Setting Context
 
-##### HELLO
+The current namespace can be set using the `with-routes` macro:
 
-<a id="x-2840ANTS-ROUTES-3AHELLO-20CLASS-29"></a>
+```lisp
+(with-routes (*app-routes*)
+  (route-url "index"))  ; => "/"
+```
 
-###### [class](9684) `40ants-routes:hello` ()
+### Generating Breadcrumbs
 
-Example class.
+Breadcrumbs can be generated using the `get-breadcrumbs` function:
 
-**Readers**
+```lisp
+(get-breadcrumbs "/admin/users/123")
+; => ((("/" . "Home") ("/admin" . "Admin") ("/admin/users" . "Users") ("/admin/users/123" . "User Profile")))
+```
 
-<a id="x-2840ANTS-ROUTES-3AUSER-NAME-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-3AHELLO-29-29"></a>
+## Documentation
 
-###### [reader](a748) `40ants-routes:user-name` (hello) (:name)
+Full documentation is available at [https://40ants.com/routes/](https://40ants.com/routes/).
 
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-3FGenerics-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+## License
 
-#### Generics
-
-<a id="x-2840ANTS-ROUTES-3ASAY-20GENERIC-FUNCTION-29"></a>
-
-##### [generic-function](5143) `40ants-routes:say` obj
-
-Say what should be said.
-
-<a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
-
-#### Functions
-
-<a id="x-2840ANTS-ROUTES-3AMAKE-HELLO-20FUNCTION-29"></a>
-
-##### [function](d50c) `40ants-routes:make-hello` name
-
-Makes hello world example
-
-
-[7261]: https://40ants.com/routes
-[6959]: https://github.com/40ants/routes
-[dc66]: https://github.com/40ants/routes/actions
-[9cc4]: https://github.com/40ants/routes/blob/5e249bbff5f009db262ebca3f9894104e84583a1/src/core.lisp#L1
-[9684]: https://github.com/40ants/routes/blob/5e249bbff5f009db262ebca3f9894104e84583a1/src/core.lisp#L11
-[a748]: https://github.com/40ants/routes/blob/5e249bbff5f009db262ebca3f9894104e84583a1/src/core.lisp#L12
-[d50c]: https://github.com/40ants/routes/blob/5e249bbff5f009db262ebca3f9894104e84583a1/src/core.lisp#L17
-[5143]: https://github.com/40ants/routes/blob/5e249bbff5f009db262ebca3f9894104e84583a1/src/core.lisp#L23
-[54bf]: https://github.com/40ants/routes/issues
-
-* * *
-###### [generated by [40ANTS-DOC](https://40ants.com/doc/)]
+Unlicense
