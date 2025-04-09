@@ -168,46 +168,51 @@
 
 (defun find-parent-namespace (namespace)
   "Find the parent namespace for a given namespace."
-  (loop for ns being the hash-keys of 40ants-routes/with-routes:*route-collections*
-        using (hash-value collection)
-        do (40ants-routes/with-routes:with-routes (collection)
-             (let ((routes (40ants-routes/route-collection:collection-routes
-                            40ants-routes/with-routes:*current-routes*)))
-               (when (find-if (lambda (route)
-                                (and (typep route '40ants-routes/included-route:included-route)
-                                     (or
-                                      ;; Match by original namespace
-                                      (and (null (40ants-routes/included-route:included-route-namespace route))
-                                           (string= (40ants-routes/route-collection:collection-namespace
-                                                     (40ants-routes/included-route:included-route-original-collection route))
-                                                    namespace))
-                                      ;; Match by custom namespace
-                                      (and (40ants-routes/included-route:included-route-namespace route)
-                                           (string= (40ants-routes/included-route:included-route-namespace route)
-                                                    namespace)))))
-                              routes)
-                 (return ns))))))
+  (error "Remake without route-collection")
+  
+  ;; (loop for ns being the hash-keys of 40ants-routes/with-routes:*route-collections*
+  ;;         using (hash-value collection)
+  ;;       do (40ants-routes/with-routes:with-routes (collection)
+  ;;            (let ((routes (40ants-routes/route-collection:collection-routes
+  ;;                           40ants-routes/with-routes:*current-routes*)))
+  ;;              (when (find-if (lambda (route)
+  ;;                               (and (typep route '40ants-routes/included-route:included-route)
+  ;;                                    (or
+  ;;                                     ;; Match by original namespace
+  ;;                                     (and (null (40ants-routes/included-route:included-route-namespace route))
+  ;;                                          (string= (40ants-routes/route-collection:collection-namespace
+  ;;                                                    (40ants-routes/included-route:included-route-original-collection route))
+  ;;                                                   namespace))
+  ;;                                     ;; Match by custom namespace
+  ;;                                     (and (40ants-routes/included-route:included-route-namespace route)
+  ;;                                          (string= (40ants-routes/included-route:included-route-namespace route)
+  ;;                                                   namespace)))))
+  ;;                             routes)
+  ;;                (return ns)))))
+  )
 
 (defun get-namespace-prefix (namespace parent-namespace)
   "Get the custom prefix for a namespace if it exists."
-  (when parent-namespace
-    (let ((parent-collection (gethash parent-namespace 40ants-routes/with-routes:*route-collections*)))
-      (when parent-collection
-        (40ants-routes/with-routes:with-routes (parent-collection)
-          (let ((routes (40ants-routes/route-collection:collection-routes
-                         40ants-routes/with-routes:*current-routes*)))
-            (loop for route in routes
-                  when (and (typep route '40ants-routes/included-route:included-route)
-                            (or
-                             ;; Match by original namespace
-                             (and (null (40ants-routes/included-route:included-route-namespace route))
-                                  (string= (40ants-routes/route-collection:collection-namespace
-                                            (40ants-routes/included-route:included-route-original-collection route))
-                                           namespace))
-                             ;; Match by custom namespace
-                             (and (40ants-routes/included-route:included-route-namespace route)
-                                  (string= (40ants-routes/included-route:included-route-namespace route)
-                                           namespace))))
-                  do (let ((prefix (40ants-routes/included-route:included-route-prefix route)))
-                       (when prefix
-                         (return prefix))))))))))
+  (error "Remake without route-collections")
+  ;; (when parent-namespace
+  ;;   (let ((parent-collection (gethash parent-namespace 40ants-routes/with-routes:*route-collections*)))
+  ;;     (when parent-collection
+  ;;       (40ants-routes/with-routes:with-routes (parent-collection)
+  ;;         (let ((routes (40ants-routes/route-collection:collection-routes
+  ;;                        40ants-routes/with-routes:*current-routes*)))
+  ;;           (loop for route in routes
+  ;;                 when (and (typep route '40ants-routes/included-route:included-route)
+  ;;                           (or
+  ;;                            ;; Match by original namespace
+  ;;                            (and (null (40ants-routes/included-route:included-route-namespace route))
+  ;;                                 (string= (40ants-routes/route-collection:collection-namespace
+  ;;                                           (40ants-routes/included-route:included-route-original-collection route))
+  ;;                                          namespace))
+  ;;                            ;; Match by custom namespace
+  ;;                            (and (40ants-routes/included-route:included-route-namespace route)
+  ;;                                 (string= (40ants-routes/included-route:included-route-namespace route)
+  ;;                                          namespace))))
+  ;;                   do (let ((prefix (40ants-routes/included-route:included-route-prefix route)))
+  ;;                        (when prefix
+  ;;                          (return prefix)))))))))
+  )

@@ -6,7 +6,6 @@
   (:export #:with-routes
            #:*current-namespace*
            #:*current-routes*
-           #:*route-collections*
            #:register-routes))
 (in-package #:40ants-routes/with-routes)
 
@@ -16,16 +15,6 @@
 
 (defvar *current-routes* nil
   "Current route collection for route resolution.")
-
-;; Global registry of route collections
-(defvar *route-collections* (make-hash-table :test 'equal)
-  "Registry of all route collections, keyed by namespace.")
-
-(defun register-routes (routes)
-  "Register a route collection in the global registry."
-  (setf (gethash (collection-namespace routes) *route-collections*)
-        routes)
-  routes)
 
 ;; Context management
 (defmacro with-routes ((routes) &body body)

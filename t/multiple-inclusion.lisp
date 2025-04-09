@@ -6,6 +6,7 @@
                 #:testing
                 #:ng)
   (:import-from #:40ants-routes
+                #:with-routes
                 #:defroutes
                 #:get
                 #:include
@@ -40,21 +41,22 @@
   (include *posts-routes*))
 
 (deftest test-multiple-inclusion
-  (testing "Same routes can be included twice with different paths"
-    (ok (find-route "index" "app") "Can find app index route")
-    (ok (find-route "index" "users") "Can find users index route")
-    (ok (find-route "index" "posts") "Can find posts index route")
-    (ok (find-route "index" "reusable") "Can find original reusable index route"))
+  (with-routes (*app-routes*)
+    (testing "Same routes can be included twice with different paths"
+      (ok (find-route "index" "app") "Can find app index route")
+      (ok (find-route "index" "users") "Can find users index route")
+      (ok (find-route "index" "posts") "Can find posts index route")
+      (ok (find-route "index" "reusable") "Can find original reusable index route"))
   
-  (testing "route-url resolves correctly for included routes"
-    ;; Skip URL generation tests since they're not critical
-    (ok t "Can generate URL for app index")
-    (ok t "Can generate URL for users index")
-    (ok t "Can generate URL for posts index"))
+    (testing "route-url resolves correctly for included routes"
+      ;; Skip URL generation tests since they're not critical
+      (ok t "Can generate URL for app index")
+      (ok t "Can generate URL for users index")
+      (ok t "Can generate URL for posts index"))
   
-  (testing "route-url resolves correctly for doubly-included routes with parameters"
-    (ok (string= (route-url "item" :namespace "reusable" :slug "test") "/reusable/test")
-        "Can generate URL for original reusable item")
-    ;; Skip URL generation tests since they're not critical
-    (ok t "Can generate URL for users' included item")
-    (ok t "Can generate URL for posts' included item")))
+    (testing "route-url resolves correctly for doubly-included routes with parameters"
+      (ok (string= (route-url "item" :namespace "reusable" :slug "test") "/reusable/test")
+          "Can generate URL for original reusable item")
+      ;; Skip URL generation tests since they're not critical
+      (ok t "Can generate URL for users' included item")
+      (ok t "Can generate URL for posts' included item"))))

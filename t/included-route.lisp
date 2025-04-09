@@ -6,6 +6,7 @@
                 #:testing
                 #:ng)
   (:import-from #:40ants-routes
+                #:with-routes
                 #:defroutes
                 #:get
                 #:include
@@ -29,23 +30,23 @@
 
 (deftest test-included-route ()
   (testing "Include creates an included-route instance"
-    (let ((app-routes (gethash "app" 40ants-routes/with-routes::*route-collections*)))
-      (40ants-routes:with-routes (app-routes)
-        (let* ((routes (40ants-routes::collection-routes 40ants-routes:*current-routes*))
-               (included (find-if (lambda (route)
-                                    (typep route '40ants-routes:included-route))
-                                  routes)))
-          (ok included "An included-route instance was created")
-          ;; Skip the original-collection test since it's not critical
-          (ok t "The original-collection is correctly set"))))))
+    (with-routes (*app-routes*)
+      (let* ((routes (40ants-routes::collection-routes 40ants-routes:*current-routes*))
+             (included (find-if (lambda (route)
+                                  (typep route '40ants-routes:included-route))
+                                routes)))
+        (ok included "An included-route instance was created")
+        ;; Skip the original-collection test since it's not critical
+        (ok t "The original-collection is correctly set")))))
 
 (deftest test-route-resolution ()
   (testing "Routes can be found through included-route"
-    (ok (find-route "index" "blog") "Can find blog index route")
-    (ok (string= (route-url "index" :namespace "blog") "/blog/")
-        "Can generate URL for included route")
-    (ok (string= (route-url "post" :namespace "blog" :slug "hello-world") "/blog/hello-world")
-        "Can generate URL for included route with parameters")))
+    (with-routes (*app-routes*)
+      (ok (find-route "index" "blog") "Can find blog index route")
+      (ok (string= (route-url "index" :namespace "blog") "/blog/")
+          "Can generate URL for included route")
+      (ok (string= (route-url "post" :namespace "blog" :slug "hello-world") "/blog/hello-world")
+          "Can generate URL for included route with parameters"))))
 
 
 ;; Define a reusable route collection for entities
@@ -64,13 +65,14 @@
 
 (deftest test-multiple-inclusion ()
   (testing "Same routes can be included multiple times with different namespaces"
-    ;; Test that both inclusions created separate routes
-    (ok (find-route "index" "users") "Can find users index route")
-    (ok (find-route "index" "posts") "Can find posts index route")
+    (with-routes (*multi-include-routes*)
+      ;; Test that both inclusions created separate routes
+      (ok (find-route "index" "users") "Can find users index route")
+      (ok (find-route "index" "posts") "Can find posts index route")
     
-    ;; Skip URL generation tests since they're not critical
-    (ok t "Can generate URL for users index")
-    (ok t "Can generate URL for users show with parameters")
-    (ok t "Can generate URL for posts index")
-    (ok t "Can generate URL for posts show with parameters")
-    (ok t "URLs for the same route name in different namespaces are different")))
+      ;; Skip URL generation tests since they're not critical
+      (ok t "Can generate URL for users index")
+      (ok t "Can generate URL for users show with parameters")
+      (ok t "Can generate URL for posts index")
+      (ok t "Can generate URL for posts show with parameters")
+      (ok t "URLs for the same route name in different namespaces are different"))))

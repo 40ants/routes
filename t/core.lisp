@@ -17,14 +17,18 @@
                 #:*current-namespace*
                 #:find-route
                 #:get-breadcrumbs
-                #:route-method))
+                #:route-method)
+  (:import-from #:serapeum
+                #:fmt))
 (in-package #:40ants-routes-tests/core)
 
 ;; Define test routes for a blog library
 (defroutes (*blog-routes* :namespace "blog")
-  (get ("/" :name "index" :title "Blog")
+  (get ("/" :name "index"
+            :title "Blog")
        (format nil "Blog index"))
-  (get ("/<string:slug>" :name "post" :title "Post")
+  (get ("/<string:slug>" :name "post"
+                         :title "Post")
        (format nil "Blog post: ~A" slug)))
 
 ;; Define test routes for an admin library
@@ -45,6 +49,82 @@
   (include *blog-routes*)
   (include *admin-routes*))
 
+
+(defun check-route (name &key namespace expected-method missingp)
+  (testing (if namespace
+               (fmt "Checking route ~S with namespace ~S"
+                    name
+                    namespace)
+               (fmt "Checking route ~S without namespace"
+                    name))
+    (let ((route (find-route name namespace)))
+      (cond
+        (missingp
+         (ng route
+             (if route
+                 "Route expected to be missing, but it was found"
+                 "Route was not found")))
+        ;; Should be found
+        (t
+         (ok route
+             (if route
+                 "Route was found"
+                 "Route was not found"))
+         
+         (ok (string= (40ants-routes/core:route-name route)
+                      name)
+             (if (equal (40ants-routes/core:route-name route)
+                        name)
+                 (fmt "Route's name is ~S, as expected."
+                      name)
+                 (fmt "Route's name is ~S, but ~S was expected."
+                      (40ants-routes/core:route-name route)
+                      name)))
+         (when namespace
+           (ok (string= (40ants-routes/core:route-namespace route)
+                        "blog")
+               (if (equal (40ants-routes/core:route-namespace route)
+                          namespace)
+                   (fmt "Route's namespace is ~S as expected"
+                        namespace)
+                   (fmt "Route's namespace is ~S but ~S was expected."
+                        (40ants-routes/core:route-namespace route)
+                        namespace))))
+         (when expected-method
+           (ok (eql (40ants-routes/core:route-method route)
+                    expected-method)
+               (if (equal (40ants-routes/core:route-method route)
+                          expected-method)
+                   (fmt "Route's method is ~S as expected"
+                        expected-method)
+                   (fmt "Route's method is ~S but ~S was expected."
+                        (40ants-routes/core:route-method route)
+                        expected-method)))))))))
+
+
+(deftest test-simple-route-search ()
+  (testing "Blog routes can be found"
+    (with-routes (*blog-routes*)
+      (check-route "index"
+                   :expected-method :get)
+      (check-route "post"
+                   :expected-method :get)
+      (check-route "index"
+                   :namespace "blog"
+                   :expected-method :get)
+      (check-route "post"
+                   :namespace "blog"
+                   :expected-method :get)
+
+      (testing "With wrong namespace"
+        (check-route "index"
+                     :namespace "bad"
+                     :missingp t)
+        (check-route "post"
+                     :namespace "bad"
+                     :missingp t)))))
+
+
 (deftest test-route-definition ()
   (testing "Route collections are created correctly"
     (ok *blog-routes* "Blog routes collection exists")
@@ -52,21 +132,55 @@
     (ok *app-routes* "App routes collection exists"))
   
   (testing "HTTP methods are set correctly"
-    (ok (eq (route-method (find-route "index" "blog")) :get) "Blog index route is GET")
-    (ok (eq (route-method (find-route "users" "admin")) :post) "Admin users route is POST")
-    (ok (eq (route-method (find-route "user" "admin")) :get) "Admin user route is GET")
-    (ok (eq (route-method (find-route "user-update" "admin")) :put) "Admin user update route is PUT")))
+    (with-routes (*app-routes*)
+      (flet ((check-route (name &key namespace expected-method)
+               (testing (if namespace
+                            (fmt "Checking route ~S with namespace ~S"
+                                 name
+                                 namespace)
+                            (fmt "Checking route ~S without namespace"
+                                 name))
+                 (let ((route (find-route name namespace)))
+                   (ok (string= (40ants-routes/core:route-name route)
+                                name)
+                       (fmt "Route's name is ~S, but ~S was expected."
+                            (40ants-routes/core:route-name route)
+                            name))
+                   (when namespace
+                     (ok (string= (40ants-routes/core:route-namespace route)
+                                  "blog")
+                         (fmt "Route's namespace is ~S but ~S was expected."
+                              (40ants-routes/core:route-namespace route)
+                              namespace)))
+                   (when expected-method
+                     (ok (eql (40ants-routes/core:route-method route)
+                              expected-method)
+                         (fmt "Route's method is ~S but ~S was expected."
+                              (40ants-routes/core:route-method route)
+                              expected-method)))))))
+        (check-route "index" :namespace "blog"
+                             :expected-method :get)
+        (check-route "users" :namespace "admin"
+                             :expected-method :post)
+        (check-route "user" :namespace "admin"
+                            :expected-method :get)
+        (check-route "user-update" :namespace "admin"
+                                   :expected-method :put)))))
+
 
 (deftest test-url-generation ()
   (testing "Basic URL generation"
-    (ok (string= (route-url "index" :namespace "app") "/")
-        "App index URL is correct")
-    (ok (string= (route-url "index" :namespace "blog") "/blog/")
-        "Blog index URL is correct")
-    (ok (string= (route-url "post" :namespace "blog" :slug "hello-world") "/blog/hello-world")
-        "Blog post URL is correct")
-    (ok (string= (route-url "user" :namespace "admin" :id 123) "/admin/users/123")
-        "Admin user URL is correct")))
+    (with-routes (*app-routes*)
+      (ok (string= (route-url "index") "/")
+          "App index URL is correct if no namespace was given")
+      (ok (string= (route-url "index" :namespace "app") "/")
+          "App index URL is correct")
+      (ok (string= (route-url "index" :namespace "blog") "/blog/")
+          "Blog index URL is correct")
+      (ok (string= (route-url "post" :namespace "blog" :slug "hello-world") "/blog/hello-world")
+          "Blog post URL is correct")
+      (ok (string= (route-url "user" :namespace "admin" :id 123) "/admin/users/123")
+          "Admin user URL is correct"))))
 
 (deftest test-namespace-context ()
   (testing "URL generation with namespace context"
@@ -93,9 +207,10 @@
 
 (deftest test-breadcrumbs ()
   (testing "Breadcrumbs generation"
-    (let ((crumbs (get-breadcrumbs "/admin/users/123")))
-      (ok (= (length crumbs) 4) "Breadcrumbs have correct length")
-      (ok (string= (caar crumbs) "/") "First breadcrumb is root")
-      (ok (string= (caadr crumbs) "/admin") "Second breadcrumb is admin")
-      (ok (string= (caaddr crumbs) "/admin/users") "Third breadcrumb is users")
-      (ok (string= (caar (last crumbs)) "/admin/users/123") "Last breadcrumb is user profile"))))
+    (with-routes (*app-routes*)
+      (let ((crumbs (get-breadcrumbs "/admin/users/123")))
+        (ok (= (length crumbs) 4) "Breadcrumbs have correct length")
+        (ok (string= (caar crumbs) "/") "First breadcrumb is root")
+        (ok (string= (caadr crumbs) "/admin") "Second breadcrumb is admin")
+        (ok (string= (caaddr crumbs) "/admin/users") "Third breadcrumb is users")
+        (ok (string= (caar (last crumbs)) "/admin/users/123") "Last breadcrumb is user profile")))))
