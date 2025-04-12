@@ -18,9 +18,10 @@
   (:import-from #:40ants-routes/vars
                 #:*routes-path*
                 #:*current-routes*)
-  (:import-from #:40ants-routes/included-route
-                #:included-route
-                #:included-route-original-collection)
+  (:import-from #:40ants-routes/included-routes
+                #:included-routes
+                #:included-routes-p
+                #:included-routes-original-collection)
   (:import-from #:40ants-routes/routes
                 #:routesp))
 (in-package #:40ants-routes-tests/with-url)
@@ -83,21 +84,17 @@
       
       (testing "Second route in the path"
         (let ((route (elt *routes-path* 1)))
-          (ok (typep route
-                     'included-route))
-          (when (typep route
-                       'included-route)
-            (ok (eql (included-route-original-collection route)
+          (ok (included-routes-p route))
+          (when (included-routes-p route)
+            (ok (eql (included-routes-original-collection route)
                      *foo*)
                 "Should be all routes of foo library."))))
       
       (testing "Third route in the path"
         (let ((route (elt *routes-path* 2)))
-          (ok (typep route
-                     'included-route))
-          (when (ok (typep route
-                           'included-route))
-            (ok (eql (included-route-original-collection route)
+          (ok (included-routes-p route))
+          (when (included-routes-p route)
+            (ok (eql (included-routes-original-collection route)
                      *bar*)
                 "Should be all routes of bar library."))))
       

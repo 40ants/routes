@@ -1,4 +1,4 @@
-(uiop:define-package #:40ants-routes-tests/included-route
+(uiop:define-package #:40ants-routes-tests/included-routes
   (:use #:cl)
   (:import-from #:rove
                 #:deftest
@@ -15,14 +15,15 @@
                 #:route-url)
   (:import-from #:40ants-routes/find-route
                 #:find-route)
-  (:import-from #:40ants-routes/included-route
-                #:included-route
-                #:included-route-original-collection)
+  (:import-from #:40ants-routes/included-routes
+                #:included-routes
+                #:included-routes-p
+                #:included-routes-original-collection)
   (:import-from #:40ants-routes/vars
                 #:*current-routes*)
   (:import-from #:40ants-routes/routes
                 #:children-routes))
-(in-package #:40ants-routes-tests/included-route)
+(in-package #:40ants-routes-tests/included-routes)
 
 ;; Define test routes for a blog library
 (defroutes (*blog-routes*)
@@ -37,19 +38,18 @@
        (format nil "App index"))
   (include *blog-routes*))
 
-(deftest test-included-route ()
-  (testing "Include creates an included-route instance"
+(deftest test-included-routes ()
+  (testing "Include creates an included-routes instance"
     (with-routes (*app-routes*)
       (let* ((routes (children-routes *current-routes*))
-             (included (find-if (lambda (route)
-                                  (typep route 'included-route))
+             (included (find-if #'included-routes-p
                                 routes)))
-        (ok included "An included-route instance was created")
+        (ok included "An included-routes instance was created")
         ;; Skip the original-collection test since it's not critical
         (ok t "The original-collection is correctly set")))))
 
 (deftest test-route-resolution ()
-  (testing "Routes can be found through included-route"
+  (testing "Routes can be found through included-routes"
     (with-routes (*app-routes*)
       (ok (find-route "index" "blog") "Can find blog index route")
       (ok (string= (route-url "index" :namespace "blog") "/blog/")

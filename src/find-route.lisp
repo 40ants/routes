@@ -9,9 +9,9 @@
                 #:routes
                 #:children-routes
                 #:collection-namespace)
-  (:import-from #:40ants-routes/included-route
-                #:included-route
-                #:included-route-original-collection)
+  (:import-from #:40ants-routes/included-routes
+                #:included-routes
+                #:included-routes-original-collection)
   (:import-from #:split-sequence
                 #:split-sequence)
   (:import-from #:40ants-routes/url-pattern
@@ -24,7 +24,7 @@
 (in-package #:40ants-routes/find-route)
 
 
-(-> namespaces-chain ((or included-route
+(-> namespaces-chain ((or included-routes
                           routes
                           route))
     (values (soft-list-of string) &optional))
@@ -33,13 +33,13 @@
 (defun namespaces-chain (routes)
   (loop for current = routes
           then (cond
-                 ((typep current 'included-route)
-                  (40ants-routes/included-route:collection-parent current))
+                 ((typep current 'included-routes)
+                  (40ants-routes/included-routes:collection-parent current))
                  (t
                   nil))
         for current-namespace = (typecase current
-                                  (included-route
-                                   (40ants-routes/included-route::included-route-namespace current))
+                                  (included-routes
+                                   (40ants-routes/included-routes::included-routes-namespace current))
                                   (t
                                    nil))
         while current-namespace
@@ -48,7 +48,7 @@
 
 (-> ensure-absolute-namespace ((or string
                                    (soft-list-of string))
-                               (or included-route
+                               (or included-routes
                                    routes
                                    route))
     (values (soft-list-of string)
@@ -87,11 +87,11 @@
     ;;          :key #'route-name
     ;;          :test #'string=))
    
-    ;;  ;; Next, check if any of the routes is an included-route
+    ;;  ;; Next, check if any of the routes is an included-routes
     ;;  (loop for route in (children-routes *current-routes*)
-    ;;        when (typep route 'included-route)
-    ;;          do (let* ((included-namespace (40ants-routes/included-route:included-route-namespace route))
-    ;;                    (original-collection (included-route-original-collection route))
+    ;;        when (typep route 'included-routes)
+    ;;          do (let* ((included-namespace (40ants-routes/included-routes:included-routes-namespace route))
+    ;;                    (original-collection (included-routes-original-collection route))
     ;;                    (found-route (if included-namespace
     ;;                                     ;; If the included route has a custom namespace, look for the route in that namespace
     ;;                                     (find-route name included-namespace)
@@ -108,10 +108,10 @@
     ;;  ;;         using (hash-value parent-collection)
     ;;  ;;       do (with-routes (parent-collection)
     ;;  ;;            (loop for route in (children-routes *current-routes*)
-    ;;  ;;                  when (and (typep route 'included-route)
-    ;;  ;;                            (let ((included-ns (40ants-routes/included-route:included-route-namespace route)))
+    ;;  ;;                  when (and (typep route 'included-routes)
+    ;;  ;;                            (let ((included-ns (40ants-routes/included-routes:included-routes-namespace route)))
     ;;  ;;                              (and included-ns (string= included-ns namespace))))
-    ;;  ;;                    do (let ((found-route (find name (children-routes (included-route-original-collection route))
+    ;;  ;;                    do (let ((found-route (find name (children-routes (included-routes-original-collection route))
     ;;  ;;                                                :key #'route-name
     ;;  ;;                                                :test #'string=)))
     ;;  ;;                         (when found-route

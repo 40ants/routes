@@ -12,7 +12,7 @@
   :depends-on (;; "40ants-routes/core"
                "40ants-routes/route"
                "40ants-routes/routes"
-               "40ants-routes/included-route"
+               "40ants-routes/included-routes"
                "40ants-routes/url-pattern"
                "40ants-routes/with-routes"
                "40ants-routes/find-route"

@@ -9,7 +9,7 @@
   :pathname "t"
   :depends-on ("40ants-routes-tests/core"
                "40ants-routes-tests/http-methods"
-               "40ants-routes-tests/included-route"
+               "40ants-routes-tests/included-routes"
                "40ants-routes-tests/url-pattern"
                "40ants-routes-tests/with-url"
                "40ants-routes"

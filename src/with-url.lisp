@@ -7,8 +7,8 @@
                 #:routes)
   (:import-from #:40ants-routes/route
                 #:route)
-  (:import-from #:40ants-routes/included-route
-                #:included-route)
+  (:import-from #:40ants-routes/included-routes
+                #:included-routes)
   (:import-from #:40ants-routes/vars
                 #:*routes-path*
                 #:*current-routes*)
@@ -21,12 +21,12 @@
 
 (-> find-route-for-url ((or routes
                             route
-                            included-route)
+                            included-routes)
                         string)
     (values (or route
-                included-route)
+                included-routes)
             (serapeum:soft-list-of (or route
-                                       included-route))
+                                       included-routes))
             &optional))
 
 (defun find-route-for-url (routes url)

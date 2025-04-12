@@ -5,8 +5,8 @@
   (:import-from #:40ants-routes/routes
                 #:routes
                 #:children-routes)
-  (:import-from #:40ants-routes/included-route
-                #:included-route)
+  (:import-from #:40ants-routes/included-routes
+                #:included-routes)
   (:import-from #:40ants-routes/url-pattern
                 #:url-pattern-params
                 #:parse-url-pattern)
@@ -75,13 +75,13 @@
 
 
 (-> include (routes &key (:path string) (:namespace string))
-    (values included-route))
+    (values included-routes))
 
 (defun include (routes &key (path "/") namespace)
   (let ((path (str:ensure-prefix
                "/"
                (str:ensure-suffix "/" path))))
-    (make-instance 'included-route
+    (make-instance 'included-routes
                    :original-collection routes
                    :path (parse-url-pattern path)
                    :namespace namespace)))
@@ -165,7 +165,7 @@
 ;;             (parsed-path (parse-url-pattern path))
 ;;             ;; (namespace (getf options :namespace nil))
 ;;             )
-;;        (make-instance 'included-route
+;;        (make-instance 'included-routes
 ;;                       :original-collection original-collection
 ;;                       :parent collection
 ;;                       :path parsed-path
@@ -184,9 +184,9 @@
          
 ;;     ;;      ;; Set the variable to the collection
 ;;     ;;      (set var-name nested-collection)
-;;     ;;      ;; Return an included-route that includes this collection
+;;     ;;      ;; Return an included-routes that includes this collection
 ;;     ;;      (break)
-;;     ;;      (make-instance 'included-route
+;;     ;;      (make-instance 'included-routes
 ;;     ;;                     :original-collection nested-collection
 ;;     ;;                     :parent collection
 ;;     ;;                     :path (parse-url-pattern "")

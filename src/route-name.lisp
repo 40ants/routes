@@ -4,10 +4,10 @@
                 #:route-name)
   (:import-from #:40ants-routes/routes
                 #:routes)
-  (:import-from #:40ants-routes/included-route
-                #:included-route
-                #:included-route-original-collection
-                #:included-route-namespace))
+  (:import-from #:40ants-routes/included-routes
+                #:included-routes
+                #:included-routes-original-collection
+                #:included-routes-namespace))
 (in-package #:40ants-routes/route-name)
 
 ;; Add a route-name method for routes
@@ -16,10 +16,10 @@
   (error "Should be removed"))
 
 
-;; Add a route-name method for included-route
-(defmethod route-name ((included included-route))
+;; Add a route-name method for included-routes
+(defmethod route-name ((included included-routes))
   "Get the name of an included route, which is the name of its original collection."
-  (let ((custom-namespace (included-route-namespace included)))
+  (let ((custom-namespace (included-routes-namespace included)))
     (if custom-namespace
         custom-namespace
-        (route-name (included-route-original-collection included)))))
+        (route-name (included-routes-original-collection included)))))
