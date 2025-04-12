@@ -60,6 +60,7 @@
            (make-instance 'route
                           :name ,name
                           :title ,title
+                          :method ,http-method
                           :pattern url-pattern
                           :handler #'handler))))))
 

@@ -43,19 +43,20 @@
 
 ;; Define test routes for an admin library
 (defroutes (*admin-routes*)
-  (get ("/" :name "index" :title "Admin")
+  (get ("/" :name "admin-index" :title "Admin")
     (fmt "Admin index"))
   (post ("/users/" :name "users" :title "Users")
-        (fmt "Users list"))
+    (fmt "Users list"))
   (get ("/users/<int:id>" :name "user" :title "User Profile")
     (fmt "User profile: ~A" id))
   (put ("/users/<int:id>" :name "user-update" :title "Update User")
-       (fmt "Update user profile: ~A" id)))
+    (fmt "Update user profile: ~A" id)))
+
 
 ;; Define test routes for an application
 (defroutes (*app-routes*)
   (get ("/" :name "index" :title "Main Page")
-       (fmt "App index"))
+    (fmt "App index"))
   (include *blog-routes*
            :path "/blog/"
            :namespace "blog")
@@ -71,7 +72,7 @@
                     namespace)
                (fmt "Checking route ~S without namespace"
                     name))
-    (let ((route (find-route name namespace)))
+    (let ((route (find-route name :namespace namespace)))
       (cond
         (missingp
          (ng route
@@ -94,17 +95,7 @@
                  (fmt "Route's name is ~S, but ~S was expected."
                       (route-name route)
                       name)))
-         ;; Namespace was removed from ROUTE class
-         ;; (when namespace
-         ;;   (ok (string= (route-namespace route)
-         ;;                "blog")
-         ;;       (if (equal (routes::route-namespace route)
-         ;;                  namespace)
-         ;;           (fmt "Route's namespace is ~S as expected"
-         ;;                namespace)
-         ;;           (fmt "Route's namespace is ~S but ~S was expected."
-         ;;                (route-namespace route)
-         ;;                namespace))))
+         
          (when expected-method
            (ok (eql (route-method route)
                     expected-method)
@@ -155,19 +146,42 @@
 
 
 (deftest test-simple-route-search ()
-  (testing "Blog routes can be found"
-    (with-url (*blog-routes* "/")
-      (check-route "index"
-                   :expected-method :get)
-      (check-route "post"
-                   :expected-method :get)
+  (with-url (*app-routes* "/blog/some-post")
+    (testing "Blog routes can be found"
+      (testing "Without namespace"
+        (check-route "index"
+                     :expected-method :get)
+        (check-route "post"
+                     :expected-method :get))
+      
+      (testing "With absolute namespace"
+        (check-route "index"
+                     :namespace '(:absolute "blog")
+                     :expected-method :get)
+        (check-route "post"
+                     :namespace '(:absolute "blog")
+                     :expected-method :get))
+      
       (testing "With wrong namespace"
         (check-route "index"
-                     :namespace "bad"
+                     :namespace '(:absolute "bad")
                      :missingp t)
         (check-route "post"
-                     :namespace "bad"
-                     :missingp t)))))
+                     :namespace '(:absolute "bad")
+                     :missingp t)))
+
+    (testing "Admin routes can be found"
+      (testing "Without namespace it should be impossible"
+        (check-route "admin-index"
+                     :missingp t))
+      
+      (testing "With absolute namespace"
+        (check-route "admin-index"
+                     :namespace '(:absolute "admin")
+                     :expected-method :get)
+        (check-route "user-update"
+                     :namespace '(:absolute "admin")
+                     :expected-method :put)))))
 
 
 (deftest test-simple-route-reverse ()
@@ -195,7 +209,7 @@
                                namespace)
                           (fmt "Checking route ~S without namespace"
                                name))
-               (let ((route (find-route name namespace)))
+               (let ((route (find-route name :namespace namespace)))
                  (ok (string= (route-name route)
                               name)
                      (fmt "Route's name is ~S, but ~S was expected."

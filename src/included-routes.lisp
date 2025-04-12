@@ -1,6 +1,7 @@
 (uiop:define-package #:40ants-routes/included-routes
   (:use #:cl)
   (:import-from #:40ants-routes/routes
+                #:routes
                 #:children-routes)
   (:import-from #:40ants-routes/route
                 #:route-name
@@ -28,10 +29,11 @@
 (defclass included-routes ()
   ((original-collection :initarg :original-collection
                         :reader included-routes-original-collection
+                        :type routes
                         :documentation "The original collection that was included")
-   (parent :accessor collection-parent
-           :initform nil
-           :documentation "Parent collection, will be set when object will be added as a child")
+   ;; (parent :accessor collection-parent
+   ;;         :initform nil
+   ;;         :documentation "Parent collection, will be set when object will be added as a child")
    (path :initarg :path
          :type url-pattern
          :reader included-routes-path
@@ -54,20 +56,23 @@
 (defun included-routes-p (obj)
   (typep obj 'included-routes))
 
+
 ;; Proxy methods for included-routes
 (defmethod children-routes ((included included-routes))
   (children-routes (included-routes-original-collection included)))
 
 
 ;; Store the original collection directly without any proxying
-(defmethod included-routes-original-collection :around ((included included-routes))
-  (let ((original (call-next-method)))
-    (if (and (typep original 'included-routes)
-             (slot-boundp original 'original-collection))
-        ;; If the original is itself an included-routes, get its original collection
-        (included-routes-original-collection original)
-        ;; Otherwise, return the original
-        original)))
+;; (defmethod included-routes-original-collection :around ((included included-routes))
+;;   (call-next-method)
+;;   ;; (let ((original (call-next-method)))
+;;   ;;   (if (and (typep original 'included-routes)
+;;   ;;            (slot-boundp original 'original-collection))
+;;   ;;       ;; If the original is itself an included-routes, get its original collection
+;;   ;;       (included-routes-original-collection original)
+;;   ;;       ;; Otherwise, return the original
+;;   ;;       original))
+;;   )
 
 ;; Add route-name method for included-routes
 (defmethod route-name ((included included-routes))
