@@ -3,13 +3,17 @@
 (in-package #:40ants-routes/generics)
 
 
-(defgeneric match-url (obj url)
+(defgeneric match-url (obj url &key on-match)
   (:documentation
    "Checks for complete match of the object to URL.
 
-    Should return an OBJ itself or a list like
-    `(list obj sub-obj-1 sub-obj-2)` where the final
-    subobjects matches to the end of the URL."))
+    Should return an OBJ if it fully matches to a given url.
+    May return a sub-object if OBJ matches to a prefix
+    and sub-object matches the rest of URL.
+
+    If ON-MATCH argument is given, then in any case
+    of match, full or prefix, calls ON-MATCH
+    function with OBJ as a single argument."))
 
 
 (defgeneric partial-match-url (obj url)

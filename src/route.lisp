@@ -8,6 +8,7 @@
   (:import-from #:serapeum
                 #:soft-alist-of)
   (:import-from #:40ants-routes/url-pattern
+                #:url-pattern-pattern
                 #:url-pattern)
   (:export #:route
            #:route-name
@@ -30,17 +31,16 @@
             :documentation "URL pattern")
    (handler :initarg :handler
             :reader route-handler
-            :type (or function
-                      symbol)
+            :type function
             :documentation "Function to handle the route")
    ;; (namespace :initarg :namespace
    ;;            :reader route-namespace
    ;;            :documentation "Namespace of the route")
-   (parameters :initarg :parameters
-               :reader route-parameters
-               :type (soft-alist-of keyword symbol) 
-               :initform nil
-               :documentation "Parameters extracted from the URL pattern as alist where keys are parameter names and values - parameter types")
+   ;; (parameters :initarg :parameters
+   ;;             :reader route-parameters
+   ;;             :type (soft-alist-of keyword symbol) 
+   ;;             :initform nil
+   ;;             :documentation "Parameters extracted from the URL pattern as alist where keys are parameter names and values - parameter types")
    (title :initarg :title
           :type (or null string function)
           :initform nil
@@ -56,11 +56,17 @@
 (defmethod print-object ((obj route) stream)
   (print-unreadable-object (obj stream :type t)
     (format stream "~S ~S"
-            (route-method route)
+            (route-method obj)
             (url-pattern-pattern
-             (route-path obj))
-            (included-route-namespace obj))))
+             (route-pattern obj)))))
 
 
-(defmethod match-url ((obj route) (url string))
-  (match-url (route-pattern obj) url))
+(defmethod match-url ((obj route) (url string) &key on-match)
+  ;; Here we don't want to pass ON-MATCH to the
+  ;; MATCH-URL method of URL-PATTERN, because we don't need
+  ;; these objects in the routes chain:
+  (when (match-url (route-pattern obj) url)
+    ;; Instead of url-pattern we want to return this route object
+    (when on-match
+      (funcall on-match obj))
+    (values obj)))

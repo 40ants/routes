@@ -19,6 +19,23 @@
    ))
 
 
-(defmethod match-url ((obj route-collection) (url string))
-  (loop for subroute in (collection-routes obj)
-        thereis (match-url subroute url)))
+(defun route-collection-p (obj)
+  (typep obj 'route-collection))
+
+
+(defmethod match-url ((obj route-collection) (url string) &key on-match)
+  (let ((already-added nil))
+    (flet ((add-collection-if-needed (matched-child)
+             ;; We need this function to add mached current object and
+             ;; matched child in the correct order:
+             (unless already-added
+               (funcall on-match obj)
+               (setf already-added t))
+             (funcall on-match
+                      matched-child)))
+      (declare (dynamic-extent #'add-collection-if-needed))
+      
+      (loop for subroute in (collection-routes obj)
+            thereis (match-url subroute url
+                               :on-match (when on-match
+                                           #'add-collection-if-needed))))))

@@ -5,29 +5,32 @@
                 #:ok
                 #:testing
                 #:ng)
-  (:import-from #:40ants-routes
-                #:defroutes
-                #:get
-                #:post
-                #:put
-                #:include
+  (:shadowing-import-from #:40ants-routes/defroutes
+                          #:defroutes
+                          #:get
+                          #:post
+                          #:put
+                          #:include)
+  (:import-from #:40ants-routes/route
                 #:route-url
-                #:with-routes
-                #:*current-namespace*
-                #:find-route
-                #:route-method))
+                #:route-method)
+  (:import-from #:40ants-routes/with-routes
+                #:with-routes)
+  (:import-from #:40ants-routes/find-route
+                #:find-route))
 (in-package #:40ants-routes-tests/http-methods)
 
+
 ;; Define test routes using the new HTTP method format
-(defroutes (*http-method-routes* :namespace "test")
+(defroutes (*http-method-routes*)
   (get ("/" :name "index" :title "Test Index")
-       (format nil "Test index page"))
+    (format nil "Test index page"))
   (post ("/items/" :name "create-item" :title "Create Item")
-        (format nil "Create a new item"))
+    (format nil "Create a new item"))
   (get ("/items/<int:id>" :name "view-item" :title "View Item")
-       (format nil "View item: ~A" id))
+    (format nil "View item: ~A" id))
   (put ("/items/<int:id>" :name "update-item" :title "Update Item")
-       (format nil "Update item: ~A" id)))
+    (format nil "Update item: ~A" id)))
 
 (deftest test-http-methods ()
   (testing "HTTP methods are set correctly"

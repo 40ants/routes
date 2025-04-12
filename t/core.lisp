@@ -5,42 +5,52 @@
                 #:ok
                 #:testing
                 #:ng)
-  (:import-from #:40ants-routes
-                #:defroutes
-                #:url
-                #:get
-                #:post
-                #:put
-                #:include
-                #:route-url
-                #:with-routes
-                #:*current-namespace*
-                #:find-route
-                #:get-breadcrumbs
-                #:route-method)
+  (:shadowing-import-from #:40ants-routes/defroutes
+                          #:defroutes
+                          #:get
+                          #:post
+                          #:put
+                          #:include)
   (:import-from #:serapeum
                 #:fmt)
   (:import-from #:alexandria
-                #:remove-from-plistf))
+                #:remove-from-plistf)
+  (:import-from #:40ants-routes/route
+                #:route-method
+                #:route-name)
+  (:import-from #:40ants-routes/vars
+                #:*current-routes*)
+  (:import-from #:40ants-routes/find-route
+                #:find-route)
+  (:import-from #:40ants-routes/route-url
+                #:route-url)
+  (:import-from #:40ants-routes/with-routes
+                #:with-routes)
+  (:import-from #:40ants-routes/with-url
+                #:with-url)
+  (:import-from #:40ants-routes/breadcrumbs
+                #:get-breadcrumbs))
 (in-package #:40ants-routes-tests/core)
+
 
 ;; Define test routes for a blog library
 (defroutes (*blog-routes*)
   (get ("/" :name "index"
             :title "Blog")
-       (fmt "Blog index"))
+    (fmt "Blog index"))
   (get ("/<string:slug>" :name "post"
                          :title "Post")
-       (fmt "Blog post: ~A" slug)))
+    (fmt "Blog post: ~A" slug)))
+
 
 ;; Define test routes for an admin library
 (defroutes (*admin-routes*)
   (get ("/" :name "index" :title "Admin")
-       (fmt "Admin index"))
+    (fmt "Admin index"))
   (post ("/users/" :name "users" :title "Users")
-       (fmt "Users list"))
+        (fmt "Users list"))
   (get ("/users/<int:id>" :name "user" :title "User Profile")
-       (fmt "User profile: ~A" id))
+    (fmt "User profile: ~A" id))
   (put ("/users/<int:id>" :name "user-update" :title "Update User")
        (fmt "Update user profile: ~A" id)))
 
@@ -77,34 +87,35 @@
                  "Route was found"
                  "Route was not found"))
          
-         (ok (string= (40ants-routes/core:route-name route)
+         (ok (string= (route-name route)
                       name)
-             (if (equal (40ants-routes/core:route-name route)
+             (if (equal (route-name route)
                         name)
                  (fmt "Route's name is ~S, as expected."
                       name)
                  (fmt "Route's name is ~S, but ~S was expected."
-                      (40ants-routes/core:route-name route)
+                      (route-name route)
                       name)))
-         (when namespace
-           (ok (string= (40ants-routes/core:route-namespace route)
-                        "blog")
-               (if (equal (40ants-routes/core:route-namespace route)
-                          namespace)
-                   (fmt "Route's namespace is ~S as expected"
-                        namespace)
-                   (fmt "Route's namespace is ~S but ~S was expected."
-                        (40ants-routes/core:route-namespace route)
-                        namespace))))
+         ;; Namespace was removed from ROUTE class
+         ;; (when namespace
+         ;;   (ok (string= (route-namespace route)
+         ;;                "blog")
+         ;;       (if (equal (routes::route-namespace route)
+         ;;                  namespace)
+         ;;           (fmt "Route's namespace is ~S as expected"
+         ;;                namespace)
+         ;;           (fmt "Route's namespace is ~S but ~S was expected."
+         ;;                (route-namespace route)
+         ;;                namespace))))
          (when expected-method
-           (ok (eql (40ants-routes/core:route-method route)
+           (ok (eql (route-method route)
                     expected-method)
-               (if (equal (40ants-routes/core:route-method route)
+               (if (equal (route-method route)
                           expected-method)
                    (fmt "Route's method is ~S as expected"
                         expected-method)
                    (fmt "Route's method is ~S but ~S was expected."
-                        (40ants-routes/core:route-method route)
+                        (route-method route)
                         expected-method)))))))))
 
 
@@ -181,8 +192,8 @@
 (deftest test-with-url ()
   (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"
     (with-url (*app-routes* "/admin/users/100500")
-      (ok (typep 40ants-routes/vars::*current-routes*
-                 '40ants-routes/route::route)))))
+      (ok (typep *current-routes*
+                 '40ants-routes/route:route)))))
 
 
 (deftest test-route-lookup-by-absolute-namespace ()
@@ -195,22 +206,24 @@
                           (fmt "Checking route ~S without namespace"
                                name))
                (let ((route (find-route name namespace)))
-                 (ok (string= (40ants-routes/core:route-name route)
+                 (ok (string= (route-name route)
                               name)
                      (fmt "Route's name is ~S, but ~S was expected."
-                          (40ants-routes/core:route-name route)
+                          (route-name route)
                           name))
-                 (when namespace
-                   (ok (string= (40ants-routes/core:route-namespace route)
-                                "blog")
-                       (fmt "Route's namespace is ~S but ~S was expected."
-                            (40ants-routes/core:route-namespace route)
-                            namespace)))
+                 ;; namespace was removed from ROUTE class, because
+                 ;; route's namespace defined by included-routes
+                 ;; (when namespace
+                 ;;   (ok (string= (route-namespace route)
+                 ;;                "blog")
+                 ;;       (fmt "Route's namespace is ~S but ~S was expected."
+                 ;;            (route-namespace route)
+                 ;;            namespace)))
                  (when expected-method
-                   (ok (eql (40ants-routes/core:route-method route)
+                   (ok (eql (route-method route)
                             expected-method)
                        (fmt "Route's method is ~S but ~S was expected."
-                            (40ants-routes/core:route-method route)
+                            (route-method route)
                             expected-method)))))))
       (testing "Lookup by absolute namespaces"
         (check-route "index" :namespace '("blog")
@@ -259,6 +272,7 @@
           (ng t "Should have raised an error for missing slug parameter"))
       (error ()
         (ok t "Correctly raised error for missing parameter")))))
+
 
 (deftest test-breadcrumbs ()
   (testing "Breadcrumbs generation"

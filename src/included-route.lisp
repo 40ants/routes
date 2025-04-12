@@ -28,16 +28,16 @@
   ((original-collection :initarg :original-collection
                         :reader included-route-original-collection
                         :documentation "The original collection that was included")
-   (parent :initarg :parent
-           :accessor collection-parent
+   (parent :accessor collection-parent
            :initform nil
-           :documentation "Parent collection")
+           :documentation "Parent collection, will be set when object will be added as a child")
    (path :initarg :path
            :type url-pattern
            :reader included-route-path
            :documentation "Path to add to all routes in the collection")
    (namespace :initarg :namespace
               :initform nil
+              :type (or null string)
               :reader included-route-namespace
               :documentation "Custom namespace for the included routes")))
 
@@ -80,9 +80,20 @@
   (route-name (included-route-original-collection included)))
 
 
-(defmethod match-url ((obj included-route) (url string))
+(defmethod match-url ((obj included-route) (url string) &key on-match)
   (multiple-value-bind (matched position)
       (partial-match-url (included-route-path obj) url)
     (when matched
+      (when on-match
+        (funcall on-match obj))
+      
       (match-url (included-route-original-collection obj)
-                 (subseq url position)))))
+                 ;; Here we substract 1 to pass
+                 ;; url with beginning /.
+                 ;; We need this, because prefix to which
+                 ;; INCLUDED-ROUTES matches should end with
+                 ;; slash, but to make correct matches
+                 ;; of child nodes we also need this slash
+                 ;; at the beginning of the path
+                 (subseq url (1- position))
+                 :on-match on-match))))

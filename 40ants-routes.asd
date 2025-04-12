@@ -9,7 +9,7 @@
   :class :40ants-asdf-system
   :defsystem-depends-on ("40ants-asdf-system")
   :pathname "src"
-  :depends-on ("40ants-routes/core"
+  :depends-on (;; "40ants-routes/core"
                "40ants-routes/route"
                "40ants-routes/route-collection"
                "40ants-routes/included-route"

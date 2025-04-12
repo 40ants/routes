@@ -1,31 +1,48 @@
 (uiop:define-package #:40ants-routes-tests/with-url
   (:use #:cl)
-  (:import-from #:40ants-routes
-                #:defroutes
-                #:include)
+  (:shadowing-import-from #:40ants-routes/defroutes
+                          #:defroutes
+                          #:include
+                          #:get)
   (:import-from #:40ants-routes/with-url
+                #:with-url
                 #:find-route-for-url)
   (:import-from #:rove
+                #:ng
                 #:testing
                 #:ok
-                #:deftest))
+                #:deftest)
+  (:import-from #:serapeum
+                #:fmt)
+  (:import-from #:40ants-routes/vars
+                #:*routes-path*
+                #:*current-routes*)
+  (:import-from #:40ants-routes/included-route
+                #:included-route
+                #:included-route-original-collection)
+  (:import-from #:40ants-routes/route-collection
+                #:route-collection))
 (in-package #:40ants-routes-tests/with-url)
+
+
+(defvar *foo-slug-route*
+  (get ("/<string:slug>" :name "foo-route")
+    (fmt "Foo route: ~A" slug)))
 
 
 (defroutes (*foo*)
   (get ("/" :name "index")
-       (fmt "Foo index"))
-  (get ("/<string:slug>" :name "foo-route")
-       (fmt "Foo route: ~A" slug)))
+    (fmt "Foo index"))
+  *foo-slug-route*)
+
 
 (defroutes (*bar*)
   (get ("/" :name "index")
-       (fmt "Bar index"))
+    (fmt "Bar index"))
   (include *foo*
            :path "/foo/"
            :namespace "foo-ns"))
 
-;; Define test routes for an application
 (defroutes (*app*)
   (get ("/" :name "index")
        (fmt "App index"))
@@ -44,6 +61,48 @@
                  '40ants-routes/route::route))
       (ok (string= (40ants-routes/route::route-name result)
                    "index"))
-      (ok (string= (40ants-routes/route::route-handler result)
+      (ok (string= (funcall
+                    (40ants-routes/route::route-handler result))
                    "Foo index")))))
 
+
+(deftest test-with-routes ()
+  (testing "WITH-URL macro should search a route matching given URL"
+    (with-url (*app* "/bar/foo/some-post")
+      (ng (eql *app*
+               *current-routes*)
+          "Current route should not be equal to the root routes object")
+      (ok (= (length *routes-path*)
+             4))
+      (testing "First route in the path"
+        (let ((route (elt *routes-path* 0)))
+          (ok (eql route *foo-slug-route*)
+              "Should be /<string:slug> of foo library.")))
+      
+      (testing "Second route in the path"
+        (let ((route (elt *routes-path* 1)))
+          (ok (typep route
+                     'included-route))
+          (when (typep route
+                       'included-route)
+            (ok (eql (included-route-original-collection route)
+                     *foo*)
+                "Should be all routes of foo library."))))
+      
+      (testing "Third route in the path"
+        (let ((route (elt *routes-path* 2)))
+          (ok (typep route
+                     'included-route))
+          (when (ok (typep route
+                           'included-route))
+            (ok (eql (included-route-original-collection route)
+                     *bar*)
+                "Should be all routes of bar library."))))
+      
+      (testing "Last route in the path"
+        (let ((route (elt *routes-path* 3)))
+          (ok (typep route
+                     'route-collection))
+          (ok (eql route
+                   *app*)
+              "Should be all routes of the application."))))))

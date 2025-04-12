@@ -5,27 +5,34 @@
                 #:ok
                 #:testing
                 #:ng)
-  (:import-from #:40ants-routes
-                #:with-routes
-                #:defroutes
-                #:get
-                #:include
-                #:route-url
-                #:find-route
+  (:shadowing-import-from #:40ants-routes/defroutes
+                          #:defroutes
+                          #:get
+                          #:include)
+  (:import-from #:40ants-routes/with-routes
+                #:with-routes)
+  (:import-from #:40ants-routes/route
+                #:route-url)
+  (:import-from #:40ants-routes/find-route
+                #:find-route)
+  (:import-from #:40ants-routes/included-route
+                #:included-route
                 #:included-route-original-collection)
   (:import-from #:40ants-routes/vars
-                #:*current-routes*))
+                #:*current-routes*)
+  (:import-from #:40ants-routes/route-collection
+                #:collection-routes))
 (in-package #:40ants-routes-tests/included-route)
 
 ;; Define test routes for a blog library
-(defroutes (*blog-routes* :namespace "blog")
+(defroutes (*blog-routes*)
   (get ("/" :name "index" :title "Blog")
        (format nil "Blog index"))
   (get ("/<string:slug>" :name "post" :title "Post")
        (format nil "Blog post: ~A" slug)))
 
 ;; Define test routes for an application
-(defroutes (*app-routes* :namespace "app")
+(defroutes (*app-routes*)
   (get ("/" :name "index" :title "Main Page")
        (format nil "App index"))
   (include *blog-routes*))
@@ -33,9 +40,9 @@
 (deftest test-included-route ()
   (testing "Include creates an included-route instance"
     (with-routes (*app-routes*)
-      (let* ((routes (40ants-routes::collection-routes *current-routes*))
+      (let* ((routes (collection-routes *current-routes*))
              (included (find-if (lambda (route)
-                                  (typep route '40ants-routes:included-route))
+                                  (typep route 'included-route))
                                 routes)))
         (ok included "An included-route instance was created")
         ;; Skip the original-collection test since it's not critical
@@ -52,18 +59,20 @@
 
 
 ;; Define a reusable route collection for entities
-(defroutes (*entity-routes* :namespace "entity")
+(defroutes (*entity-routes*)
   (get ("/" :name "index" :title "All Entities")
        (format nil "List of all entities"))
   (get ("/<string:id>" :name "show" :title "Entity Details")
        (format nil "Entity details: ~A" id)))
 
+
 ;; Define routes that include the entity routes twice with different prefixes and namespaces
-(defroutes (*multi-include-routes* :namespace "app")
+(defroutes (*multi-include-routes*)
   (get ("/" :name "index" :title "Application")
-       (format nil "Application index"))
-  (include *entity-routes* :prefix "/users" :namespace "users")
-  (include *entity-routes* :prefix "/posts" :namespace "posts"))
+    (format nil "Application index"))
+  (include *entity-routes* :path "/users" :namespace "users")
+  (include *entity-routes* :path "/posts" :namespace "posts"))
+
 
 (deftest test-multiple-inclusion ()
   (testing "Same routes can be included multiple times with different namespaces"

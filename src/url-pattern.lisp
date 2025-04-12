@@ -42,7 +42,8 @@
 
 (defun parse-url-pattern (pattern)
   "Parse a URL pattern and extract parameter specifications.
-   Returns two values: the regex pattern and a list of parameter names and types."
+
+   Returns an object of class URL-PATTERN."
   (let ((params nil)
         (regex-pattern "^")
         (start 0))
@@ -167,7 +168,10 @@
         finally (return result)))
 
 
-(defmethod 40ants-routes/generics::match-url ((obj url-pattern) (url string))
+(defmethod 40ants-routes/generics::match-url ((obj url-pattern) (url string) &key on-match)
+  (when on-match
+    (error "ON-MATCH argument should not be passed to a method MATCH-URL specialized on URL-PATTERN, because these objects are implementation details and we don't want to expose them in the chain of matched routes."))
+  
   (when (match-url obj url)
     (values obj)))
 
