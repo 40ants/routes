@@ -14,6 +14,8 @@
                 #:*current-routes*)
   (:import-from #:40ants-routes/generics
                 #:match-url)
+  (:import-from #:40ants-routes/matched-route
+                #:matched-route)
   (:export
    #:with-url))
 (in-package #:40ants-routes/with-url)
@@ -23,9 +25,9 @@
                             route
                             included-routes)
                         string)
-    (values (or route
+    (values (or matched-route
                 included-routes)
-            (serapeum:soft-list-of (or route
+            (serapeum:soft-list-of (or matched-route
                                        included-routes))
             &optional))
 

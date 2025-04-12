@@ -62,8 +62,16 @@
   ;; Here we don't want to pass ON-MATCH to the
   ;; MATCH-URL method of URL-PATTERN, because we don't need
   ;; these objects in the routes chain:
-  (when (match-url (route-pattern obj) url)
-    ;; Instead of url-pattern we want to return this route object
-    (when on-match
-      (funcall on-match obj))
-    (values obj)))
+  (multiple-value-bind (matchedp parameters)
+      (match-url (route-pattern obj) url)
+    (when matchedp
+      ;; Instead of url-pattern we want to return this route object
+      (let ((route-with-params
+              (make-instance '40ants-routes/matched-route::matched-route
+                             :original-route obj
+                             :parameters parameters)))
+        (when on-match
+          (funcall on-match
+                   route-with-params))
+        (values route-with-params
+                parameters)))))

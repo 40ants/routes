@@ -171,9 +171,12 @@
 (defmethod 40ants-routes/generics::match-url ((obj url-pattern) (url string) &key on-match)
   (when on-match
     (error "ON-MATCH argument should not be passed to a method MATCH-URL specialized on URL-PATTERN, because these objects are implementation details and we don't want to expose them in the chain of matched routes."))
-  
-  (when (match-url obj url)
-    (values obj)))
+
+  (multiple-value-bind (matchedp parameters)
+      (match-url obj url)
+    (when matchedp
+      (values obj
+              parameters))))
 
 
 (defmethod 40ants-routes/generics::partial-match-url ((obj url-pattern) (url string))

@@ -45,10 +45,13 @@
           (name (or name
                     (string-downcase
                      (gensym "UNNAMED-ROUTE-")))))
-      `(flet ((handler ,(loop for (param-name . param-type) in (url-pattern-params url-pattern)
-                              collect (intern (string-upcase param-name)))
+      `(flet ((handler (&key ,@(loop for (param-name . param-type) in (url-pattern-params url-pattern)
+                                     collect (intern (string-upcase param-name))))
                 ,handler-docstring
-                ,@handler-body))
+
+                ,@(if handler-body
+                      handler-body
+                      '((values)))))
          ;; Here we have to call parse-url-pattern second time,
          ;; because first time was required for building the handler's arg list
          ;; during macro-expansion time:

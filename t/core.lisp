@@ -163,14 +163,6 @@
                    :expected-method :get)
       (check-route "post"
                    :expected-method :get)
-      ;; Not applicable, because *blog-routes* it self has no namespace
-      ;; (check-route "index"
-      ;;              :namespace "blog"
-      ;;              :expected-method :get)
-      ;; (check-route "post"
-      ;;              :namespace "blog"
-      ;;              :expected-method :get)
-
       (testing "With wrong namespace"
         (check-route "index"
                      :namespace "bad"

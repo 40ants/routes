@@ -11,6 +11,9 @@
     May return a sub-object if OBJ matches to a prefix
     and sub-object matches the rest of URL.
 
+    If match was found, the second returned value
+    should be a alist with matched parameters.
+
     If ON-MATCH argument is given, then in any case
     of match, full or prefix, calls ON-MATCH
     function with OBJ as a single argument."))
