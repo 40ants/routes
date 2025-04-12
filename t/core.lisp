@@ -24,8 +24,6 @@
                 #:find-route)
   (:import-from #:40ants-routes/route-url
                 #:route-url)
-  (:import-from #:40ants-routes/with-routes
-                #:with-routes)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
   (:import-from #:40ants-routes/breadcrumbs
@@ -158,7 +156,7 @@
 
 (deftest test-simple-route-search ()
   (testing "Blog routes can be found"
-    (with-routes (*blog-routes*)
+    (with-url (*blog-routes* "/")
       (check-route "index"
                    :expected-method :get)
       (check-route "post"
@@ -174,7 +172,7 @@
 
 (deftest test-simple-route-reverse ()
   (testing "Blog routes can be reversed"
-    (with-routes (*blog-routes*)
+    (with-url (*blog-routes* "/")
       (check-route-url "index"
                        "/")
       (check-route-url "post"
@@ -189,7 +187,7 @@
 
 
 (deftest test-route-lookup-by-absolute-namespace ()
-  (with-routes (*app-routes*)
+  (with-url (*app-routes* "/")
     (flet ((check-route (name &key namespace expected-method)
              (testing (if namespace
                           (fmt "Checking route ~S with namespace ~S"
@@ -230,7 +228,7 @@
 
 (deftest test-url-generation ()
   (testing "Basic URL generation"
-    (with-routes (*app-routes*)
+    (with-url (*app-routes* "/")
       (ok (string= (route-url "index") "/")
           "App index URL is correct if no namespace was given")
       (ok (string= (route-url "index" :namespace "app") "/")
@@ -244,13 +242,13 @@
 
 (deftest test-namespace-context ()
   (testing "URL generation with namespace context"
-    (with-routes (*app-routes*)
+    (with-url (*app-routes* "/")
       (ok (string= (route-url "index") "/")
           "App index URL is correct in app context")
       (ok (string= (route-url "index" :namespace "blog") "/blog/")
           "Blog index URL is correct in app context"))
     
-    (with-routes (*blog-routes*)
+    (with-url (*blog-routes* "/")
       (ok (string= (route-url "index") "/blog/")
           "Blog index URL is correct in blog context")
       (ok (string= (route-url "post" :slug "hello-world") "/blog/hello-world")
@@ -268,7 +266,7 @@
 
 (deftest test-breadcrumbs ()
   (testing "Breadcrumbs generation"
-    (with-routes (*app-routes*)
+    (with-url (*app-routes* "/admin/users/123")
       (let ((crumbs (get-breadcrumbs "/admin/users/123")))
         (ok (= (length crumbs) 4) "Breadcrumbs have correct length")
         (ok (string= (caar crumbs) "/") "First breadcrumb is root")

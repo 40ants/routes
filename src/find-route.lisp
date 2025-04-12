@@ -70,7 +70,7 @@
 ;; Primary method for find-route
 (defmethod find-route ((name string) (namespace t))
   (unless *current-routes*
-    (error "Use WITH-ROUTES macro to set current routes object."))
+    (error "Use WITH-URL macro to set current routes object."))
 
   (let ((namespace (ensure-absolute-namespace
                     namespace
@@ -106,7 +106,7 @@
     ;;  ;; and look for the route there with the original name
     ;;  ;; (loop for parent-ns being the hash-keys of *routess*
     ;;  ;;         using (hash-value parent-collection)
-    ;;  ;;       do (with-routes (parent-collection)
+    ;;  ;;       do (with-url (parent-collection "/")
     ;;  ;;            (loop for route in (children-routes *current-routes*)
     ;;  ;;                  when (and (typep route 'included-routes)
     ;;  ;;                            (let ((included-ns (40ants-routes/included-routes:included-routes-namespace route)))
@@ -126,7 +126,7 @@
   ;;     ;; For users and posts namespaces, look in the entity routes
   ;;     (let ((entity-routes (gethash "entity" *routess*)))
   ;;       (when entity-routes
-  ;;         (with-routes (entity-routes)
+  ;;         (with-url (entity-routes "/")
   ;;           (let ((found-route (find name (children-routes *current-routes*)
   ;;                                    :key #'route-name
   ;;                                    :test #'string=)))
@@ -146,7 +146,7 @@
   ;;      (let ((result nil)
   ;;            (app-routes (gethash "app" *routess*)))
   ;;        (when app-routes
-  ;;          (with-routes (app-routes)
+  ;;          (with-url (app-routes "/")
   ;;            (let ((routes (children-routes *current-routes*)))
   ;;              (setf result (find-if (lambda (r)
   ;;                                      (and (string= (route-name r) "index")
@@ -159,7 +159,7 @@
   ;;             (result nil)
   ;;             (namespace-routes (gethash namespace *routess*)))
   ;;        (when namespace-routes
-  ;;          (with-routes (namespace-routes)
+  ;;          (with-url (namespace-routes "/")
   ;;            (let ((routes (children-routes *current-routes*)))
   ;;              (setf result (find-if (lambda (r)
   ;;                                      (match-url r url))

@@ -9,8 +9,8 @@
                           #:defroutes
                           #:get
                           #:include)
-  (:import-from #:40ants-routes/with-routes
-                #:with-routes)
+  (:import-from #:40ants-routes/with-url
+                #:with-url)
   (:import-from #:40ants-routes/route
                 #:route-url)
   (:import-from #:40ants-routes/find-route
@@ -40,7 +40,7 @@
 
 (deftest test-included-routes ()
   (testing "Include creates an included-routes instance"
-    (with-routes (*app-routes*)
+    (with-url (*app-routes* "/")
       (let* ((routes (children-routes *current-routes*))
              (included (find-if #'included-routes-p
                                 routes)))
@@ -50,7 +50,7 @@
 
 (deftest test-route-resolution ()
   (testing "Routes can be found through included-routes"
-    (with-routes (*app-routes*)
+    (with-url (*app-routes* "/")
       (ok (find-route "index" "blog") "Can find blog index route")
       (ok (string= (route-url "index" :namespace "blog") "/blog/")
           "Can generate URL for included route")
@@ -76,7 +76,7 @@
 
 (deftest test-multiple-inclusion ()
   (testing "Same routes can be included multiple times with different namespaces"
-    (with-routes (*multi-include-routes*)
+    (with-url (*multi-include-routes* "/")
       ;; Test that both inclusions created separate routes
       (ok (find-route "index" "users") "Can find users index route")
       (ok (find-route "index" "posts") "Can find posts index route")

@@ -14,8 +14,8 @@
   (:import-from #:40ants-routes/route
                 #:route-url
                 #:route-method)
-  (:import-from #:40ants-routes/with-routes
-                #:with-routes)
+  (:import-from #:40ants-routes/with-url
+                #:with-url)
   (:import-from #:40ants-routes/find-route
                 #:find-route))
 (in-package #:40ants-routes-tests/http-methods)
@@ -34,19 +34,19 @@
 
 (deftest test-http-methods ()
   (testing "HTTP methods are set correctly"
-    (with-routes (*http-method-routes*)
-      (ok (eq (route-method (find-route "index" "test")) :get) 
+    (with-url (*http-method-routes* "/")
+      (ok (eq (route-method (find-route "index" "test")) :get)
           "Index route is GET")
-      (ok (eq (route-method (find-route "create-item" "test")) :post) 
+      (ok (eq (route-method (find-route "create-item" "test")) :post)
           "Create item route is POST")
-      (ok (eq (route-method (find-route "view-item" "test")) :get) 
+      (ok (eq (route-method (find-route "view-item" "test")) :get)
           "View item route is GET")
-      (ok (eq (route-method (find-route "update-item" "test")) :put) 
+      (ok (eq (route-method (find-route "update-item" "test")) :put)
           "Update item route is PUT"))))
 
 (deftest test-url-generation-with-methods ()
   (testing "URL generation works with HTTP method routes"
-    (with-routes (*http-method-routes*)
+    (with-url (*http-method-routes* "/")
       (ok (string= (route-url "index" :namespace "test") "/test/")
           "Test index URL is correct")
       (ok (string= (route-url "create-item" :namespace "test") "/test/items/")

@@ -14,7 +14,7 @@
                "40ants-routes/routes"
                "40ants-routes/included-routes"
                "40ants-routes/url-pattern"
-               "40ants-routes/with-routes"
+               "40ants-routes/with-url"
                "40ants-routes/find-route"
                "40ants-routes/defroutes"
                "40ants-routes/route-url"

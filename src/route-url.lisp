@@ -1,6 +1,6 @@
 (uiop:define-package #:40ants-routes/route-url
   (:use #:cl)
-  (:import-from #:40ants-routes/with-routes
+  (:import-from #:40ants-routes/vars
                 #:*current-namespace*
                 #:*current-routes*)
   (:import-from #:40ants-routes/find-route
@@ -182,11 +182,11 @@
   "Find the parent namespace for a given namespace."
   (error "Remake without ROUTES")
   
-  ;; (loop for ns being the hash-keys of 40ants-routes/with-routes:*routess*
+  ;; (loop for ns being the hash-keys of *routess*
   ;;         using (hash-value collection)
-  ;;       do (40ants-routes/with-routes:with-routes (collection)
+  ;;       do (40ants-routes/with-url:with-url (collection "/")
   ;;            (let ((routes (40ants-routes/routes:collection-routes
-  ;;                           40ants-routes/with-routes:*current-routes*)))
+  ;;                           *current-routes*)))
   ;;              (when (find-if (lambda (route)
   ;;                               (and (typep route '40ants-routes/included-route:included-route)
   ;;                                    (or
@@ -207,11 +207,11 @@
   "Get the custom prefix for a namespace if it exists."
   (error "Remake without routess")
   ;; (when parent-namespace
-  ;;   (let ((parent-collection (gethash parent-namespace 40ants-routes/with-routes:*routess*)))
+  ;;   (let ((parent-collection (gethash parent-namespace *routess*)))
   ;;     (when parent-collection
-  ;;       (40ants-routes/with-routes:with-routes (parent-collection)
+  ;;       (40ants-routes/with-url:with-url (parent-collection "/")
   ;;         (let ((routes (40ants-routes/routes:collection-routes
-  ;;                        40ants-routes/with-routes:*current-routes*)))
+  ;;                        *current-routes*)))
   ;;           (loop for route in routes
   ;;                 when (and (typep route '40ants-routes/included-route:included-route)
   ;;                           (or
