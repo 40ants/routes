@@ -11,9 +11,15 @@
                 #:route-title
                 #:route-method
                 #:route-handler)
+  (:import-from #:40ants-routes/url-pattern
+                #:url-pattern-pattern
+                #:url-pattern)
+  (:import-from #:40ants-routes/generics
+                #:partial-match-url
+                #:match-url)
   (:export #:included-route
            #:included-route-original-collection
-           #:included-route-prefix
+           #:included-route-path
            #:included-route-namespace
            #:collection-parent))
 (in-package #:40ants-routes/included-route)
@@ -26,23 +32,32 @@
            :accessor collection-parent
            :initform nil
            :documentation "Parent collection")
-   (prefix :initarg :prefix
-           :initform ""
-           :reader included-route-prefix
-           :documentation "Prefix to add to all routes in the collection")
+   (path :initarg :path
+           :type url-pattern
+           :reader included-route-path
+           :documentation "Path to add to all routes in the collection")
    (namespace :initarg :namespace
               :initform nil
               :reader included-route-namespace
               :documentation "Custom namespace for the included routes")))
 
+
+(defmethod print-object ((obj included-route) stream)
+  (print-unreadable-object (obj stream :type t)
+    (format stream "~S (:namespace ~S)"
+            (url-pattern-pattern
+             (included-route-path obj))
+            (included-route-namespace obj))))
+
+
 ;; Proxy methods for included-route
 (defmethod collection-routes ((included included-route))
   (let ((original (included-route-original-collection included)))
     (if (typep original 'included-route)
-      ;; If the original is itself an included-route, get its routes
-      (collection-routes original)
-      ;; Otherwise, get the routes directly
-      (collection-routes original))))
+        ;; If the original is itself an included-route, get its routes
+        (collection-routes original)
+        ;; Otherwise, get the routes directly
+        (collection-routes original))))
 
 (defmethod collection-namespace ((included included-route))
   (let ((custom-namespace (included-route-namespace included)))
@@ -63,3 +78,11 @@
 ;; Add route-name method for included-route
 (defmethod route-name ((included included-route))
   (route-name (included-route-original-collection included)))
+
+
+(defmethod match-url ((obj included-route) (url string))
+  (multiple-value-bind (matched position)
+      (partial-match-url (included-route-path obj) url)
+    (when matched
+      (match-url (included-route-original-collection obj)
+                 (subseq url position)))))

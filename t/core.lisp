@@ -19,35 +19,41 @@
                 #:get-breadcrumbs
                 #:route-method)
   (:import-from #:serapeum
-                #:fmt))
+                #:fmt)
+  (:import-from #:alexandria
+                #:remove-from-plistf))
 (in-package #:40ants-routes-tests/core)
 
 ;; Define test routes for a blog library
-(defroutes (*blog-routes* :namespace "blog")
+(defroutes (*blog-routes*)
   (get ("/" :name "index"
             :title "Blog")
-       (format nil "Blog index"))
+       (fmt "Blog index"))
   (get ("/<string:slug>" :name "post"
                          :title "Post")
-       (format nil "Blog post: ~A" slug)))
+       (fmt "Blog post: ~A" slug)))
 
 ;; Define test routes for an admin library
-(defroutes (*admin-routes* :namespace "admin")
+(defroutes (*admin-routes*)
   (get ("/" :name "index" :title "Admin")
-       (format nil "Admin index"))
+       (fmt "Admin index"))
   (post ("/users/" :name "users" :title "Users")
-       (format nil "Users list"))
+       (fmt "Users list"))
   (get ("/users/<int:id>" :name "user" :title "User Profile")
-       (format nil "User profile: ~A" id))
+       (fmt "User profile: ~A" id))
   (put ("/users/<int:id>" :name "user-update" :title "Update User")
-       (format nil "Update user profile: ~A" id)))
+       (fmt "Update user profile: ~A" id)))
 
 ;; Define test routes for an application
-(defroutes (*app-routes* :namespace "app")
+(defroutes (*app-routes*)
   (get ("/" :name "index" :title "Main Page")
-       (format nil "App index"))
-  (include *blog-routes*)
-  (include *admin-routes*))
+       (fmt "App index"))
+  (include *blog-routes*
+           :path "/blog/"
+           :namespace "blog")
+  (include *admin-routes*
+           :path "/admin/"
+           :namespace "admin"))
 
 
 (defun check-route (name &key namespace expected-method missingp)
@@ -102,6 +108,43 @@
                         expected-method)))))))))
 
 
+(defun check-route-url (name expected-url &rest args &key namespace missingp &allow-other-keys)
+  (remove-from-plistf args
+                      :missingp)
+  
+  (testing (if namespace
+               (fmt "Checking url for route ~S with namespace ~S"
+                    name
+                    namespace)
+               (fmt "Checking url for route ~S without namespace"
+                    name))
+    (let ((url (apply #'route-url
+                      name
+                      args)))
+      (cond
+        (missingp
+         (ng url
+             (if url
+                 "URL expected to be missing, but it was found"
+                 "URL was not found")))
+        ;; Should be found
+        (t
+         (ok url
+             (if url
+                 "URL was found"
+                 "URL was not found"))
+         
+         (ok (string= url
+                      expected-url)
+             (if (equal url
+                        name)
+                 (fmt "Route's URL is ~S, as expected."
+                      url)
+                 (fmt "Route's URL is ~S, but ~S was expected."
+                      url
+                      expected-url))))))))
+
+
 (deftest test-simple-route-search ()
   (testing "Blog routes can be found"
     (with-routes (*blog-routes*)
@@ -109,12 +152,13 @@
                    :expected-method :get)
       (check-route "post"
                    :expected-method :get)
-      (check-route "index"
-                   :namespace "blog"
-                   :expected-method :get)
-      (check-route "post"
-                   :namespace "blog"
-                   :expected-method :get)
+      ;; Not applicable, because *blog-routes* it self has no namespace
+      ;; (check-route "index"
+      ;;              :namespace "blog"
+      ;;              :expected-method :get)
+      ;; (check-route "post"
+      ;;              :namespace "blog"
+      ;;              :expected-method :get)
 
       (testing "With wrong namespace"
         (check-route "index"
@@ -125,46 +169,57 @@
                      :missingp t)))))
 
 
-(deftest test-route-definition ()
-  (testing "Route collections are created correctly"
-    (ok *blog-routes* "Blog routes collection exists")
-    (ok *admin-routes* "Admin routes collection exists")
-    (ok *app-routes* "App routes collection exists"))
-  
-  (testing "HTTP methods are set correctly"
-    (with-routes (*app-routes*)
-      (flet ((check-route (name &key namespace expected-method)
-               (testing (if namespace
-                            (fmt "Checking route ~S with namespace ~S"
-                                 name
-                                 namespace)
-                            (fmt "Checking route ~S without namespace"
-                                 name))
-                 (let ((route (find-route name namespace)))
-                   (ok (string= (40ants-routes/core:route-name route)
-                                name)
-                       (fmt "Route's name is ~S, but ~S was expected."
-                            (40ants-routes/core:route-name route)
-                            name))
-                   (when namespace
-                     (ok (string= (40ants-routes/core:route-namespace route)
-                                  "blog")
-                         (fmt "Route's namespace is ~S but ~S was expected."
-                              (40ants-routes/core:route-namespace route)
-                              namespace)))
-                   (when expected-method
-                     (ok (eql (40ants-routes/core:route-method route)
-                              expected-method)
-                         (fmt "Route's method is ~S but ~S was expected."
-                              (40ants-routes/core:route-method route)
-                              expected-method)))))))
-        (check-route "index" :namespace "blog"
+(deftest test-simple-route-reverse ()
+  (testing "Blog routes can be reversed"
+    (with-routes (*blog-routes*)
+      (check-route-url "index"
+                       "/")
+      (check-route-url "post"
+                       "/foo-bar"
+                       :slug "foo-bar"))))
+
+(deftest test-with-url ()
+  (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"
+    (with-url (*app-routes* "/admin/users/100500")
+      (ok (typep 40ants-routes/vars::*current-routes*
+                 '40ants-routes/route::route)))))
+
+
+(deftest test-route-lookup-by-absolute-namespace ()
+  (with-routes (*app-routes*)
+    (flet ((check-route (name &key namespace expected-method)
+             (testing (if namespace
+                          (fmt "Checking route ~S with namespace ~S"
+                               name
+                               namespace)
+                          (fmt "Checking route ~S without namespace"
+                               name))
+               (let ((route (find-route name namespace)))
+                 (ok (string= (40ants-routes/core:route-name route)
+                              name)
+                     (fmt "Route's name is ~S, but ~S was expected."
+                          (40ants-routes/core:route-name route)
+                          name))
+                 (when namespace
+                   (ok (string= (40ants-routes/core:route-namespace route)
+                                "blog")
+                       (fmt "Route's namespace is ~S but ~S was expected."
+                            (40ants-routes/core:route-namespace route)
+                            namespace)))
+                 (when expected-method
+                   (ok (eql (40ants-routes/core:route-method route)
+                            expected-method)
+                       (fmt "Route's method is ~S but ~S was expected."
+                            (40ants-routes/core:route-method route)
+                            expected-method)))))))
+      (testing "Lookup by absolute namespaces"
+        (check-route "index" :namespace '("blog")
                              :expected-method :get)
-        (check-route "users" :namespace "admin"
+        (check-route "users" :namespace '("admin")
                              :expected-method :post)
-        (check-route "user" :namespace "admin"
+        (check-route "user" :namespace '("admin")
                             :expected-method :get)
-        (check-route "user-update" :namespace "admin"
+        (check-route "user-update" :namespace '("admin")
                                    :expected-method :put)))))
 
 

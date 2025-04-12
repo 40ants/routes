@@ -1,17 +1,44 @@
 (uiop:define-package #:40ants-routes/url-pattern
   (:use #:cl)
-  (:import-from #:40ants-routes/route
-                #:route
-                #:route-pattern
-                #:route-parameters)
   (:import-from #:cl-ppcre
+                #:scan
                 #:scan-to-strings
                 #:regex-replace
                 #:regex-replace-all)
-  (:export #:parse-url-pattern
-           #:match-url
-           #:replace-parameters))
+  (:import-from #:serapeum
+                #:->)
+  (:import-from #:str
+                #:trim-right
+                #:replace-all)
+  (:import-from #:40ants-routes/generics)
+  ;; (:export #:parse-url-pattern
+  ;;          #:match-url
+  ;;          #:replace-parameters)
+  )
 (in-package #:40ants-routes/url-pattern)
+
+
+(defclass url-pattern ()
+  ((pattern :initarg :pattern
+            :type string
+            :reader url-pattern-pattern)
+   (regex :initarg :regex
+          :type string
+          :reader url-pattern-regex)
+   (params :initarg :params
+           :type list
+           :documentation "Alist with parameter types"
+           :reader url-pattern-params)))
+
+
+(defmethod print-object ((obj url-pattern) stream)
+  (print-unreadable-object (obj stream :type t)
+    (format stream "~S"
+            (url-pattern-pattern obj))))
+
+
+(-> parse-url-pattern (string)
+    (values url-pattern &optional))
 
 (defun parse-url-pattern (pattern)
   "Parse a URL pattern and extract parameter specifications.
@@ -40,11 +67,11 @@
           (let* ((param-spec (subseq pattern (1+ param-start) param-end))
                  (colon-pos (position #\: param-spec))
                  (param-type (if colon-pos
-                                (subseq param-spec 0 colon-pos)
-                                "string"))
+                                 (subseq param-spec 0 colon-pos)
+                                 "string"))
                  (param-name (if colon-pos
-                                (subseq param-spec (1+ colon-pos))
-                                param-spec))
+                                 (subseq param-spec (1+ colon-pos))
+                                 param-spec))
                  (regex (cond
                           ((string= param-type "string") "([^/]+)")
                           ((string= param-type "int") "(\\d+)")
@@ -64,70 +91,90 @@
     ;; Ensure the pattern ends with $
     (setf regex-pattern (concatenate 'string regex-pattern "$"))
     
-    (values regex-pattern (nreverse params))))
+    (make-instance 'url-pattern
+                   :pattern pattern
+                   :regex regex-pattern
+                   :params (nreverse params))))
 
-(defun match-url (route url)
-  "Match a URL against a route. Returns parameter values if matched, nil otherwise."
-  (let ((pattern (route-pattern route))
-        (params (route-parameters route)))
-    (multiple-value-bind (match-p matches)
-        (scan-to-strings pattern url)
-      (when match-p
-        (let ((param-values nil))
-          (loop for i from 0 below (length matches)
-                for (param-name param-type) in params
-                for value = (aref matches i)
-                do (push (cons param-name 
-                               (if (string= param-type "int")
-                                   (parse-integer value)
-                                   value))
-                         param-values))
-          (nreverse param-values))))))
+(-> match-url (url-pattern string &key (:partialp boolean))
+    (values boolean
+            list
+            (or null integer)
+            &optional))
 
-(defun replace-parameters (url-pattern params args)
+(defun match-url (pattern url &key partialp)
+  "Match a URL against a route.
+
+   Returns three values where:
+
+   - first will be T if pattern was matched
+   - the second value is parameter values alist
+   - and the third one is position of the character right after the matched piece of URL
+
+   If PARTIALP argument is T then full match is required and the third returned
+   value will be equal to a URL length."
+  
+  (let ((pattern (let ((res (url-pattern-regex pattern)))
+                   (if partialp
+                       (trim-right res :char-bag "$")
+                       res)))
+        (params (url-pattern-params pattern)))
+    (multiple-value-bind (match-start match-end reg-starts reg-ends)
+        (scan pattern url)
+      (cond
+        (match-start
+         (let ((param-values nil))
+           (loop for reg-start across reg-starts
+                 for reg-end across reg-ends
+                 for (param-name param-type) in params
+                 do (push (cons param-name 
+                                (if (string= param-type "int")
+                                    (parse-integer url
+                                                   :start reg-start
+                                                   :end reg-end)
+                                    (subseq url reg-start reg-end)))
+                          param-values))
+           (values t
+                   (nreverse param-values)
+                   match-end)))
+        (t
+         (values nil
+                 nil
+                 nil))))))
+
+
+(-> replace-parameters (url-pattern list)
+    (values string &optional))
+
+(defun replace-parameters (url-pattern args)
   "Replace parameters in a URL pattern with their values.
    url-pattern: The original URL pattern (e.g., '/<string:slug>')
    params: List of parameter specifications ((name type) ...)
    args: Property list of parameter values (:name value ...)"
-  (let ((result url-pattern))
-    ;; First, handle special cases
-    (cond
-      ;; Root path
-      ((string= url-pattern "/")
-       (return-from replace-parameters "/"))
-      
-      ;; Simple slug pattern
-      ((string= url-pattern "/<string:slug>")
-       (let ((slug (getf args :slug)))
-         (when slug
-           (return-from replace-parameters (format nil "/~A" slug)))))
-      
-      ;; Simple ID pattern
-      ((string= url-pattern "/<int:id>")
-       (let ((id (getf args :id)))
-         (when id
-           (return-from replace-parameters (format nil "/~A" id)))))
-      
-      ;; Users ID pattern
-      ((string= url-pattern "/users/<int:id>")
-       (let ((id (getf args :id)))
-         (when id
-           (return-from replace-parameters (format nil "/users/~A" id))))))
-    
-    ;; For other patterns, replace each parameter with its value
-    (loop for (param-name param-type) in params
-          for param-value = (getf args param-name)
-          when param-value
-          do (let ((param-regex (format nil "<~A:~A>"
-                                       param-type
-                                       (string-downcase (symbol-name param-name)))))
-               (setf result (regex-replace-all param-regex result (format nil "~A" param-value)))))
-    
-    ;; Clean up any remaining regex artifacts and ensure proper formatting
-    (setf result (regex-replace-all "/+" result "/"))
-    
-    ;; Ensure the path starts with a slash
-    (unless (or (string= result "") (char= (char result 0) #\/))
-      (setf result (concatenate 'string "/" result)))
-    
-    result))
+  (loop with params = (url-pattern-params url-pattern)
+        with pattern = (url-pattern-pattern url-pattern)
+        with result = pattern
+        for (param-name param-type) in params
+        for param-value = (getf args param-name)
+        when param-value
+          do (let ((param-with-type
+                     (format nil "<~A:~A>"
+                             param-type
+                             (string-downcase (symbol-name param-name)))))
+               (setf result (replace-all param-with-type
+                                         (princ-to-string param-value)
+                                         result)))
+        finally (return result)))
+
+
+(defmethod 40ants-routes/generics::match-url ((obj url-pattern) (url string))
+  (when (match-url obj url)
+    (values obj)))
+
+
+(defmethod 40ants-routes/generics::partial-match-url ((obj url-pattern) (url string))
+  (multiple-value-bind (matched-obj parameters end-position)
+      (match-url obj url :partialp t)
+    (declare (ignore parameters))
+    (values matched-obj
+            end-position)))
