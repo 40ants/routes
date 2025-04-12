@@ -24,6 +24,7 @@
            #:collection-parent))
 (in-package #:40ants-routes/included-route)
 
+
 (defclass included-route ()
   ((original-collection :initarg :original-collection
                         :reader included-route-original-collection
@@ -32,9 +33,9 @@
            :initform nil
            :documentation "Parent collection, will be set when object will be added as a child")
    (path :initarg :path
-           :type url-pattern
-           :reader included-route-path
-           :documentation "Path to add to all routes in the collection")
+         :type url-pattern
+         :reader included-route-path
+         :documentation "Path to add to all routes in the collection")
    (namespace :initarg :namespace
               :initform nil
               :type (or null string)
