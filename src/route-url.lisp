@@ -180,19 +180,19 @@
 
 (defun find-parent-namespace (namespace)
   "Find the parent namespace for a given namespace."
-  (error "Remake without route-collection")
+  (error "Remake without ROUTES")
   
-  ;; (loop for ns being the hash-keys of 40ants-routes/with-routes:*route-collections*
+  ;; (loop for ns being the hash-keys of 40ants-routes/with-routes:*routess*
   ;;         using (hash-value collection)
   ;;       do (40ants-routes/with-routes:with-routes (collection)
-  ;;            (let ((routes (40ants-routes/route-collection:collection-routes
+  ;;            (let ((routes (40ants-routes/routes:collection-routes
   ;;                           40ants-routes/with-routes:*current-routes*)))
   ;;              (when (find-if (lambda (route)
   ;;                               (and (typep route '40ants-routes/included-route:included-route)
   ;;                                    (or
   ;;                                     ;; Match by original namespace
   ;;                                     (and (null (40ants-routes/included-route:included-route-namespace route))
-  ;;                                          (string= (40ants-routes/route-collection:collection-namespace
+  ;;                                          (string= (40ants-routes/routes:collection-namespace
   ;;                                                    (40ants-routes/included-route:included-route-original-collection route))
   ;;                                                   namespace))
   ;;                                     ;; Match by custom namespace
@@ -205,19 +205,19 @@
 
 (defun get-namespace-prefix (namespace parent-namespace)
   "Get the custom prefix for a namespace if it exists."
-  (error "Remake without route-collections")
+  (error "Remake without routess")
   ;; (when parent-namespace
-  ;;   (let ((parent-collection (gethash parent-namespace 40ants-routes/with-routes:*route-collections*)))
+  ;;   (let ((parent-collection (gethash parent-namespace 40ants-routes/with-routes:*routess*)))
   ;;     (when parent-collection
   ;;       (40ants-routes/with-routes:with-routes (parent-collection)
-  ;;         (let ((routes (40ants-routes/route-collection:collection-routes
+  ;;         (let ((routes (40ants-routes/routes:collection-routes
   ;;                        40ants-routes/with-routes:*current-routes*)))
   ;;           (loop for route in routes
   ;;                 when (and (typep route '40ants-routes/included-route:included-route)
   ;;                           (or
   ;;                            ;; Match by original namespace
   ;;                            (and (null (40ants-routes/included-route:included-route-namespace route))
-  ;;                                 (string= (40ants-routes/route-collection:collection-namespace
+  ;;                                 (string= (40ants-routes/routes:collection-namespace
   ;;                                           (40ants-routes/included-route:included-route-original-collection route))
   ;;                                          namespace))
   ;;                            ;; Match by custom namespace

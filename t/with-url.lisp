@@ -13,6 +13,7 @@
                 #:ok
                 #:deftest)
   (:import-from #:serapeum
+                #:eval-always
                 #:fmt)
   (:import-from #:40ants-routes/vars
                 #:*routes-path*
@@ -20,14 +21,15 @@
   (:import-from #:40ants-routes/included-route
                 #:included-route
                 #:included-route-original-collection)
-  (:import-from #:40ants-routes/route-collection
-                #:route-collection))
+  (:import-from #:40ants-routes/routes
+                #:routesp))
 (in-package #:40ants-routes-tests/with-url)
 
 
-(defvar *foo-slug-route*
-  (get ("/<string:slug>" :name "foo-route")
-    (fmt "Foo route: ~A" slug)))
+(eval-always
+  (defvar *foo-slug-route*
+    (get ("/<string:slug>" :name "foo-route")
+      (fmt "Foo route: ~A" slug))))
 
 
 (defroutes (*foo*)
@@ -101,8 +103,7 @@
       
       (testing "Last route in the path"
         (let ((route (elt *routes-path* 3)))
-          (ok (typep route
-                     'route-collection))
+          (ok (routesp route))
           (ok (eql route
                    *app*)
               "Should be all routes of the application."))))))

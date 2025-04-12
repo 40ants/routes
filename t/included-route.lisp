@@ -20,8 +20,8 @@
                 #:included-route-original-collection)
   (:import-from #:40ants-routes/vars
                 #:*current-routes*)
-  (:import-from #:40ants-routes/route-collection
-                #:collection-routes))
+  (:import-from #:40ants-routes/routes
+                #:children-routes))
 (in-package #:40ants-routes-tests/included-route)
 
 ;; Define test routes for a blog library
@@ -40,7 +40,7 @@
 (deftest test-included-route ()
   (testing "Include creates an included-route instance"
     (with-routes (*app-routes*)
-      (let* ((routes (collection-routes *current-routes*))
+      (let* ((routes (children-routes *current-routes*))
              (included (find-if (lambda (route)
                                   (typep route 'included-route))
                                 routes)))

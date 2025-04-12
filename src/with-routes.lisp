@@ -1,8 +1,5 @@
 (uiop:define-package #:40ants-routes/with-routes
   (:use #:cl)
-  (:import-from #:40ants-routes/route-collection
-                #:collection-namespace
-                #:collection-routes)
   (:import-from #:40ants-routes/find-route
                 #:namespaces-chain)
   (:import-from #:40ants-routes/vars

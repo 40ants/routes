@@ -1,8 +1,5 @@
 (uiop:define-package #:40ants-routes/route
   (:use #:cl)
-  (:import-from #:40ants-routes/route-collection
-                #:route-collection
-                #:collection-namespace)
   (:import-from #:40ants-routes/generics
                 #:match-url)
   (:import-from #:serapeum

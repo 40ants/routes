@@ -2,9 +2,9 @@
   (:use #:cl)
   (:import-from #:serapeum
                 #:->)
-  (:import-from #:40ants-routes/route-collection
-                #:route-collection-p
-                #:route-collection)
+  (:import-from #:40ants-routes/routes
+                #:routesp
+                #:routes)
   (:import-from #:40ants-routes/route
                 #:route)
   (:import-from #:40ants-routes/included-route
@@ -19,7 +19,7 @@
 (in-package #:40ants-routes/with-url)
 
 
-(-> find-route-for-url ((or route-collection
+(-> find-route-for-url ((or routes
                             route
                             included-route)
                         string)
@@ -44,7 +44,7 @@
              ;; except the last one, because it is enough to have
              ;; INCLUDED-ROUTES only:
              (filtered-routes-path
-               (append (remove-if #'route-collection-p
+               (append (remove-if #'routesp
                                   (butlast routes-path))
                        (last routes-path))))
       

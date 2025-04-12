@@ -2,19 +2,19 @@
   (:use #:cl)
   (:import-from #:40ants-routes/route
                 #:route-name)
-  (:import-from #:40ants-routes/route-collection
-                #:route-collection
-                #:collection-namespace)
+  (:import-from #:40ants-routes/routes
+                #:routes)
   (:import-from #:40ants-routes/included-route
                 #:included-route
                 #:included-route-original-collection
                 #:included-route-namespace))
 (in-package #:40ants-routes/route-name)
 
-;; Add a route-name method for route-collection
-(defmethod route-name ((collection route-collection))
+;; Add a route-name method for routes
+(defmethod route-name ((collection routes))
   "Get the name of a route collection, which is its namespace."
-  (collection-namespace collection))
+  (error "Should be removed"))
+
 
 ;; Add a route-name method for included-route
 (defmethod route-name ((included included-route))

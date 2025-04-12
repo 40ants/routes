@@ -3,7 +3,6 @@
 ;;   (:nicknames #:40ants-routes)
 ;;   ;; (:shadow #:get)
 ;;   ;; (:use-reexport #:40ants-routes/route
-;;   ;;                #:40ants-routes/route-collection
 ;;   ;;                #:40ants-routes/included-route
 ;;   ;;                #:40ants-routes/url-pattern
 ;;   ;;                #:40ants-routes/with-routes

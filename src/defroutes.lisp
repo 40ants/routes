@@ -2,9 +2,9 @@
   (:use #:cl)
   (:import-from #:40ants-routes/route
                 #:route)
-  (:import-from #:40ants-routes/route-collection
-                #:route-collection
-                #:collection-routes)
+  (:import-from #:40ants-routes/routes
+                #:routes
+                #:children-routes)
   (:import-from #:40ants-routes/included-route
                 #:included-route)
   (:import-from #:40ants-routes/url-pattern
@@ -28,9 +28,9 @@
 (defmacro defroutes ((var-name) &body route-definitions)
   "Define a variable holding collection of routes."
   `(eval-always
-     (defvar ,var-name (make-instance 'route-collection))
+     (defvar ,var-name (make-instance 'routes))
      
-     (setf (collection-routes ,var-name)
+     (setf (children-routes ,var-name)
            (list ,@route-definitions))
      ,var-name))
 
@@ -74,7 +74,7 @@
   (generate-route :delete path name title handler-body))
 
 
-(-> include (route-collection &key (:path string) (:namespace string))
+(-> include (routes &key (:path string) (:namespace string))
     (values included-route))
 
 (defun include (routes &key (path "/") namespace)
@@ -174,11 +174,11 @@
 ;;     ;; Nested defroutes
 ;;     ;; ((and (listp definition) (eq (first definition) 'defroutes))
 ;;     ;;  (destructuring-bind (var-name &key namespace) (second definition)
-;;     ;;    (let ((nested-collection (make-instance 'route-collection
+;;     ;;    (let ((nested-collection (make-instance 'routes
 ;;     ;;                                            ;; :namespace namespace
 ;;     ;;                                            )))
 ;;     ;;      ;; Process the nested routes
-;;     ;;      (setf (collection-routes nested-collection)
+;;     ;;      (setf (children-routes nested-collection)
 ;;     ;;            (loop for def in (cddr definition)
 ;;     ;;                  collect (process-route-definition def namespace nested-collection)))
          

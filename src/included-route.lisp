@@ -1,8 +1,7 @@
 (uiop:define-package #:40ants-routes/included-route
   (:use #:cl)
-  (:import-from #:40ants-routes/route-collection
-                #:collection-namespace
-                #:collection-routes)
+  (:import-from #:40ants-routes/routes
+                #:children-routes)
   (:import-from #:40ants-routes/route
                 #:route-name
                 #:route-namespace
@@ -52,19 +51,9 @@
 
 
 ;; Proxy methods for included-route
-(defmethod collection-routes ((included included-route))
-  (let ((original (included-route-original-collection included)))
-    (if (typep original 'included-route)
-        ;; If the original is itself an included-route, get its routes
-        (collection-routes original)
-        ;; Otherwise, get the routes directly
-        (collection-routes original))))
+(defmethod children-routes ((included included-route))
+  (children-routes (included-route-original-collection included)))
 
-(defmethod collection-namespace ((included included-route))
-  (let ((custom-namespace (included-route-namespace included)))
-    (if custom-namespace
-        custom-namespace
-        (collection-namespace (included-route-original-collection included)))))
 
 ;; Store the original collection directly without any proxying
 (defmethod included-route-original-collection :around ((included included-route))

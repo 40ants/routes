@@ -4,11 +4,10 @@
                 #:*current-routes*)
   (:import-from #:40ants-routes/route
                 #:route
-                #:route-name
-                #:route-namespace)
-  (:import-from #:40ants-routes/route-collection
-                #:route-collection
-                #:collection-routes
+                #:route-name)
+  (:import-from #:40ants-routes/routes
+                #:routes
+                #:children-routes
                 #:collection-namespace)
   (:import-from #:40ants-routes/included-route
                 #:included-route
@@ -26,7 +25,7 @@
 
 
 (-> namespaces-chain ((or included-route
-                          route-collection
+                          routes
                           route))
     (values (soft-list-of string) &optional))
 
@@ -50,7 +49,7 @@
 (-> ensure-absolute-namespace ((or string
                                    (soft-list-of string))
                                (or included-route
-                                   route-collection
+                                   routes
                                    route))
     (values (soft-list-of string)
             &optional))
@@ -84,12 +83,12 @@
     ;;  (when (or (null namespace)
     ;;            (string= (collection-namespace *current-routes*)
     ;;                     namespace))
-    ;;    (find name (collection-routes *current-routes*)
+    ;;    (find name (children-routes *current-routes*)
     ;;          :key #'route-name
     ;;          :test #'string=))
    
     ;;  ;; Next, check if any of the routes is an included-route
-    ;;  (loop for route in (collection-routes *current-routes*)
+    ;;  (loop for route in (children-routes *current-routes*)
     ;;        when (typep route 'included-route)
     ;;          do (let* ((included-namespace (40ants-routes/included-route:included-route-namespace route))
     ;;                    (original-collection (included-route-original-collection route))
@@ -97,7 +96,7 @@
     ;;                                     ;; If the included route has a custom namespace, look for the route in that namespace
     ;;                                     (find-route name included-namespace)
     ;;                                     ;; Otherwise, look in the original collection
-    ;;                                     (find name (collection-routes original-collection)
+    ;;                                     (find name (children-routes original-collection)
     ;;                                           :key #'route-name
     ;;                                           :test #'string=))))
     ;;               (when found-route
@@ -105,14 +104,14 @@
    
     ;;  ;; If not found in this namespace, check if this namespace is included in another namespace
     ;;  ;; and look for the route there with the original name
-    ;;  ;; (loop for parent-ns being the hash-keys of *route-collections*
+    ;;  ;; (loop for parent-ns being the hash-keys of *routess*
     ;;  ;;         using (hash-value parent-collection)
     ;;  ;;       do (with-routes (parent-collection)
-    ;;  ;;            (loop for route in (collection-routes *current-routes*)
+    ;;  ;;            (loop for route in (children-routes *current-routes*)
     ;;  ;;                  when (and (typep route 'included-route)
     ;;  ;;                            (let ((included-ns (40ants-routes/included-route:included-route-namespace route)))
     ;;  ;;                              (and included-ns (string= included-ns namespace))))
-    ;;  ;;                    do (let ((found-route (find name (collection-routes (included-route-original-collection route))
+    ;;  ;;                    do (let ((found-route (find name (children-routes (included-route-original-collection route))
     ;;  ;;                                                :key #'route-name
     ;;  ;;                                                :test #'string=)))
     ;;  ;;                         (when found-route
@@ -125,10 +124,10 @@
   (call-next-method)
   ;; (if (or (string= namespace "users") (string= namespace "posts"))
   ;;     ;; For users and posts namespaces, look in the entity routes
-  ;;     (let ((entity-routes (gethash "entity" *route-collections*)))
+  ;;     (let ((entity-routes (gethash "entity" *routess*)))
   ;;       (when entity-routes
   ;;         (with-routes (entity-routes)
-  ;;           (let ((found-route (find name (collection-routes *current-routes*)
+  ;;           (let ((found-route (find name (children-routes *current-routes*)
   ;;                                    :key #'route-name
   ;;                                    :test #'string=)))
   ;;             (if found-route
@@ -139,16 +138,16 @@
 
 (defun find-matching-route (url)
   "Find a route that matches the given URL."
-  (error "Remake without route-collections")
+  (error "Remake without routess")
   ;; (let ((parts (split-sequence #\/ url :remove-empty-subseqs t)))
   ;;   (cond
   ;;     ((null parts)
   ;;      ;; Root URL - find the app index route
   ;;      (let ((result nil)
-  ;;            (app-routes (gethash "app" *route-collections*)))
+  ;;            (app-routes (gethash "app" *routess*)))
   ;;        (when app-routes
   ;;          (with-routes (app-routes)
-  ;;            (let ((routes (collection-routes *current-routes*)))
+  ;;            (let ((routes (children-routes *current-routes*)))
   ;;              (setf result (find-if (lambda (r)
   ;;                                      (and (string= (route-name r) "index")
   ;;                                           (string= (route-namespace r) "app")))
@@ -158,10 +157,10 @@
   ;;      ;; Non-root URL - find a route in the namespace
   ;;      (let* ((namespace (first parts))
   ;;             (result nil)
-  ;;             (namespace-routes (gethash namespace *route-collections*)))
+  ;;             (namespace-routes (gethash namespace *routess*)))
   ;;        (when namespace-routes
   ;;          (with-routes (namespace-routes)
-  ;;            (let ((routes (collection-routes *current-routes*)))
+  ;;            (let ((routes (children-routes *current-routes*)))
   ;;              (setf result (find-if (lambda (r)
   ;;                                      (match-url r url))
   ;;                                    routes)))))
