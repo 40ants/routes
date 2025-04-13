@@ -19,6 +19,7 @@
                "40ants-routes/defroutes"
                "40ants-routes/route-url"
                "40ants-routes/breadcrumbs"
+               "40ants-routes/utils"
                "cl-ppcre"
                "split-sequence")
   :in-order-to ((test-op (test-op "40ants-routes-tests"))))
