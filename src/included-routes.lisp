@@ -17,25 +17,18 @@
   (:import-from #:40ants-routes/generics
                 #:partial-match-url
                 #:match-url)
-  (:import-from #:40ants-routes/with-parent
-                #:with-parent)
   (:export #:included-routes
            #:included-routes-original-collection
            #:included-routes-path
            #:included-routes-namespace
-           #:collection-parent
            #:included-routes-p))
 (in-package #:40ants-routes/included-routes)
 
-
-(defclass included-routes (with-parent)
+(defclass included-routes ()
   ((original-collection :initarg :original-collection
                         :reader included-routes-original-collection
                         :type routes
                         :documentation "The original collection that was included")
-   ;; (parent :accessor collection-parent
-   ;;         :initform nil
-   ;;         :documentation "Parent collection, will be set when object will be added as a child")
    (path :initarg :path
          :type url-pattern
          :reader included-routes-path

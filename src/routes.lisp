@@ -2,14 +2,11 @@
   (:use #:cl)
   (:import-from #:40ants-routes/generics
                 #:match-url)
-  (:import-from #:40ants-routes/with-parent
-                #:with-parent)
   (:export #:routes
            #:children-routes))
 (in-package #:40ants-routes/routes)
 
-
-(defclass routes (with-parent)
+(defclass routes ()
   ((children :initarg :children
              :accessor children-routes
              :initform nil

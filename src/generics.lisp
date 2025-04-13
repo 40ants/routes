@@ -1,23 +1,6 @@
 (uiop:define-package #:40ants-routes/generics
-  (:use #:cl)
-  (:import-from #:40ants-routes/errors
-                #:parent-already-set))
+  (:use #:cl))
 (in-package #:40ants-routes/generics)
-
-
-(defgeneric parent (obj)
-  (:documentation "Returns a parent object in the routes tree.
-                   For root route should return NIL
-
-                   SETF can be used to set parent, but
-                   if route already has parent, then SETF should
-                   signal condition 40ANTS-ROUTES/ERRORS:PARENT-ALREADY-SET."))
-
-
-(defmethod (setf parent) :before (new-parent (obj t))
-  (when (parent obj)
-    (error 'parent-already-set
-           :route obj)))
 
 
 (defgeneric match-url (obj url &key on-match)

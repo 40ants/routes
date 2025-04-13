@@ -5,8 +5,6 @@
   (:import-from #:40ants-routes/url-pattern
                 #:url-pattern-pattern
                 #:url-pattern)
-  (:import-from #:40ants-routes/with-parent
-                #:with-parent)
   (:export #:route
            #:route-name
            #:route-pattern
@@ -16,8 +14,7 @@
            #:route-title
            #:route-method))
 (in-package #:40ants-routes/route)
-
-(defclass route (with-parent)
+(defclass route ()
   ((name :initarg :name
          :type string
          :reader route-name
@@ -35,7 +32,7 @@
    ;;            :documentation "Namespace of the route")
    ;; (parameters :initarg :parameters
    ;;             :reader route-parameters
-   ;;             :type (soft-alist-of keyword symbol) 
+   ;;             :type (soft-alist-of keyword symbol)
    ;;             :initform nil
    ;;             :documentation "Parameters extracted from the URL pattern as alist where keys are parameter names and values - parameter types")
    (title :initarg :title
