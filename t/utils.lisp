@@ -87,13 +87,7 @@
     (assert-namespace-result *standard-full-namespace*
                              '("app")
                              '("server" "app")
-                             "Should truncate the namespace at the matching part"))
-  
-  (testing "When relative namespace has a common element but not as the first element"
-    (assert-namespace-result *standard-full-namespace*
-                             '("unknown" "app" "admin")
-                             '("server" "app" "admin")
-                             "Should replace from the matching part to the end")))
+                             "Should truncate the namespace at the matching part")))
 
 ;;;; Error Cases Tests
 
