@@ -17,6 +17,8 @@
   (:import-from #:40ants-routes/generics
                 #:partial-match-url
                 #:match-url)
+  (:import-from #:40ants-routes/with-parent
+                #:with-parent)
   (:export #:included-routes
            #:included-routes-original-collection
            #:included-routes-path
@@ -26,7 +28,7 @@
 (in-package #:40ants-routes/included-routes)
 
 
-(defclass included-routes ()
+(defclass included-routes (with-parent)
   ((original-collection :initarg :original-collection
                         :reader included-routes-original-collection
                         :type routes

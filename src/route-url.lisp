@@ -22,18 +22,20 @@
 
 (defun route-url (name &rest args &key namespace &allow-other-keys)
   "Generate a URL for a named route with the given parameters."
-  (let* ((current-ns (or namespace *current-namespace*))
-         (route (find-route name :namespace current-ns)))
+  (let* ((route (find-route name :namespace namespace)))
 
     (remove-from-plistf args :namespace)
 
     (cond
       (route
        (let ((url-pattern (route-pattern route)))
+         ;; TODO: тут надо собрать всю цепочку предыдущих роутов
+         ;; до корня, чтобы получить полный путь.
+         ;; А для этого надо чтобы у роутов был прописан parent
          (replace-parameters url-pattern
                              args)))
       (t
-       (error "Route not found: ~A in namespace ~A" name current-ns)))
+       (error "Route not found: ~A in namespace ~A" name namespace)))
     
     ;; (unless route)
     

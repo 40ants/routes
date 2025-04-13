@@ -186,12 +186,21 @@
 
 (deftest test-simple-route-reverse ()
   (testing "Blog routes can be reversed"
-    (with-url (*blog-routes* "/")
+    (with-url (*app-routes* "/blog/some-post")
       (check-route-url "index"
-                       "/")
+                       "/blog/")
       (check-route-url "post"
-                       "/foo-bar"
-                       :slug "foo-bar"))))
+                       "/blog/foo-bar"
+                       :slug "foo-bar")))
+  
+  ;; (testing "Admin routes can be reversed if absolute namespace given"
+  ;;   (with-url (*app-routes* "/blog/some-post")
+  ;;     (check-route-url "adminindex"
+  ;;                      "/")
+  ;;     (check-route-url "post"
+  ;;                      "/foo-bar"
+  ;;                      :slug "foo-bar")))
+  )
 
 (deftest test-with-url ()
   (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"

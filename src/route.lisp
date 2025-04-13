@@ -5,6 +5,8 @@
   (:import-from #:40ants-routes/url-pattern
                 #:url-pattern-pattern
                 #:url-pattern)
+  (:import-from #:40ants-routes/with-parent
+                #:with-parent)
   (:export #:route
            #:route-name
            #:route-pattern
@@ -15,7 +17,7 @@
            #:route-method))
 (in-package #:40ants-routes/route)
 
-(defclass route ()
+(defclass route (with-parent)
   ((name :initarg :name
          :type string
          :reader route-name
