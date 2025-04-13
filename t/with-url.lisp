@@ -33,20 +33,20 @@
       (fmt "Foo route: ~A" slug))))
 
 
-(defroutes (*foo*)
+(defroutes (*foo* :namespace "foo")
   (get ("/" :name "index")
     (fmt "Foo index"))
   *foo-slug-route*)
 
 
-(defroutes (*bar*)
+(defroutes (*bar* :namespace "bar")
   (get ("/" :name "index")
     (fmt "Bar index"))
   (include *foo*
            :path "/foo/"
            :namespace "foo-ns"))
 
-(defroutes (*app*)
+(defroutes (*app* :namespace "app")
   (get ("/" :name "index")
        (fmt "App index"))
   (include *bar*
@@ -62,10 +62,10 @@
       (ok result)
       (ok (typep result
                  '40ants-routes/route::route))
-      (ok (string= (40ants-routes/route::route-name result)
+      (ok (string= (40ants-routes/route:route-name result)
                    "index"))
       (ok (string= (funcall
-                    (40ants-routes/route::route-handler result))
+                    (40ants-routes/route:route-handler result))
                    "Foo index")))))
 
 

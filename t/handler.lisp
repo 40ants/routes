@@ -17,7 +17,7 @@
 (in-package #:40ants-routes-tests/handler)
 
 
-(defroutes (*blog*)
+(defroutes (*blog* :namespace "blog")
   (get ("/" :name "index")
     "List of blog posts")
   (get ("/post-<int:post-id>" :name "index")
@@ -25,7 +25,7 @@
          post-id)))
 
 
-(defroutes (*app*)
+(defroutes (*app* :namespace "app")
   (include *blog*
            :path "/blog/"))
 

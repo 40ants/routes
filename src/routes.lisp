@@ -3,14 +3,26 @@
   (:import-from #:40ants-routes/generics
                 #:match-url)
   (:export #:routes
-           #:children-routes))
+           #:children-routes
+           #:routes-namespace))
 (in-package #:40ants-routes/routes)
 
 (defclass routes ()
   ((children :initarg :children
              :accessor children-routes
              :initform nil
-             :documentation "List of children in this collection")))
+             :documentation "List of children in this collection.")
+   (namespace :initarg :namespace
+              :type string
+              :accessor routes-namespace
+              :documentation "Namespace of this routes collection.")))
+
+
+(defmethod print-object ((obj routes) stream)
+  (print-unreadable-object (obj stream :type t)
+    (format stream "~S ~A subroute~:P"
+            (routes-namespace obj)
+            (length (children-routes obj)))))
 
 
 (defun routesp (obj)

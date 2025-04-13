@@ -11,7 +11,7 @@
                           #:include)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
-  (:import-from #:40ants-routes/route
+  (:import-from #:40ants-routes/route-url
                 #:route-url)
   (:import-from #:40ants-routes/find-route
                 #:find-route)
@@ -26,14 +26,14 @@
 (in-package #:40ants-routes-tests/included-routes)
 
 ;; Define test routes for a blog library
-(defroutes (*blog-routes*)
+(defroutes (*blog-routes* :namespace "blog")
   (get ("/" :name "index" :title "Blog")
        (format nil "Blog index"))
   (get ("/<string:slug>" :name "post" :title "Post")
        (format nil "Blog post: ~A" slug)))
 
 ;; Define test routes for an application
-(defroutes (*app-routes*)
+(defroutes (*app-routes* :namespace "app")
   (get ("/" :name "index" :title "Main Page")
        (format nil "App index"))
   (include *blog-routes*))
@@ -51,15 +51,15 @@
 (deftest test-route-resolution ()
   (testing "Routes can be found through included-routes"
     (with-url (*app-routes* "/")
-      (ok (find-route "index" "blog") "Can find blog index route")
-      (ok (string= (route-url "index" :namespace "blog") "/blog/")
+      (ok (find-route "index" :namespace '(:absolute "blog")) "Can find blog index route")
+      (ok (string= (route-url "index" :namespace '(:absolute "blog")) "/blog/")
           "Can generate URL for included route")
-      (ok (string= (route-url "post" :namespace "blog" :slug "hello-world") "/blog/hello-world")
+      (ok (string= (route-url "post" :namespace '(:absolute "blog") :slug "hello-world") "/blog/hello-world")
           "Can generate URL for included route with parameters"))))
 
 
 ;; Define a reusable route collection for entities
-(defroutes (*entity-routes*)
+(defroutes (*entity-routes* :namespace "entity")
   (get ("/" :name "index" :title "All Entities")
        (format nil "List of all entities"))
   (get ("/<string:id>" :name "show" :title "Entity Details")
@@ -67,7 +67,7 @@
 
 
 ;; Define routes that include the entity routes twice with different prefixes and namespaces
-(defroutes (*multi-include-routes*)
+(defroutes (*multi-include-routes* :namespace "multi-include")
   (get ("/" :name "index" :title "Application")
     (format nil "Application index"))
   (include *entity-routes* :path "/users" :namespace "users")
@@ -78,8 +78,8 @@
   (testing "Same routes can be included multiple times with different namespaces"
     (with-url (*multi-include-routes* "/")
       ;; Test that both inclusions created separate routes
-      (ok (find-route "index" "users") "Can find users index route")
-      (ok (find-route "index" "posts") "Can find posts index route")
+      (ok (find-route "index" :namespace '(:absolute "users")) "Can find users index route")
+      (ok (find-route "index" :namespace '(:absolute "posts")) "Can find posts index route")
     
       ;; Skip URL generation tests since they're not critical
       (ok t "Can generate URL for users index")

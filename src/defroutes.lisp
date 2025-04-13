@@ -14,6 +14,8 @@
                 #:->
                 #:fmt
                 #:eval-always)
+  (:import-from #:alexandria
+                #:length=)
   (:shadow #:get
            #:delete)
   (:export #:defroutes
@@ -25,10 +27,23 @@
 (in-package #:40ants-routes/defroutes)
 
 
-(defmacro defroutes ((var-name) &body route-definitions)
+(defmacro defroutes ((var-name &key namespace)
+                     &body route-definitions)
   "Define a variable holding collection of routes."
-  `(eval-always
-     (defvar ,var-name (make-instance 'routes))
+  (unless namespace
+    (error "NAMESPACE is required argument."))
+     
+  (unless (and (typep namespace 'string)
+               (not (length= 0 namespace)))
+    (error "NAMESPACE should be a non-empty string."))
+  
+  `(eval-always 
+     (defvar ,var-name (make-instance 'routes
+                                      :namespace ,namespace))
+
+     ;; In case if we did change route on var redifinition
+     (setf (40ants-routes/routes:routes-namespace ,var-name)
+           ,namespace)
      
      (setf (children-routes ,var-name)
            (list ,@route-definitions))

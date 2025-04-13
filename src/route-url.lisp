@@ -22,7 +22,11 @@
 
 (defun route-url (name &rest args &key namespace &allow-other-keys)
   "Generate a URL for a named route with the given parameters."
-  (let* ((route (find-route name :namespace namespace)))
+  (let* ((route (find-route name :namespace (if (and (listp namespace)
+                                                     (eq (first namespace) :absolute))
+                                                namespace
+                                                (when namespace
+                                                  `(:absolute ,namespace))))))
 
     (remove-from-plistf args :namespace)
 

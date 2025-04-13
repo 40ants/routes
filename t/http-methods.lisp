@@ -12,8 +12,9 @@
                           #:put
                           #:include)
   (:import-from #:40ants-routes/route
-                #:route-url
                 #:route-method)
+  (:import-from #:40ants-routes/route-url
+                #:route-url)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
   (:import-from #:40ants-routes/find-route
@@ -22,7 +23,7 @@
 
 
 ;; Define test routes using the new HTTP method format
-(defroutes (*http-method-routes*)
+(defroutes (*http-method-routes* :namespace "test")
   (get ("/" :name "index" :title "Test Index")
     (format nil "Test index page"))
   (post ("/items/" :name "create-item" :title "Create Item")
@@ -35,24 +36,24 @@
 (deftest test-http-methods ()
   (testing "HTTP methods are set correctly"
     (with-url (*http-method-routes* "/")
-      (ok (eq (route-method (find-route "index" "test")) :get)
+      (ok (eq (route-method (find-route "index" :namespace '(:absolute "test"))) :get)
           "Index route is GET")
-      (ok (eq (route-method (find-route "create-item" "test")) :post)
+      (ok (eq (route-method (find-route "create-item" :namespace '(:absolute "test"))) :post)
           "Create item route is POST")
-      (ok (eq (route-method (find-route "view-item" "test")) :get)
+      (ok (eq (route-method (find-route "view-item" :namespace '(:absolute "test"))) :get)
           "View item route is GET")
-      (ok (eq (route-method (find-route "update-item" "test")) :put)
+      (ok (eq (route-method (find-route "update-item" :namespace '(:absolute "test"))) :put)
           "Update item route is PUT"))))
 
 (deftest test-url-generation-with-methods ()
   (testing "URL generation works with HTTP method routes"
     (with-url (*http-method-routes* "/")
-      (ok (string= (route-url "index" :namespace "test") "/test/")
+      (ok (string= (route-url "index" :namespace '(:absolute "test")) "/test/")
           "Test index URL is correct")
-      (ok (string= (route-url "create-item" :namespace "test") "/test/items/")
+      (ok (string= (route-url "create-item" :namespace '(:absolute "test")) "/test/items/")
           "Create item URL is correct")
-      (ok (string= (route-url "view-item" :namespace "test" :id 123) "/test/items/123")
+      (ok (string= (route-url "view-item" :namespace '(:absolute "test") :id 123) "/test/items/123")
           "View item URL is correct")
-      (ok (string= (route-url "update-item" :namespace "test" :id 456) "/test/items/456")
+      (ok (string= (route-url "update-item" :namespace '(:absolute "test") :id 456) "/test/items/456")
           "Update item URL is correct"))))
 

@@ -32,7 +32,7 @@
 
 
 ;; Define test routes for a blog library
-(defroutes (*blog-routes*)
+(defroutes (*blog-routes* :namespace "blog")
   (get ("/" :name "index"
             :title "Blog")
     (fmt "Blog index"))
@@ -42,7 +42,7 @@
 
 
 ;; Define test routes for an admin library
-(defroutes (*admin-routes*)
+(defroutes (*admin-routes* :namespace "admin")
   (get ("/" :name "admin-index" :title "Admin")
     (fmt "Admin index"))
   (post ("/users/" :name "users" :title "Users")
@@ -54,7 +54,7 @@
 
 
 ;; Define test routes for an application
-(defroutes (*app-routes*)
+(defroutes (*app-routes* :namespace "app")
   (get ("/" :name "index" :title "Main Page")
     (fmt "App index"))
   (include *blog-routes*
@@ -239,13 +239,13 @@
                             (route-method route)
                             expected-method)))))))
       (testing "Lookup by absolute namespaces"
-        (check-route "index" :namespace '("blog")
+        (check-route "index" :namespace '(:absolute "blog")
                              :expected-method :get)
-        (check-route "users" :namespace '("admin")
+        (check-route "users" :namespace '(:absolute "admin")
                              :expected-method :post)
-        (check-route "user" :namespace '("admin")
+        (check-route "user" :namespace '(:absolute "admin")
                             :expected-method :get)
-        (check-route "user-update" :namespace '("admin")
+        (check-route "user-update" :namespace '(:absolute "admin")
                                    :expected-method :put)))))
 
 
@@ -254,13 +254,13 @@
     (with-url (*app-routes* "/")
       (ok (string= (route-url "index") "/")
           "App index URL is correct if no namespace was given")
-      (ok (string= (route-url "index" :namespace "app") "/")
+      (ok (string= (route-url "index" :namespace '(:absolute "app")) "/")
           "App index URL is correct")
-      (ok (string= (route-url "index" :namespace "blog") "/blog/")
+      (ok (string= (route-url "index" :namespace '(:absolute "blog")) "/blog/")
           "Blog index URL is correct")
-      (ok (string= (route-url "post" :namespace "blog" :slug "hello-world") "/blog/hello-world")
+      (ok (string= (route-url "post" :namespace '(:absolute "blog") :slug "hello-world") "/blog/hello-world")
           "Blog post URL is correct")
-      (ok (string= (route-url "user" :namespace "admin" :id 123) "/admin/users/123")
+      (ok (string= (route-url "user" :namespace '(:absolute "admin") :id 123) "/admin/users/123")
           "Admin user URL is correct"))))
 
 (deftest test-namespace-context ()
@@ -268,7 +268,7 @@
     (with-url (*app-routes* "/")
       (ok (string= (route-url "index") "/")
           "App index URL is correct in app context")
-      (ok (string= (route-url "index" :namespace "blog") "/blog/")
+      (ok (string= (route-url "index" :namespace '(:absolute "blog")) "/blog/")
           "Blog index URL is correct in app context"))
     
     (with-url (*blog-routes* "/")
@@ -281,7 +281,7 @@
   (testing "Missing parameters cause errors"
     (handler-case
         (progn
-          (route-url "post" :namespace "blog")
+          (route-url "post" :namespace '(:absolute "blog"))
           (ng t "Should have raised an error for missing slug parameter"))
       (error ()
         (ok t "Correctly raised error for missing parameter")))))
