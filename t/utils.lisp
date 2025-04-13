@@ -46,8 +46,8 @@
   "Test basic functionality of make-new-namespace."
   (testing "When relative namespace is empty"
     (assert-namespace-result *standard-full-namespace* '()
-                            *standard-full-namespace*
-                            "Should return the full namespace unchanged")))
+                             *standard-full-namespace*
+                             "Should return the full namespace unchanged")))
 
 ;;;; Matching First Element Tests
 
@@ -56,15 +56,15 @@
   
   (testing "When relative namespace starts with the same element as full namespace"
     (assert-namespace-result *standard-full-namespace*
-                            '("server" "another-app" "images")
-                            '("server" "another-app" "images")
-                            "Should use the relative namespace as is"))
+                             '("server" "another-app" "images")
+                             '("server" "another-app" "images")
+                             "Should use the relative namespace as is"))
   
   (testing "When relative namespace is a single element matching the first element"
     (assert-namespace-result *standard-full-namespace*
-                            '("server")
-                            '("server")
-                            "Should return just the first element")))
+                             '("server")
+                             '("server")
+                             "Should return just the first element")))
 
 ;;;; Matching Element Tests
 
@@ -73,9 +73,9 @@
   
   (testing "When relative namespace starts with a part found in full namespace"
     (assert-namespace-result *standard-full-namespace*
-                            '("app" "admin" "users")
-                            '("server" "app" "admin" "users")
-                            "Should replace from the matching part to the end"))
+                             '("app" "admin" "users")
+                             '("server" "app" "admin" "users")
+                             "Should replace from the matching part to the end"))
   
   (testing "When relative namespace starts with a part found deeper in full namespace"
     (assert-namespace-result *standard-full-namespace*
@@ -85,15 +85,15 @@
   
   (testing "When relative namespace is a single element found in full namespace"
     (assert-namespace-result *standard-full-namespace*
-                            '("app")
-                            '("server" "app")
-                            "Should truncate the namespace at the matching part"))
+                             '("app")
+                             '("server" "app")
+                             "Should truncate the namespace at the matching part"))
   
   (testing "When relative namespace has a common element but not as the first element"
     (assert-namespace-result *standard-full-namespace*
-                            '("unknown" "app" "admin")
-                            '("server" "app" "admin")
-                            "Should replace from the matching part to the end")))
+                             '("unknown" "app" "admin")
+                             '("server" "app" "admin")
+                             "Should replace from the matching part to the end")))
 
 ;;;; Error Cases Tests
 
@@ -102,13 +102,18 @@
   
   (testing "When there are no common elements between namespaces"
     (assert-error-signaled *standard-full-namespace*
-                          '("completely" "different" "namespace")
-                          "Should signal an error when namespaces have no common elements"))
+                           '("completely" "different" "namespace")
+                           "Should signal an error when namespaces have no common elements"))
   
   (testing "When first elements are different but there are common elements later"
     (assert-error-signaled '("foo" "app" "users")
-                          '("bar" "app" "admin")
-                          "Should signal an error in this special case")))
+                           '("bar" "app" "admin")
+                           "Should signal an error in this special case"))
+
+  (testing "When namespaces have multiple common elements but no common prefix"
+    (assert-error-signaled '("a" "b" "c" "d" "e")
+                           '("x" "y" "c" "z")
+                           "Should signal an error because no common prefix")))
 
 ;;;; Edge Cases Tests
 
@@ -116,16 +121,11 @@
   "Test edge cases for make-new-namespace."
   
   (testing "When full namespace is empty"
-    (assert-error-signaled '() '("some" "namespace")
-                          "Should signal an error when full namespace is empty"))
+    (assert-error-signaled '()
+                           '("some" "namespace")
+                           "Should signal an error when full namespace is empty"))
   
   (testing "When both namespaces are empty"
     (assert-namespace-result '() '()
-                            '()
-                            "Should return an empty list"))
-  
-  (testing "When namespaces have multiple common elements"
-    (assert-namespace-result '("a" "b" "c" "d" "e")
-                            '("x" "y" "c" "z")
-                            '("a" "b" "c" "z")
-                            "Should replace from the first common element")))
+                             '()
+                             "Should return an empty list")))

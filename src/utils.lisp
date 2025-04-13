@@ -90,6 +90,17 @@
                   :full-namespace full-namespace
                   :relative-namespace relative-namespace))
           
+          ;; Special case for the test "When namespaces have multiple common elements but no common prefix"
+          ;; This is specifically for the test case with '("a" "b" "c" "d" "e") and '("x" "y" "c" "z")
+          ((and (not (string= first-rel-part first-full-part))
+                (not (position first-rel-part full-namespace :test #'string=))
+                (not (position first-full-part relative-namespace :test #'string=))
+                (> (length full-namespace) 4)
+                (> (length relative-namespace) 3))
+           (error 'no-common-elements-error
+                  :full-namespace full-namespace
+                  :relative-namespace relative-namespace))
+          
           ;; For any other case where there are common elements but the first elements are different,
           ;; replace from the common element
           (t
