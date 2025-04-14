@@ -20,7 +20,6 @@
   (:export #:included-routes
            #:included-routes-original-collection
            #:included-routes-path
-           ;; #:included-routes-namespace
            #:included-routes-p))
 (in-package #:40ants-routes/included-routes)
 
@@ -32,13 +31,7 @@
    (path :initarg :path
          :type url-pattern
          :reader included-routes-path
-         :documentation "Path to add to all routes in the collection")
-   ;; (namespace :initarg :namespace
-   ;;            :initform nil
-   ;;            :type (or null string)
-   ;;            :reader included-routes-namespace
-   ;;            :documentation "Custom namespace for the included routes")
-   ))
+         :documentation "Path to add to all routes in the collection")))
 
 
 (defmethod print-object ((obj included-routes) stream)
@@ -60,19 +53,6 @@
 
 (defmethod routes-namespace ((included included-routes))
   (routes-namespace (included-routes-original-collection included)))
-
-
-;; Store the original collection directly without any proxying
-;; (defmethod included-routes-original-collection :around ((included included-routes))
-;;   (call-next-method)
-;;   ;; (let ((original (call-next-method)))
-;;   ;;   (if (and (typep original 'included-routes)
-;;   ;;            (slot-boundp original 'original-collection))
-;;   ;;       ;; If the original is itself an included-routes, get its original collection
-;;   ;;       (included-routes-original-collection original)
-;;   ;;       ;; Otherwise, return the original
-;;   ;;       original))
-;;   )
 
 
 (defmethod match-url ((obj included-routes) (url string) &key on-match)

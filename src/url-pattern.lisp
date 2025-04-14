@@ -10,11 +10,7 @@
   (:import-from #:str
                 #:trim-right
                 #:replace-all)
-  (:import-from #:40ants-routes/generics)
-  ;; (:export #:parse-url-pattern
-  ;;          #:match-url
-  ;;          #:replace-parameters)
-  )
+  (:import-from #:40ants-routes/generics))
 (in-package #:40ants-routes/url-pattern)
 
 

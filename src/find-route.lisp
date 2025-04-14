@@ -1,8 +1,7 @@
 (uiop:define-package #:40ants-routes/find-route
   (:use #:cl)
   (:import-from #:40ants-routes/vars
-                #:*routes-path*
-                #:*current-routes*)
+                #:*routes-path*)
   (:import-from #:40ants-routes/route
                 #:routep
                 #:route

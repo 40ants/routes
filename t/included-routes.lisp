@@ -19,8 +19,6 @@
                 #:included-routes
                 #:included-routes-p
                 #:included-routes-original-collection)
-  (:import-from #:40ants-routes/vars
-                #:*current-routes*)
   (:import-from #:40ants-routes/routes
                 #:routes
                 #:children-routes)
@@ -69,17 +67,8 @@
        (format nil "Entity details: ~A" id)))
 
 
-;; Define routes that include the entity routes twice with different prefixes and namespaces
-;; (defroutes (*multi-include-routes* :namespace "multi-include")
-;;   (get ("/" :name "index" :title "Application")
-;;     (format nil "Application index"))
-;;   (include *entity-routes* :path "/users")
-;;   (include *entity-routes* :path "/posts"))
-
-
 (deftest test-multiple-inclusion ()
   (testing "It should not be possible to include same routes with the same namespace on the single level"
-
     (ok
      (rove:signals 
          (routes ("multi-include")

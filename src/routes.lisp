@@ -6,6 +6,8 @@
                 #:dict)
   (:import-from #:40ants-routes/route
                 #:routep)
+  (:import-from #:40ants-routes/errors
+                #:namespace-duplication-error)
   (:export #:routes
            #:children-routes
            #:routes-namespace))
@@ -45,7 +47,7 @@
         for existing-item = (when namespace
                               (gethash namespace seen-namespaces))
         when existing-item
-          do (error '40ants-routes/errors::namespace-duplication-error
+          do (error 'namespace-duplication-error
                     :existing-route existing-item
                     :new-route item
                     :namespace namespace)
