@@ -57,26 +57,27 @@
                  "Route was found"
                  "Route was not found"))
          
-         (ok (string= (route-name route)
-                      name)
-             (if (equal (route-name route)
+         (when route
+           (ok (string= (route-name route)
                         name)
-                 (fmt "Route's name is ~S, as expected."
-                      name)
-                 (fmt "Route's name is ~S, but ~S was expected."
-                      (route-name route)
-                      name)))
+               (if (equal (route-name route)
+                          name)
+                   (fmt "Route's name is ~S, as expected."
+                        name)
+                   (fmt "Route's name is ~S, but ~S was expected."
+                        (route-name route)
+                        name)))
          
-         (when expected-method
-           (ok (eql (route-method route)
-                    expected-method)
-               (if (equal (route-method route)
+           (when expected-method
+             (ok (eql (route-method route)
+                      expected-method)
+                 (if (equal (route-method route)
+                            expected-method)
+                     (fmt "Route's method is ~S as expected"
                           expected-method)
-                   (fmt "Route's method is ~S as expected"
-                        expected-method)
-                   (fmt "Route's method is ~S but ~S was expected."
-                        (route-method route)
-                        expected-method)))))))))
+                     (fmt "Route's method is ~S but ~S was expected."
+                          (route-method route)
+                          expected-method))))))))))
 
 
 (defun check-route-url (name expected-url &rest args &key namespace missingp &allow-other-keys)
@@ -127,18 +128,18 @@
       
       (testing "With absolute namespace"
         (check-route "index"
-                     :namespace '(:absolute "blog")
+                     :namespace '("app" "blog")
                      :expected-method :get)
         (check-route "post"
-                     :namespace '(:absolute "blog")
+                     :namespace '("app" "blog")
                      :expected-method :get))
       
       (testing "With wrong namespace"
         (check-route "index"
-                     :namespace '(:absolute "bad")
+                     :namespace '("bad")
                      :missingp t)
         (check-route "post"
-                     :namespace '(:absolute "bad")
+                     :namespace '("bad")
                      :missingp t)))
 
     (testing "Admin routes can be found"
@@ -148,10 +149,10 @@
       
       (testing "With absolute namespace"
         (check-route "admin-index"
-                     :namespace '(:absolute "admin")
+                     :namespace '("app" "admin")
                      :expected-method :get)
         (check-route "user-update"
-                     :namespace '(:absolute "admin")
+                     :namespace '("app" "admin" "users")
                      :expected-method :put)))))
 
 
@@ -187,83 +188,66 @@
 (deftest test-with-url ()
   (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"
     (with-url (*app-routes* "/admin/users/100500")
-      (ok (typep *current-routes*
-                 '40ants-routes/route:route)))))
+      (ok (40ants-routes/matched-route::matched-route-p *current-routes*)))))
 
 
 (deftest test-route-lookup-by-absolute-namespace ()
   (with-url (*app-routes* "/")
-    (flet ((check-route (name &key namespace expected-method)
-             (testing (if namespace
-                          (fmt "Checking route ~S with namespace ~S"
-                               name
-                               namespace)
-                          (fmt "Checking route ~S without namespace"
-                               name))
-               (let ((route (find-route name :namespace namespace)))
-                 (ok (string= (route-name route)
-                              name)
-                     (fmt "Route's name is ~S, but ~S was expected."
-                          (route-name route)
-                          name))
-                 ;; namespace was removed from ROUTE class, because
-                 ;; route's namespace defined by included-routes
-                 ;; (when namespace
-                 ;;   (ok (string= (route-namespace route)
-                 ;;                "blog")
-                 ;;       (fmt "Route's namespace is ~S but ~S was expected."
-                 ;;            (route-namespace route)
-                 ;;            namespace)))
-                 (when expected-method
-                   (ok (eql (route-method route)
-                            expected-method)
-                       (fmt "Route's method is ~S but ~S was expected."
-                            (route-method route)
-                            expected-method)))))))
-      (testing "Lookup by absolute namespaces"
-        (check-route "index" :namespace '(:absolute "blog")
-                             :expected-method :get)
-        (check-route "users" :namespace '(:absolute "admin")
-                             :expected-method :post)
-        (check-route "user" :namespace '(:absolute "admin")
-                            :expected-method :get)
-        (check-route "user-update" :namespace '(:absolute "admin")
-                                   :expected-method :put)))))
+    (testing "Lookup by absolute namespaces"
+      (check-route "index" :namespace '("app" "blog")
+                           :expected-method :get)
+      (check-route "users" :namespace '("app" "admin" "users")
+                           :expected-method :post)
+      (check-route "user" :namespace '("app" "admin" "users")
+                          :expected-method :get)
+      (check-route "user-update" :namespace '("app" "admin" "users")
+                                 :expected-method :put))))
 
 
 (deftest test-url-generation ()
   (testing "Basic URL generation"
     (with-url (*app-routes* "/")
-      (ok (string= (route-url "index") "/")
+      (ok (string= (route-url "index")
+                   "/")
           "App index URL is correct if no namespace was given")
-      (ok (string= (route-url "index" :namespace '(:absolute "app")) "/")
+      (ok (string= (route-url "index" :namespace '("app"))
+                   "/")
           "App index URL is correct")
-      (ok (string= (route-url "index" :namespace '(:absolute "blog")) "/blog/")
+      (ok (string= (route-url "index" :namespace '("app" "blog"))
+                   "/blog/")
           "Blog index URL is correct")
-      (ok (string= (route-url "post" :namespace '(:absolute "blog") :slug "hello-world") "/blog/hello-world")
+      (ok (string= (route-url "post" :namespace '("app" "blog") :slug "hello-world")
+                   "/blog/hello-world")
           "Blog post URL is correct")
-      (ok (string= (route-url "user" :namespace '(:absolute "admin") :id 123) "/admin/users/123")
+      (ok (string= (route-url "user" :namespace '("app" "admin" "users") :id 123)
+                   "/admin/users/123")
           "Admin user URL is correct"))))
+
 
 (deftest test-namespace-context ()
   (testing "URL generation with namespace context"
     (with-url (*app-routes* "/")
-      (ok (string= (route-url "index") "/")
+      (ok (string= (route-url "index")
+                   "/")
           "App index URL is correct in app context")
-      (ok (string= (route-url "index" :namespace '(:absolute "blog")) "/blog/")
+      (ok (string= (route-url "index" :namespace '("app" "blog"))
+                   "/blog/")
           "Blog index URL is correct in app context"))
     
     (with-url (*blog-routes* "/")
-      (ok (string= (route-url "index") "/blog/")
+      (ok (string= (route-url "index")
+                   "/")
           "Blog index URL is correct in blog context")
-      (ok (string= (route-url "post" :slug "hello-world") "/blog/hello-world")
+      (ok (string= (route-url "post" :slug "hello-world")
+                   "/hello-world")
           "Blog post URL is correct in blog context"))))
+
 
 (deftest test-parameter-validation ()
   (testing "Missing parameters cause errors"
     (handler-case
         (progn
-          (route-url "post" :namespace '(:absolute "blog"))
+          (route-url "post" :namespace '("blog"))
           (ng t "Should have raised an error for missing slug parameter"))
       (error ()
         (ok t "Correctly raised error for missing parameter")))))

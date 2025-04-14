@@ -90,7 +90,8 @@
 
 (defun search-child-route-with-name (routes name)
   (loop for route in (40ants-routes/routes::children-routes routes)
-        for route-name = (40ants-routes/route::route-name route)
+        for route-name = (when (routep route)
+                           (40ants-routes/route::route-name route))
         when (string= route-name
                       name)
           do (return route)))
