@@ -185,3 +185,10 @@
     (declare (ignore parameters))
     (values matched-obj
             end-position)))
+
+
+(defmethod 40ants-routes/generics::format-url ((obj url-pattern) stream args)
+  (write-string (string-left-trim '(#\/)
+                                  (replace-parameters obj args))
+                stream)
+  (values))

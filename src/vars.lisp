@@ -7,7 +7,9 @@
 
 
 (defvar-unbound *current-namespace*
-  "Current namespace for route resolution.")
+  "Current namespace of the current route. Will be bound during WITH-URL macro body exectution.
+
+   Holds a list of namespace names starting from the current route's namespace and ending with root routes node.")
 
 
 (defvar-unbound *current-routes*

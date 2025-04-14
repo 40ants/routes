@@ -16,6 +16,7 @@
                 #:eval-always
                 #:fmt)
   (:import-from #:40ants-routes/vars
+                #:*current-namespace*
                 #:*routes-path*
                 #:*current-routes*)
   (:import-from #:40ants-routes/included-routes
@@ -43,15 +44,13 @@
   (get ("/" :name "index")
     (fmt "Bar index"))
   (include *foo*
-           :path "/foo/"
-           :namespace "foo-ns"))
+           :path "/foo/"))
 
 (defroutes (*app* :namespace "app")
   (get ("/" :name "index")
        (fmt "App index"))
   (include *bar*
-           :path "/bar/"
-           :namespace "bar-ns"))
+           :path "/bar/"))
 
 
 (deftest test-route-search ()
@@ -104,3 +103,10 @@
           (ok (eql route
                    *app*)
               "Should be all routes of the application."))))))
+
+
+(deftest test-current-namespace-is-known-during-with-routes ()
+  (testing "WITH-URL macro sets current-namespace var"
+    (with-url (*app* "/bar/foo/some-post")
+      (ok (equal *current-namespace*
+                 '("app" "bar" "foo"))))))

@@ -46,3 +46,7 @@
                                :on-match (when on-match
                                            #'add-collection-if-needed))))))
 
+
+(defmethod 40ants-routes/generics::format-url ((obj routes) stream args)
+  (values))
+

@@ -70,8 +70,8 @@
 (defroutes (*multi-include-routes* :namespace "multi-include")
   (get ("/" :name "index" :title "Application")
     (format nil "Application index"))
-  (include *entity-routes* :path "/users" :namespace "users")
-  (include *entity-routes* :path "/posts" :namespace "posts"))
+  (include *entity-routes* :path "/users")
+  (include *entity-routes* :path "/posts"))
 
 
 (deftest test-multiple-inclusion ()

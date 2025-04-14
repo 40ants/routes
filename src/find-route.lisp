@@ -4,13 +4,17 @@
                 #:*routes-path*
                 #:*current-routes*)
   (:import-from #:40ants-routes/route
+                #:routep
                 #:route
                 #:route-name)
   (:import-from #:40ants-routes/routes
+                #:routes-namespace
+                #:routesp
                 #:routes
                 #:children-routes
                 #:collection-namespace)
   (:import-from #:40ants-routes/included-routes
+                #:included-routes-p
                 #:included-routes
                 #:included-routes-original-collection)
   (:import-from #:split-sequence
@@ -27,45 +31,6 @@
 (in-package #:40ants-routes/find-route)
 
 
-;; (-> namespaces-chain ((or included-routes
-;;                           routes
-;;                           route))
-;;     (values (soft-list-of string) &optional))
-
-
-;; (defun namespaces-chain (routes)
-;;   (loop for current = routes
-;;           then (cond
-;;                  ((typep current 'included-routes)
-;;                   (40ants-routes/included-routes:collection-parent current))
-;;                  (t
-;;                   nil))
-;;         for current-namespace = (typecase current
-;;                                   (included-routes
-;;                                    (40ants-routes/included-routes::included-routes-namespace current))
-;;                                   (t
-;;                                    nil))
-;;         while current-namespace
-;;         collect current-namespace))
-
-
-;; (-> ensure-absolute-namespace ((or string
-;;                                    (soft-list-of string))
-;;                                (or included-routes
-;;                                    routes
-;;                                    route))
-;;     (values (soft-list-of string)
-;;             &optional))
-
-;; (defun ensure-absolute-namespace (namespace current-routes)
-;;   (etypecase namespace
-;;     (string
-;;      (append (namespaces-chain current-routes)
-;;              (list namespace)))
-;;     (list
-;;      (values namespace))))
-
-
 (-> absolute-namespace-p (t)
     (values boolean &optional))
 
@@ -77,44 +42,44 @@
 
 
 (-> search-routes-with-namespace ((or routes included-routes)
-                                  list)
+                                  list
+                                  &key (:on-match (or null function)))
     (values (or null
                 routes
                 included-routes)
             &optional))
 
-(defun search-routes-with-namespace (root-routes namespaces)
-  (loop with namespace-to-search = (first namespaces)
-        for child in (40ants-routes/routes::children-routes root-routes)
-        when (and (40ants-routes/included-routes::included-routes-p child)
-                  (string= (40ants-routes/included-routes::included-routes-namespace child)
-                           namespace-to-search))
-          do (return (let ((rest-namespaces (rest namespaces)))
-                       (cond
-                         (rest-namespaces
-                          (search-routes-with-namespace child
-                                                        rest-namespaces))
-                         (t
-                          child)))))
-  
-  ;; (typecase root-routes
-  ;;   (routes
-  ;;    (loop with namespace-to-search = (first namespaces)
-  ;;          for child in (40ants-routes/routes::children-routes root-routes)
-  ;;          when (and (40ants-routes/included-routes::included-routes-p child)
-  ;;                    (string= (40ants-routes/included-routes::included-routes-namespace child)
-  ;;                             namespace-to-search))
-  ;;            do (return (let ((rest-namespaces (rest namespaces)))
-  ;;                         (cond
-  ;;                           (rest-namespaces
-  ;;                            (search-routes-with-namespace child
-  ;;                                                          rest-namespaces))
-  ;;                           (t
-  ;;                            child))))))
-  ;;   (40ants-routes/included-routes::included-routes
-  ;;    (search-routes-with-namespace (40ants-routes/included-routes::included-routes-original-collection root-routes)
-  ;;                                  namespaces)))
-  )
+(defun search-routes-with-namespace (root-routes namespaces &key on-match)
+  "If given, ON-MATCH callable will be called starting from the root node to the last routes object matching the last namespace in the list."
+  (labels ((recursive-search (routes namespaces path)
+             (let ((namespace-to-search (first namespaces)))
+               (cond
+                 ((included-routes-p routes)
+                  (recursive-search (included-routes-original-collection routes)
+                                    namespaces
+                                    (cons routes
+                                          path)))
+                 ((string= namespace-to-search
+                           (routes-namespace routes))
+                  (let ((rest-namespaces (rest namespaces)))
+                    (cond
+                      (rest-namespaces
+                       (loop for child in (children-routes routes)
+                             thereis (unless (routep child)
+                                       (recursive-search child
+                                                         rest-namespaces
+                                                         (cons routes path)))))
+                      ;; We've found our routes object
+                      (t
+                       (when on-match
+                         (mapc on-match
+                               (nreverse path))
+                         (funcall on-match
+                                  routes))
+                       (values routes)))))))))
+    (recursive-search root-routes
+                      namespaces
+                      nil)))
 
 
 (-> search-child-route-with-name ((or routes
@@ -131,12 +96,15 @@
           do (return route)))
 
 
-(-> find-route (string &key (:namespace list))
+(-> find-route (string
+                &key
+                (:namespace list)
+                (:on-match (or null function)))
     (values (or null
                 route)
             &optional))
 
-(defun find-route (name &key namespace)
+(defun find-route (name &key namespace on-match)
   "Find a route by name in the given namespace hierarchy."
   (unless *routes-path*
     (error "Use WITH-URL macro to set current routes object."))
@@ -146,27 +114,26 @@
   ;; 1. namespace is not given
   ;; 2. namespace is given in form (:absolute "foo" "bar" ...)
 
-  (cond
-    ((null namespace)
-     ;; This is a simplest case, we have to get parent of the current route
-     ;; from *routes-path* and search route with the given name among it's
-     ;; children:
-     (let* ((parent (second *routes-path*))
-            ;; Just assert a precondition
-            ;; (parent (etypecase parent
-            ;;           (40ants-routes/included-routes:included-routes
-            ;;            (40ants-routes/included-routes:included-routes-original-collection parent))
-            ;;           (40ants-routes/routes::routes parent)))
-            )
-       (search-child-route-with-name parent name))
-     )
-    ;; If absolute namespace was given, then we take the root route
-    ;; and start searching down the tree:
-    ((absolute-namespace-p namespace)
-     (let* ((root (last-elt *routes-path*))
-            (routes (search-routes-with-namespace root (cdr namespace))))
-       (when routes
-         (search-child-route-with-name routes name))))
-    (t
-     (error "Namespace should be NIL or in form (:absolute \"foo\" \"bar\")."))))
+  (let ((result
+          (cond
+            ((null namespace)
+             ;; This is a simplest case, we have to get parent of the current route
+             ;; from *routes-path* and search route with the given name among it's
+             ;; children:
+             (let* ((parent (second *routes-path*)))
+               (search-child-route-with-name parent name)))
+            ;; If absolute namespace was given, then we take the root route
+            ;; and start searching down the tree:
+            (namespace
+             (let* ((root (last-elt *routes-path*))
+                    (routes (search-routes-with-namespace root namespace
+                                                          :on-match on-match)))
+               (when routes
+                 (search-child-route-with-name routes name))))
+            (t
+             (error "Namespace should be NIL or in form (:absolute \"foo\" \"bar\").")))))
+    (when (and result
+               on-match)
+      (funcall on-match result))
+    (values result)))
 

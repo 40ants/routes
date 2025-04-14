@@ -29,3 +29,9 @@
 
     If OBJ is a compound element, then
     a sub-element can be returned in case of match."))
+
+
+(defgeneric format-url (obj stream args)
+  (:documentation "Should write a piece of URL to the STREAM substituting arguments from plist ARGS.
+
+                   When called, it should write a piece of URL without starting backslash."))

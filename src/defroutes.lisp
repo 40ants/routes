@@ -93,17 +93,16 @@
   (generate-route :delete path name title handler-body))
 
 
-(-> include (routes &key (:path string) (:namespace string))
+(-> include (routes &key (:path string))
     (values included-routes))
 
-(defun include (routes &key (path "/") namespace)
+(defun include (routes &key (path "/"))
   (let ((path (str:ensure-prefix
                "/"
                (str:ensure-suffix "/" path))))
     (make-instance 'included-routes
                    :original-collection routes
-                   :path (parse-url-pattern path)
-                   :namespace namespace)))
+                   :path (parse-url-pattern path))))
 
 ;; (defmacro get ((path &key name title) &body handler-body)
 ;;   (let ((url-pattern (parse-url-pattern path))

@@ -10,6 +10,7 @@
   (:import-from #:40ants-routes/included-routes
                 #:included-routes)
   (:import-from #:40ants-routes/vars
+                #:*current-namespace*
                 #:*routes-path*
                 #:*current-routes*)
   (:import-from #:40ants-routes/generics
@@ -29,14 +30,19 @@
                 included-routes)
             (serapeum:soft-list-of (or matched-route
                                        included-routes))
+            (serapeum:soft-list-of string)
             &optional))
 
 (defun find-route-for-url (routes url)
   "Searches a route matching URL.
 
    URL can match some nested route."
-  (let ((routes-path nil))
+  (let ((routes-path nil)
+        (namespace nil))
     (flet ((collect-matched-route (route)
+             (when (typep route 'routes)
+               (push (40ants-routes/routes::routes-namespace route)
+                     namespace))
              (push route routes-path)))
       (declare (dynamic-extent #'collect-matched-route))
 
@@ -51,15 +57,20 @@
                        (last routes-path))))
       
           (values matched-route
-                  filtered-routes-path)))))
+                  filtered-routes-path
+                  (nreverse namespace))))))
 
+
+(defun call-with-url (root-routes url thunk)
+  (multiple-value-bind (*current-routes* *routes-path* *current-namespace*)
+      (find-route-for-url root-routes
+                          url)
+    (funcall thunk)))
 
 
 (defmacro with-url ((root-routes url) &body body)
   "Execute body with the current routes object corresponding to a given URL argument."
-  (let ((root-routes-var (gensym "ROOT-ROUTES")))
-    `(let* ((,root-routes-var ,root-routes))
-       (multiple-value-bind (*current-routes* *routes-path*)
-           (find-route-for-url ,root-routes-var
-                               ,url)
-         ,@body))))
+  `(flet ((thunk-with-url ()
+            ,@body))
+     (declare (dynamic-extent #'thunk-with-url))
+     (call-with-url ,root-routes ,url #'thunk-with-url)))

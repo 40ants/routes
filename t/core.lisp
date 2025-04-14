@@ -27,42 +27,13 @@
   (:import-from #:40ants-routes/with-url
                 #:with-url)
   (:import-from #:40ants-routes/breadcrumbs
-                #:get-breadcrumbs))
+                #:get-breadcrumbs)
+  (:import-from #:40ants-routes-tests/fixtures
+                #:*app-routes*
+                #:*blog-routes*
+                #:*admin-routes*))
 (in-package #:40ants-routes-tests/core)
 
-
-;; Define test routes for a blog library
-(defroutes (*blog-routes* :namespace "blog")
-  (get ("/" :name "index"
-            :title "Blog")
-    (fmt "Blog index"))
-  (get ("/<string:slug>" :name "post"
-                         :title "Post")
-    (fmt "Blog post: ~A" slug)))
-
-
-;; Define test routes for an admin library
-(defroutes (*admin-routes* :namespace "admin")
-  (get ("/" :name "admin-index" :title "Admin")
-    (fmt "Admin index"))
-  (post ("/users/" :name "users" :title "Users")
-    (fmt "Users list"))
-  (get ("/users/<int:id>" :name "user" :title "User Profile")
-    (fmt "User profile: ~A" id))
-  (put ("/users/<int:id>" :name "user-update" :title "Update User")
-    (fmt "Update user profile: ~A" id)))
-
-
-;; Define test routes for an application
-(defroutes (*app-routes* :namespace "app")
-  (get ("/" :name "index" :title "Main Page")
-    (fmt "App index"))
-  (include *blog-routes*
-           :path "/blog/"
-           :namespace "blog")
-  (include *admin-routes*
-           :path "/admin/"
-           :namespace "admin"))
 
 
 (defun check-route (name &key namespace expected-method missingp)
@@ -136,8 +107,8 @@
          
          (ok (string= url
                       expected-url)
-             (if (equal url
-                        name)
+             (if (string= url
+                        expected-url)
                  (fmt "Route's URL is ~S, as expected."
                       url)
                  (fmt "Route's URL is ~S, but ~S was expected."
@@ -185,22 +156,33 @@
 
 
 (deftest test-simple-route-reverse ()
-  (testing "Blog routes can be reversed"
-    (with-url (*app-routes* "/blog/some-post")
+  (with-url (*app-routes* "/blog/some-post")
+    (testing "Blog routes can be reversed"
       (check-route-url "index"
                        "/blog/")
       (check-route-url "post"
                        "/blog/foo-bar"
-                       :slug "foo-bar")))
+                       :slug "foo-bar"))
   
-  ;; (testing "Admin routes can be reversed if absolute namespace given"
-  ;;   (with-url (*app-routes* "/blog/some-post")
-  ;;     (check-route-url "adminindex"
-  ;;                      "/")
-  ;;     (check-route-url "post"
-  ;;                      "/foo-bar"
-  ;;                      :slug "foo-bar")))
-  )
+    (testing "Admin routes can be reversed if absolute namespace given"
+      (check-route-url "admin-index"
+                       "/admin/"
+                       :namespace '("app" "admin"))
+      (check-route-url "user-update"
+                       "/admin/users/42"
+                       :namespace '("app" "admin" "users")
+                       :id "42")))
+  
+  (with-url (*app-routes* "/admin/users/100500")
+    (testing "Admin routes can be reversed using relative namespace"
+      (check-route-url "admin-index"
+                       "/admin/"
+                       :namespace '("admin"))
+      (check-route-url "post"
+                       "/admin/posts/foo-bar"
+                       :namespace '("admin" "posts")
+                       :slug "foo-bar"))))
+
 
 (deftest test-with-url ()
   (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"

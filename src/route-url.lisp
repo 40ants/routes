@@ -17,138 +17,159 @@
                 #:regex-replace-all)
   (:import-from #:alexandria
                 #:remove-from-plistf)
+  (:import-from #:40ants-routes/generics
+                #:format-url)
   (:export #:route-url))
 (in-package #:40ants-routes/route-url)
 
+
+
 (defun route-url (name &rest args &key namespace &allow-other-keys)
   "Generate a URL for a named route with the given parameters."
-  (let* ((route (find-route name :namespace (if (and (listp namespace)
-                                                     (eq (first namespace) :absolute))
-                                                namespace
-                                                (when namespace
-                                                  `(:absolute ,namespace))))))
+  (let* ((new-namespace (40ants-routes/utils::make-new-namespace *current-namespace*
+                                                                 namespace))
+         (full-routes-path nil))
+    (flet ((on-match (route)
+             (push route full-routes-path)))
+      (declare (dynamic-extent #'on-match))
+      
+      (find-route name
+                  :namespace new-namespace
+                  :on-match #'on-match)
+      (when full-routes-path
+        (with-output-to-string (s)
+          (write-char #\/ s)
+          (loop for piece in (nreverse full-routes-path)
+                do (format-url piece s args))))))
+  
+  ;; (let* ((route (find-route name :namespace (if (and (listp namespace)
+  ;;                                                    (eq (first namespace) :absolute))
+  ;;                                               namespace
+  ;;                                               (when namespace
+  ;;                                                 `(:absolute ,namespace))))))
 
-    (remove-from-plistf args :namespace)
+  ;;   (remove-from-plistf args :namespace)
 
-    (cond
-      (route
-       (let ((url-pattern (route-pattern route)))
-         ;; TODO: тут надо собрать всю цепочку предыдущих роутов
-         ;; до корня, чтобы получить полный путь.
-         ;; А для этого надо чтобы у роутов был прописан parent
-         (replace-parameters url-pattern
-                             args)))
-      (t
-       (error "Route not found: ~A in namespace ~A" name namespace)))
+  ;;   (cond
+  ;;     (route
+  ;;      (let ((url-pattern (route-pattern route)))
+  ;;        ;; TODO: тут надо собрать всю цепочку предыдущих роутов
+  ;;        ;; до корня, чтобы получить полный путь.
+  ;;        ;; А для этого надо чтобы у роутов был прописан parent
+  ;;        (replace-parameters url-pattern
+  ;;                            args)))
+  ;;     (t
+  ;;      (error "Route not found: ~A in namespace ~A" name namespace)))
     
-    ;; (unless route)
+  ;;   ;; (unless route)
     
-    ;; (let ((url-pattern (route-pattern route))
-    ;;       (params (route-parameters route))
-    ;;       (ns (route-namespace route)))
+  ;;   ;; (let ((url-pattern (route-pattern route))
+  ;;   ;;       (params (route-parameters route))
+  ;;   ;;       (ns (route-namespace route)))
       
-    ;;   ;; Remove namespace from args
-    ;;   (remf args :namespace)
+  ;;   ;;   ;; Remove namespace from args
+  ;;   ;;   (remf args :namespace)
       
-    ;;   ;; Check that all required parameters are provided
-    ;;   (loop for (param-name _) in params
-    ;;         unless (getf args param-name)
-    ;;         do (error "Missing required parameter ~A for route ~A"
-    ;;                   param-name name))
+  ;;   ;;   ;; Check that all required parameters are provided
+  ;;   ;;   (loop for (param-name _) in params
+  ;;   ;;         unless (getf args param-name)
+  ;;   ;;         do (error "Missing required parameter ~A for route ~A"
+  ;;   ;;                   param-name name))
       
-    ;;   ;; Generate the URL based on the pattern
-    ;;   (let ((path ""))
-    ;;     ;; Root route
-    ;;     (if (string= url-pattern "^/$")
-    ;;         (setf path "/")
-    ;;         ;; For non-root routes, extract the path template without regex anchors
-    ;;         (let* ((pattern-without-anchors (subseq url-pattern 1 (1- (length url-pattern))))
-    ;;                ;; Extract the path parts from the pattern
-    ;;                (path-parts (cl-ppcre:split "/" pattern-without-anchors))
-    ;;                ;; Reconstruct the original pattern
-    ;;                (original-pattern
-    ;;                 (cond
-    ;;                   ;; Handle common patterns
-    ;;                   ((string= pattern-without-anchors "/") "/")
-    ;;                   ((string= pattern-without-anchors "/items/") "/items/")
-    ;;                   ((string= pattern-without-anchors "/items/([^/]+)") "/items/<string:id>")
-    ;;                   ((string= pattern-without-anchors "/items/(\\d+)") "/items/<int:id>")
-    ;;                   ((string= pattern-without-anchors "/([^/]+)") "/<string:slug>")
-    ;;                   ((string= pattern-without-anchors "/(\\d+)") "/<int:id>")
-    ;;                   ((string= pattern-without-anchors "/users/(\\d+)") "/users/<int:id>")
-    ;;                   (t
-    ;;                    ;; For other patterns, reconstruct from parameters
-    ;;                    (let ((reconstructed "/"))
-    ;;                      ;; Extract the static path parts
-    ;;                      (when (> (length path-parts) 1)
-    ;;                        (loop for part in (butlast path-parts)
-    ;;                              when (and part (not (cl-ppcre:scan "\\(.*\\)" part)))
-    ;;                              do (setf reconstructed
-    ;;                                       (concatenate 'string reconstructed part "/"))))
+  ;;   ;;   ;; Generate the URL based on the pattern
+  ;;   ;;   (let ((path ""))
+  ;;   ;;     ;; Root route
+  ;;   ;;     (if (string= url-pattern "^/$")
+  ;;   ;;         (setf path "/")
+  ;;   ;;         ;; For non-root routes, extract the path template without regex anchors
+  ;;   ;;         (let* ((pattern-without-anchors (subseq url-pattern 1 (1- (length url-pattern))))
+  ;;   ;;                ;; Extract the path parts from the pattern
+  ;;   ;;                (path-parts (cl-ppcre:split "/" pattern-without-anchors))
+  ;;   ;;                ;; Reconstruct the original pattern
+  ;;   ;;                (original-pattern
+  ;;   ;;                 (cond
+  ;;   ;;                   ;; Handle common patterns
+  ;;   ;;                   ((string= pattern-without-anchors "/") "/")
+  ;;   ;;                   ((string= pattern-without-anchors "/items/") "/items/")
+  ;;   ;;                   ((string= pattern-without-anchors "/items/([^/]+)") "/items/<string:id>")
+  ;;   ;;                   ((string= pattern-without-anchors "/items/(\\d+)") "/items/<int:id>")
+  ;;   ;;                   ((string= pattern-without-anchors "/([^/]+)") "/<string:slug>")
+  ;;   ;;                   ((string= pattern-without-anchors "/(\\d+)") "/<int:id>")
+  ;;   ;;                   ((string= pattern-without-anchors "/users/(\\d+)") "/users/<int:id>")
+  ;;   ;;                   (t
+  ;;   ;;                    ;; For other patterns, reconstruct from parameters
+  ;;   ;;                    (let ((reconstructed "/"))
+  ;;   ;;                      ;; Extract the static path parts
+  ;;   ;;                      (when (> (length path-parts) 1)
+  ;;   ;;                        (loop for part in (butlast path-parts)
+  ;;   ;;                              when (and part (not (cl-ppcre:scan "\\(.*\\)" part)))
+  ;;   ;;                              do (setf reconstructed
+  ;;   ;;                                       (concatenate 'string reconstructed part "/"))))
                          
-    ;;                      ;; Add parameters
-    ;;                      (loop for (param-name param-type) in params
-    ;;                            do (setf reconstructed
-    ;;                                     (concatenate 'string
-    ;;                                                  reconstructed
-    ;;                                                  (format nil "<~A:~A>/"
-    ;;                                                          param-type
-    ;;                                                          (string-downcase (symbol-name param-name))))))
+  ;;   ;;                      ;; Add parameters
+  ;;   ;;                      (loop for (param-name param-type) in params
+  ;;   ;;                            do (setf reconstructed
+  ;;   ;;                                     (concatenate 'string
+  ;;   ;;                                                  reconstructed
+  ;;   ;;                                                  (format nil "<~A:~A>/"
+  ;;   ;;                                                          param-type
+  ;;   ;;                                                          (string-downcase (symbol-name param-name))))))
                          
-    ;;                      ;; Remove trailing slash if present
-    ;;                      (if (and (> (length reconstructed) 1)
-    ;;                               (char= (char reconstructed (1- (length reconstructed))) #\/))
-    ;;                          (subseq reconstructed 0 (1- (length reconstructed)))
-    ;;                          reconstructed))))))
+  ;;   ;;                      ;; Remove trailing slash if present
+  ;;   ;;                      (if (and (> (length reconstructed) 1)
+  ;;   ;;                               (char= (char reconstructed (1- (length reconstructed))) #\/))
+  ;;   ;;                          (subseq reconstructed 0 (1- (length reconstructed)))
+  ;;   ;;                          reconstructed))))))
               
-    ;;           ;; Use the replace-parameters function to handle parameter replacement
-    ;;           (setf path (replace-parameters original-pattern params args))))
+  ;;   ;;           ;; Use the replace-parameters function to handle parameter replacement
+  ;;   ;;           (setf path (replace-parameters original-pattern params args))))
         
-    ;;     ;; Add namespace prefix
-    ;;     (let ((namespace-path (get-namespace-path ns)))
-    ;;       (if namespace-path
-    ;;           (let ((result (concatenate 'string namespace-path path)))
-    ;;             ;; Special cases for specific routes
-    ;;             (cond
-    ;;               ;; Special case for app index route
-    ;;               ((and (string= ns "app") (string= (route-name route) "index"))
-    ;;                (setf result "/"))
+  ;;   ;;     ;; Add namespace prefix
+  ;;   ;;     (let ((namespace-path (get-namespace-path ns)))
+  ;;   ;;       (if namespace-path
+  ;;   ;;           (let ((result (concatenate 'string namespace-path path)))
+  ;;   ;;             ;; Special cases for specific routes
+  ;;   ;;             (cond
+  ;;   ;;               ;; Special case for app index route
+  ;;   ;;               ((and (string= ns "app") (string= (route-name route) "index"))
+  ;;   ;;                (setf result "/"))
                   
-    ;;               ;; Handle users namespace
-    ;;               ((string= ns "users")
-    ;;                (if (string= (route-name route) "item")
-    ;;                    (setf result (concatenate 'string "/app/users" path))
-    ;;                    (if (string= (route-name route) "show")
-    ;;                        (setf result (concatenate 'string "/users/" (getf args :id)))
-    ;;                        (setf result (concatenate 'string "/users" path)))))
+  ;;   ;;               ;; Handle users namespace
+  ;;   ;;               ((string= ns "users")
+  ;;   ;;                (if (string= (route-name route) "item")
+  ;;   ;;                    (setf result (concatenate 'string "/app/users" path))
+  ;;   ;;                    (if (string= (route-name route) "show")
+  ;;   ;;                        (setf result (concatenate 'string "/users/" (getf args :id)))
+  ;;   ;;                        (setf result (concatenate 'string "/users" path)))))
                   
-    ;;               ;; Handle posts namespace
-    ;;               ((string= ns "posts")
-    ;;                (if (string= (route-name route) "item")
-    ;;                    (setf result (concatenate 'string "/app/posts" path))
-    ;;                    (if (string= (route-name route) "show")
-    ;;                        (setf result (concatenate 'string "/posts/" (getf args :id)))
-    ;;                        (setf result (concatenate 'string "/posts" path)))))
+  ;;   ;;               ;; Handle posts namespace
+  ;;   ;;               ((string= ns "posts")
+  ;;   ;;                (if (string= (route-name route) "item")
+  ;;   ;;                    (setf result (concatenate 'string "/app/posts" path))
+  ;;   ;;                    (if (string= (route-name route) "show")
+  ;;   ;;                        (setf result (concatenate 'string "/posts/" (getf args :id)))
+  ;;   ;;                        (setf result (concatenate 'string "/posts" path)))))
                   
-    ;;               ;; Handle app namespace for multiple-inclusion test
-    ;;               ((string= ns "app")
-    ;;                (if (string= path "/")
-    ;;                    (setf result "/app/")
-    ;;                    (setf result (concatenate 'string "/app" path)))))
+  ;;   ;;               ;; Handle app namespace for multiple-inclusion test
+  ;;   ;;               ((string= ns "app")
+  ;;   ;;                (if (string= path "/")
+  ;;   ;;                    (setf result "/app/")
+  ;;   ;;                    (setf result (concatenate 'string "/app" path)))))
                 
-    ;;             ;; Remove any double slashes and ensure proper formatting
-    ;;             (setf result (regex-replace-all "/+" result "/"))
+  ;;   ;;             ;; Remove any double slashes and ensure proper formatting
+  ;;   ;;             (setf result (regex-replace-all "/+" result "/"))
                 
-    ;;             ;; Special case for root path
-    ;;             (if (string= result "/")
-    ;;                 result
-    ;;                 ;; Ensure trailing slash for index routes
-    ;;                 (if (and (string= (route-name route) "index")
-    ;;                          (not (char= (char result (1- (length result))) #\/)))
-    ;;                     (concatenate 'string result "/")
-    ;;                     result)))
-    ;;           path))))
-    ))
+  ;;   ;;             ;; Special case for root path
+  ;;   ;;             (if (string= result "/")
+  ;;   ;;                 result
+  ;;   ;;                 ;; Ensure trailing slash for index routes
+  ;;   ;;                 (if (and (string= (route-name route) "index")
+  ;;   ;;                          (not (char= (char result (1- (length result))) #\/)))
+  ;;   ;;                     (concatenate 'string result "/")
+  ;;   ;;                     result)))
+  ;;   ;;           path))))
+  ;;   )
+  )
 
 (defun get-namespace-path (namespace)
   "Get the full path for a namespace, handling nested namespaces."

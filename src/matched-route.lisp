@@ -20,7 +20,7 @@
                    :documentation "The original ROUTE object which has been matched.")
    (parameters :initarg :parameters
                :reader matched-route-parameters
-               :type (soft-alist-of keyword symbol) 
+               :type (soft-alist-of keyword (or integer string)) 
                :initform nil
                :documentation "Parameters extracted from the URL pattern as alist where keys are parameter names and values - parameter types.")))
 

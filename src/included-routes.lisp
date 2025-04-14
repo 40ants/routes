@@ -2,10 +2,10 @@
   (:use #:cl)
   (:import-from #:40ants-routes/routes
                 #:routes
+                #:routes-namespace
                 #:children-routes)
   (:import-from #:40ants-routes/route
                 #:route-name
-                #:route-namespace
                 #:route-pattern
                 #:route-parameters
                 #:route-title
@@ -20,7 +20,7 @@
   (:export #:included-routes
            #:included-routes-original-collection
            #:included-routes-path
-           #:included-routes-namespace
+           ;; #:included-routes-namespace
            #:included-routes-p))
 (in-package #:40ants-routes/included-routes)
 
@@ -33,19 +33,20 @@
          :type url-pattern
          :reader included-routes-path
          :documentation "Path to add to all routes in the collection")
-   (namespace :initarg :namespace
-              :initform nil
-              :type (or null string)
-              :reader included-routes-namespace
-              :documentation "Custom namespace for the included routes")))
+   ;; (namespace :initarg :namespace
+   ;;            :initform nil
+   ;;            :type (or null string)
+   ;;            :reader included-routes-namespace
+   ;;            :documentation "Custom namespace for the included routes")
+   ))
 
 
 (defmethod print-object ((obj included-routes) stream)
   (print-unreadable-object (obj stream :type t)
-    (format stream "~S (:namespace ~S)"
+    (format stream "~S (refers to :namespace ~S)"
             (url-pattern-pattern
              (included-routes-path obj))
-            (included-routes-namespace obj))))
+            (routes-namespace obj))))
 
 
 (defun included-routes-p (obj)
@@ -55,6 +56,10 @@
 ;; Proxy methods for included-routes
 (defmethod children-routes ((included included-routes))
   (children-routes (included-routes-original-collection included)))
+
+
+(defmethod routes-namespace ((included included-routes))
+  (routes-namespace (included-routes-original-collection included)))
 
 
 ;; Store the original collection directly without any proxying
@@ -91,3 +96,10 @@
                  ;; at the beginning of the path
                  (subseq url (1- position))
                  :on-match on-match))))
+
+
+(defmethod 40ants-routes/generics::format-url ((obj included-routes) stream args)
+  (40ants-routes/generics::format-url
+   (included-routes-path obj)
+   stream
+   args))
