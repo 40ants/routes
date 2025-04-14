@@ -22,7 +22,10 @@
   (:import-from #:40ants-routes/vars
                 #:*current-routes*)
   (:import-from #:40ants-routes/routes
-                #:children-routes))
+                #:routes
+                #:children-routes)
+  (:import-from #:40ants-routes/errors
+                #:namespace-duplication-error))
 (in-package #:40ants-routes-tests/included-routes)
 
 ;; Define test routes for a blog library
@@ -32,29 +35,29 @@
   (get ("/<string:slug>" :name "post" :title "Post")
        (format nil "Blog post: ~A" slug)))
 
+
 ;; Define test routes for an application
 (defroutes (*app-routes* :namespace "app")
   (get ("/" :name "index" :title "Main Page")
-       (format nil "App index"))
-  (include *blog-routes*))
+    (format nil "App index"))
+  (include *blog-routes*
+           :path "/blog/"))
+
 
 (deftest test-included-routes ()
   (testing "Include creates an included-routes instance"
-    (with-url (*app-routes* "/")
-      (let* ((routes (children-routes *current-routes*))
-             (included (find-if #'included-routes-p
-                                routes)))
-        (ok included "An included-routes instance was created")
-        ;; Skip the original-collection test since it's not critical
-        (ok t "The original-collection is correctly set")))))
+    (let* ((routes (children-routes *app-routes*))
+           (included (find-if #'included-routes-p
+                              routes)))
+      (ok included "An included-routes instance was created"))))
 
 (deftest test-route-resolution ()
   (testing "Routes can be found through included-routes"
     (with-url (*app-routes* "/")
-      (ok (find-route "index" :namespace '(:absolute "blog")) "Can find blog index route")
-      (ok (string= (route-url "index" :namespace '(:absolute "blog")) "/blog/")
+      (ok (find-route "index" :namespace '("app" "blog")) "Can find blog index route")
+      (ok (string= (route-url "index" :namespace '("app" "blog")) "/blog/")
           "Can generate URL for included route")
-      (ok (string= (route-url "post" :namespace '(:absolute "blog") :slug "hello-world") "/blog/hello-world")
+      (ok (string= (route-url "post" :namespace '("app" "blog") :slug "hello-world") "/blog/hello-world")
           "Can generate URL for included route with parameters"))))
 
 
@@ -67,23 +70,21 @@
 
 
 ;; Define routes that include the entity routes twice with different prefixes and namespaces
-(defroutes (*multi-include-routes* :namespace "multi-include")
-  (get ("/" :name "index" :title "Application")
-    (format nil "Application index"))
-  (include *entity-routes* :path "/users")
-  (include *entity-routes* :path "/posts"))
+;; (defroutes (*multi-include-routes* :namespace "multi-include")
+;;   (get ("/" :name "index" :title "Application")
+;;     (format nil "Application index"))
+;;   (include *entity-routes* :path "/users")
+;;   (include *entity-routes* :path "/posts"))
 
 
 (deftest test-multiple-inclusion ()
-  (testing "Same routes can be included multiple times with different namespaces"
-    (with-url (*multi-include-routes* "/")
-      ;; Test that both inclusions created separate routes
-      (ok (find-route "index" :namespace '(:absolute "users")) "Can find users index route")
-      (ok (find-route "index" :namespace '(:absolute "posts")) "Can find posts index route")
-    
-      ;; Skip URL generation tests since they're not critical
-      (ok t "Can generate URL for users index")
-      (ok t "Can generate URL for users show with parameters")
-      (ok t "Can generate URL for posts index")
-      (ok t "Can generate URL for posts show with parameters")
-      (ok t "URLs for the same route name in different namespaces are different"))))
+  (testing "It should not be possible to include same routes with the same namespace on the single level"
+
+    (ok
+     (rove:signals 
+         (routes ("multi-include")
+           (get ("/" :name "index" :title "Application")
+             (format nil "Application index"))
+           (include *entity-routes* :path "/users")
+           (include *entity-routes* :path "/posts"))
+         'namespace-duplication-error))))

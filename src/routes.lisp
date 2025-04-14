@@ -2,6 +2,10 @@
   (:use #:cl)
   (:import-from #:40ants-routes/generics
                 #:match-url)
+  (:import-from #:serapeum
+                #:dict)
+  (:import-from #:40ants-routes/route
+                #:routep)
   (:export #:routes
            #:children-routes
            #:routes-namespace))
@@ -27,6 +31,27 @@
 
 (defun routesp (obj)
   (typep obj 'routes))
+
+
+(defmethod (setf children-routes) :around (new-routes (obj routes))
+  ;; Validating if there are some namespaces duplication
+  (loop with seen-namespaces = (dict)
+        for item in new-routes
+        for namespace = (cond
+                          ((routep item)
+                           nil)
+                          (t
+                           (routes-namespace item)))
+        for existing-item = (when namespace
+                              (gethash namespace seen-namespaces))
+        when existing-item
+          do (error '40ants-routes/errors::namespace-duplication-error
+                    :existing-route existing-item
+                    :new-route item
+                    :namespace namespace)
+        do (setf (gethash namespace seen-namespaces)
+                 item))
+  (call-next-method))
 
 
 (defmethod match-url ((obj routes) (url string) &key on-match)

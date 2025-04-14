@@ -23,7 +23,8 @@
            #:get
            #:post
            #:put
-           #:include))
+           #:include
+           #:routes))
 (in-package #:40ants-routes/defroutes)
 
 
@@ -48,6 +49,22 @@
      (setf (children-routes ,var-name)
            (list ,@route-definitions))
      ,var-name))
+
+
+(defmacro routes ((namespace)
+                  &body route-definitions)
+  "Define a variable holding collection of routes."
+  (unless (and (typep namespace 'string)
+               (not (length= 0 namespace)))
+    (error "NAMESPACE should be a non-empty string."))
+
+  (alexandria:with-gensyms (var-name)
+    `(let ((,var-name
+             (make-instance 'routes
+                            :namespace ,namespace)))
+       (setf (children-routes ,var-name)
+             (list ,@route-definitions))
+       ,var-name)))
 
 
 (eval-always
