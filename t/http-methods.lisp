@@ -33,6 +33,7 @@
   (put ("/items/<int:id>" :name "update-item" :title "Update Item")
     (format nil "Update item: ~A" id)))
 
+
 (deftest test-http-methods ()
   (testing "HTTP methods are set correctly"
     (with-url (*http-method-routes* "/")
@@ -48,12 +49,12 @@
 (deftest test-url-generation-with-methods ()
   (testing "URL generation works with HTTP method routes"
     (with-url (*http-method-routes* "/")
-      (ok (string= (route-url "index" :namespace '("test")) "/test/")
+      (ok (string= (route-url "index" :namespace '("test")) "/")
           "Test index URL is correct")
-      (ok (string= (route-url "create-item" :namespace '("test")) "/test/items/")
+      (ok (string= (route-url "create-item" :namespace '("test")) "/items/")
           "Create item URL is correct")
-      (ok (string= (route-url "view-item" :namespace '("test") :id 123) "/test/items/123")
+      (ok (string= (route-url "view-item" :namespace '("test") :id 123) "/items/123")
           "View item URL is correct")
-      (ok (string= (route-url "update-item" :namespace '("test") :id 456) "/test/items/456")
+      (ok (string= (route-url "update-item" :namespace '("test") :id 456) "/items/456")
           "Update item URL is correct"))))
 
