@@ -24,7 +24,10 @@
                 #:included-routes-p
                 #:included-routes-original-collection)
   (:import-from #:40ants-routes/routes
-                #:routesp))
+                #:routesp)
+  (:import-from #:40ants-routes/matched-route
+                #:matched-route-original-route
+                #:matched-route-p))
 (in-package #:40ants-routes-tests/with-url)
 
 
@@ -59,13 +62,13 @@
             (find-route-for-url *app*
                                 "/bar/foo/")))
       (ok result)
-      (ok (typep result
-                 '40ants-routes/route::route))
-      (ok (string= (40ants-routes/route:route-name result)
-                   "index"))
-      (ok (string= (funcall
-                    (40ants-routes/route:route-handler result))
-                   "Foo index")))))
+      (ok (40ants-routes/matched-route::matched-route-p result))
+      (when (40ants-routes/matched-route::matched-route-p result)
+        (ok (string= (40ants-routes/route:route-name result)
+                     "index"))
+        (ok (string= (funcall
+                      (40ants-routes/route:route-handler result))
+                     "Foo index"))))))
 
 
 (deftest test-with-routes ()
@@ -76,10 +79,14 @@
           "Current route should not be equal to the root routes object")
       (ok (= (length *routes-path*)
              4))
+
       (testing "First route in the path"
         (let ((route (elt *routes-path* 0)))
-          (ok (eql route *foo-slug-route*)
-              "Should be /<string:slug> of foo library.")))
+          (ok (matched-route-p route))
+          (when (matched-route-p route)
+            (ok (eql (matched-route-original-route route)
+                     *foo-slug-route*)
+                "Should be /<string:slug> of foo library."))))
       
       (testing "Second route in the path"
         (let ((route (elt *routes-path* 1)))

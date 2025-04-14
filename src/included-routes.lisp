@@ -74,10 +74,6 @@
 ;;   ;;       original))
 ;;   )
 
-;; Add route-name method for included-routes
-(defmethod route-name ((included included-routes))
-  (route-name (included-routes-original-collection included)))
-
 
 (defmethod match-url ((obj included-routes) (url string) &key on-match)
   (multiple-value-bind (matched position)

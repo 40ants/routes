@@ -1,6 +1,7 @@
 (uiop:define-package #:40ants-routes/matched-route
   (:use #:cl)
   (:import-from #:serapeum
+                #:eval-always
                 #:soft-alist-of)
   (:import-from #:40ants-routes/route
                 #:route
@@ -56,3 +57,18 @@
                    route-with-params))
         (values route-with-params
                 parameters)))))
+
+
+(eval-always
+  (defmacro def-proxy-method (name)
+    (let ((method-name (find-symbol (symbol-name name)
+                                    (find-package "40ANTS-ROUTES/ROUTE"))))
+      `(defmethod ,method-name ((obj matched-route))
+         (,method-name (matched-route-original-route obj))))))
+
+
+(def-proxy-method route-name)
+(def-proxy-method route-pattern)
+(def-proxy-method route-handler)
+(def-proxy-method route-title)
+(def-proxy-method route-method)
