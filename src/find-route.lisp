@@ -15,7 +15,7 @@
   (:import-from #:40ants-routes/included-routes
                 #:included-routes-p
                 #:included-routes
-                #:included-routes-original-collection)
+                #:original-routes)
   (:import-from #:split-sequence
                 #:split-sequence)
   (:import-from #:40ants-routes/url-pattern
@@ -54,7 +54,7 @@
              (let ((namespace-to-search (first namespaces)))
                (cond
                  ((included-routes-p routes)
-                  (recursive-search (included-routes-original-collection routes)
+                  (recursive-search (original-routes routes)
                                     namespaces
                                     (cons routes
                                           path)))

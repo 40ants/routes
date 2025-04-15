@@ -18,13 +18,13 @@
                 #:match-url
                 #:url-path)
   (:export #:included-routes
-           #:included-routes-original-collection
+           #:original-routes
            #:included-routes-p))
 (in-package #:40ants-routes/included-routes)
 
 (defclass included-routes ()
   ((original-collection :initarg :original-collection
-                        :reader included-routes-original-collection
+                        :reader original-routes
                         :type routes
                         :documentation "The original collection that was included")
    (path :initarg :path
@@ -47,11 +47,11 @@
 
 ;; Proxy methods for included-routes
 (defmethod children-routes ((included included-routes))
-  (children-routes (included-routes-original-collection included)))
+  (children-routes (original-routes included)))
 
 
 (defmethod routes-namespace ((included included-routes))
-  (routes-namespace (included-routes-original-collection included)))
+  (routes-namespace (original-routes included)))
 
 
 (defmethod match-url ((obj included-routes) (url string) &key on-match)
@@ -61,7 +61,7 @@
       (when on-match
         (funcall on-match obj))
       
-      (match-url (included-routes-original-collection obj)
+      (match-url (original-routes obj)
                  ;; Here we substract 1 to pass
                  ;; url with beginning /.
                  ;; We need this, because prefix to which

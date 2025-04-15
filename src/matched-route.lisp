@@ -16,7 +16,7 @@
 
 (defclass matched-route ()
   ((original-route :initarg :original-route
-                   :reader matched-route-original-route
+                   :reader original-route
                    :type route
                    :documentation "The original ROUTE object which has been matched.")
    (parameters :initarg :parameters
@@ -27,7 +27,7 @@
 
 
 (defmethod print-object ((obj matched-route) stream)
-  (let ((route (matched-route-original-route obj)))
+  (let ((route (original-route obj)))
     (print-unreadable-object (obj stream :type t)
       (format stream "~S ~S~@[~S~]"
               (route-method route)
@@ -64,7 +64,7 @@
     (let ((method-name (find-symbol (symbol-name name)
                                     (find-package "40ANTS-ROUTES/ROUTE"))))
       `(defmethod ,method-name ((obj matched-route))
-         (,method-name (matched-route-original-route obj))))))
+         (,method-name (original-route obj))))))
 
 
 (def-proxy-method route-name)

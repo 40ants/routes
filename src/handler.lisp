@@ -5,7 +5,7 @@
   (:import-from #:40ants-routes/matched-route
                 #:matched-route-p
                 #:matched-route-parameters
-                #:matched-route-original-route)
+                #:original-route)
   (:import-from #:40ants-routes/route
                 #:route-handler)
   (:export #:call-handler))
@@ -21,8 +21,7 @@
 
   (unless (matched-route-p *current-routes*)
     (error "Current route is not of type MATCHED-ROUTE, probably this is a bug in the 40ANTS-ROUTES."))
-
-  (let* ((route (matched-route-original-route *current-routes*))
+  (let* ((route (original-route *current-routes*))
          (handler (route-handler route))
          (parameters (matched-route-parameters *current-routes*))
          (parameters-plist (alexandria:alist-plist parameters)))

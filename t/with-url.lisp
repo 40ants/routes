@@ -22,11 +22,11 @@
   (:import-from #:40ants-routes/included-routes
                 #:included-routes
                 #:included-routes-p
-                #:included-routes-original-collection)
+                #:original-routes)
   (:import-from #:40ants-routes/routes
                 #:routesp)
   (:import-from #:40ants-routes/matched-route
-                #:matched-route-original-route
+                #:original-route
                 #:matched-route-p))
 (in-package #:40ants-routes-tests/with-url)
 
@@ -84,7 +84,7 @@
         (let ((route (elt *routes-path* 0)))
           (ok (matched-route-p route))
           (when (matched-route-p route)
-            (ok (eql (matched-route-original-route route)
+            (ok (eql (original-route route)
                      *foo-slug-route*)
                 "Should be /<string:slug> of foo library."))))
       
@@ -92,7 +92,7 @@
         (let ((route (elt *routes-path* 1)))
           (ok (included-routes-p route))
           (when (included-routes-p route)
-            (ok (eql (included-routes-original-collection route)
+            (ok (eql (original-routes route)
                      *foo*)
                 "Should be all routes of foo library."))))
       
@@ -100,7 +100,7 @@
         (let ((route (elt *routes-path* 2)))
           (ok (included-routes-p route))
           (when (included-routes-p route)
-            (ok (eql (included-routes-original-collection route)
+            (ok (eql (original-routes route)
                      *bar*)
                 "Should be all routes of bar library."))))
       

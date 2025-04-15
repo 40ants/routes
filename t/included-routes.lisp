@@ -18,7 +18,7 @@
   (:import-from #:40ants-routes/included-routes
                 #:included-routes
                 #:included-routes-p
-                #:included-routes-original-collection)
+                #:original-routes)
   (:import-from #:40ants-routes/routes
                 #:routes
                 #:children-routes)

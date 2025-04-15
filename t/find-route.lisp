@@ -14,7 +14,7 @@
   (:import-from #:alexandria
                 #:length=)
   (:import-from #:40ants-routes/included-routes
-                #:included-routes-original-collection
+                #:original-routes
                 #:included-routes-p))
 (in-package #:40ants-routes-tests/find-route)
 
@@ -41,14 +41,14 @@
               (let ((fourth (elt matched-routes 1)))
                 (ok (included-routes-p fourth))
                 (when (included-routes-p fourth)
-                  (ok (eql (included-routes-original-collection fourth)
+                  (ok (eql (original-routes fourth)
                            *admin-users-routes*))))
               (ok (eql (elt matched-routes 2)
                        *admin-routes*))
               (let ((second (elt matched-routes 3)))
                 (ok (included-routes-p second))
                 (when (included-routes-p second)
-                  (ok (eql (included-routes-original-collection second)
+                  (ok (eql (original-routes second)
                            *admin-routes*))))
               (ok (eql (elt matched-routes 4)
                        *app-routes*)))))))))
