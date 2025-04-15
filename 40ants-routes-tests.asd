@@ -14,6 +14,7 @@
                "40ants-routes-tests/with-url"
                "40ants-routes-tests/handler"
                "40ants-routes-tests/utils"
+               "40ants-routes-tests/add-route"
                "40ants-routes"
                "rove"
                "cl-ppcre"

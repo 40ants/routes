@@ -1,16 +1,19 @@
 (uiop:define-package #:40ants-routes/routes
   (:use #:cl)
   (:import-from #:40ants-routes/generics
-                #:match-url)
+                #:match-url
+                #:url-path)
   (:import-from #:serapeum
                 #:dict)
   (:import-from #:40ants-routes/route
                 #:routep)
   (:import-from #:40ants-routes/errors
-                #:namespace-duplication-error)
+                #:namespace-duplication-error
+                #:path-duplication-error)
   (:export #:routes
            #:children-routes
-           #:routes-namespace))
+           #:routes-namespace
+           #:add-route))
 (in-package #:40ants-routes/routes)
 
 (defclass routes ()
@@ -77,3 +80,84 @@
 (defmethod 40ants-routes/generics::format-url ((obj routes) stream args)
   (values))
 
+
+(defgeneric add-route (routes route &key override)
+  (:documentation "Add a route or included-routes object to the routes collection at runtime.
+If a route with the same path or namespace already exists, an error will be signaled
+unless override is set to true."))
+
+
+(defmethod add-route ((routes routes) route &key override)
+  "Add a route or included-routes object to the routes collection at runtime.
+If a route with the same path or namespace already exists, an error will be signaled
+unless override is set to true."
+  (let ((children (children-routes routes)))
+    ;; Check for duplicates
+    (cond
+      ;; For regular routes, check for path duplication
+      ((routep route)
+       (let* ((path (url-path route))
+              (duplicate-found nil)
+              (duplicate-route nil))
+         ;; Compare the string representation of the paths
+         (loop for existing-route in children
+               when (and (routep existing-route)
+                         (equal (princ-to-string (url-path existing-route))
+                                (princ-to-string path)))
+               do (setf duplicate-found t
+                        duplicate-route existing-route)
+                  (return))
+         (cond
+           ;; If duplicate found and override is true, remove the old route
+           ((and duplicate-found override)
+            (setf (slot-value routes 'children) 
+                  (cons route (remove duplicate-route children))))
+           
+           ;; If duplicate found and override is false, signal an error
+           (duplicate-found
+            (error 'path-duplication-error
+                   :existing-route duplicate-route
+                   :new-route route
+                   :path path))
+           
+           ;; No duplicate found, just add the route
+           (t
+            (setf (children-routes routes) (cons route children))))))
+      
+      ;; For included-routes, check for namespace duplication
+      ((and (not (routep route))
+            (slot-exists-p route 'original-collection))
+       (let* ((namespace (routes-namespace route))
+              (duplicate-found nil)
+              (duplicate-route nil))
+         (loop for existing-route in children
+               when (and (not (routep existing-route))
+                         (string= (routes-namespace existing-route) namespace))
+               do (setf duplicate-found t
+                        duplicate-route existing-route)
+                  (return))
+         (cond
+           ;; If duplicate found and override is true, remove the old route and add the new one
+           ;; We need to completely bypass the namespace duplication check in (setf children-routes)
+           ((and duplicate-found override)
+            ;; First, remove the old route
+            (let ((new-children (remove duplicate-route children)))
+              ;; Then, set the children list directly
+              (setf (slot-value routes 'children) (list route))))
+           
+           ;; If duplicate found and override is false, signal an error
+           (duplicate-found
+            (error 'namespace-duplication-error
+                   :existing-route duplicate-route
+                   :new-route route
+                   :namespace namespace))
+           
+           ;; No duplicate found, just add the route
+           (t
+            (setf (children-routes routes) (cons route children))))))
+      
+      ;; For other types, just add the route
+      (t
+       (setf (children-routes routes) (cons route children))))
+    
+    route))

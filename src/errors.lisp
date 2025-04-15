@@ -4,7 +4,9 @@
            #:full-namespace
            #:relative-namespace
            #:no-route-for-url-error
-           #:url))
+           #:url
+           #:namespace-duplication-error
+           #:path-duplication-error))
 (in-package #:40ants-routes/errors)
 
 
@@ -30,6 +32,20 @@
              (format stream "There is already a ~S route with namespace ~S namespaces, can't add route ~S with same namespace."
                      (existing-route condition)
                      (existing-namespace condition)
+                     (new-route condition)))))
+
+
+(define-condition path-duplication-error (error)
+  ((path :initarg :path
+         :reader existing-path)
+   (existing-route :initarg :existing-route
+                   :reader existing-route)
+   (new-route :initarg :new-route
+              :reader new-route))
+  (:report (lambda (condition stream)
+             (format stream "There is already a ~S route with path ~S, can't add route ~S with same path."
+                     (existing-route condition)
+                     (existing-path condition)
                      (new-route condition)))))
 
 
