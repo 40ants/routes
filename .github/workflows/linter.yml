@@ -51,7 +51,7 @@
         },
         {
           "name": "Run Linter",
-          "run": "qlot exec 40ants-linter --system \"40ants-routes, 40ants-routes-docs, 40ants-routes-tests\"",
+          "run": "qlot exec 40ants-linter --system \"40ants-routes, 40ants-routes-docs, 40ants-routes-tests\" --imports",
           "shell": "bash"
         }
       ]
