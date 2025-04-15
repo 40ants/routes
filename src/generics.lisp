@@ -1,5 +1,9 @@
 (uiop:define-package #:40ants-routes/generics
-  (:use #:cl))
+  (:use #:cl)
+  (:export #:match-url
+           #:partial-match-url
+           #:format-url
+           #:url-path))
 (in-package #:40ants-routes/generics)
 
 
@@ -35,3 +39,7 @@
   (:documentation "Should write a piece of URL to the STREAM substituting arguments from plist ARGS.
 
                    When called, it should write a piece of URL without starting backslash."))
+
+
+(defgeneric url-path (obj)
+  (:documentation "Returns the URL pattern associated with the object."))

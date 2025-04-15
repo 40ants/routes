@@ -6,7 +6,6 @@
                 #:children-routes)
   (:import-from #:40ants-routes/route
                 #:route-name
-                #:route-pattern
                 #:route-parameters
                 #:route-title
                 #:route-method
@@ -16,10 +15,10 @@
                 #:url-pattern)
   (:import-from #:40ants-routes/generics
                 #:partial-match-url
-                #:match-url)
+                #:match-url
+                #:url-path)
   (:export #:included-routes
            #:included-routes-original-collection
-           #:included-routes-path
            #:included-routes-p))
 (in-package #:40ants-routes/included-routes)
 
@@ -30,7 +29,7 @@
                         :documentation "The original collection that was included")
    (path :initarg :path
          :type url-pattern
-         :reader included-routes-path
+         :reader url-path
          :documentation "Path to add to all routes in the collection")))
 
 
@@ -38,7 +37,7 @@
   (print-unreadable-object (obj stream :type t)
     (format stream "~S (refers to :namespace ~S)"
             (url-pattern-pattern
-             (included-routes-path obj))
+             (url-path obj))
             (routes-namespace obj))))
 
 
@@ -57,7 +56,7 @@
 
 (defmethod match-url ((obj included-routes) (url string) &key on-match)
   (multiple-value-bind (matched position)
-      (partial-match-url (included-routes-path obj) url)
+      (partial-match-url (url-path obj) url)
     (when matched
       (when on-match
         (funcall on-match obj))
@@ -76,6 +75,6 @@
 
 (defmethod 40ants-routes/generics::format-url ((obj included-routes) stream args)
   (40ants-routes/generics::format-url
-   (included-routes-path obj)
+   (url-path obj)
    stream
    args))

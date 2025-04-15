@@ -5,7 +5,6 @@
   (:import-from #:40ants-routes/find-route
                 #:find-route)
   (:import-from #:40ants-routes/route
-                #:route-pattern
                 #:route-parameters
                 #:route-namespace
                 #:route-name)
@@ -17,7 +16,8 @@
   (:import-from #:alexandria
                 #:remove-from-plistf)
   (:import-from #:40ants-routes/generics
-                #:format-url)
+                #:format-url
+                #:url-path)
   (:import-from #:40ants-routes/utils
                 #:make-new-namespace)
   (:export #:route-url))

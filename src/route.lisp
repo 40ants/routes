@@ -6,9 +6,10 @@
   (:import-from #:40ants-routes/url-pattern
                 #:url-pattern-pattern
                 #:url-pattern)
+  (:import-from #:40ants-routes/generics
+                #:url-path)
   (:export #:route
            #:route-name
-           #:route-pattern
            #:route-handler
            #:route-parameters
            #:route-title
@@ -22,10 +23,10 @@
          :type string
          :reader route-name
          :documentation "Name of the route")
-   (pattern :initarg :pattern
-            :type url-pattern
-            :reader route-pattern
-            :documentation "URL pattern")
+  (pattern :initarg :pattern
+           :type url-pattern
+           :reader url-path
+           :documentation "URL pattern")
    (handler :initarg :handler
             :reader route-handler
             :type function
@@ -47,7 +48,7 @@
     (format stream "~S ~S"
             (route-method obj)
             (url-pattern-pattern
-             (route-pattern obj)))))
+             (url-path obj)))))
 
 
 (-> routep (t)
@@ -60,6 +61,6 @@
 
 (defmethod 40ants-routes/generics::format-url ((obj route) stream args)
   (40ants-routes/generics::format-url
-   (route-pattern obj)
+   (url-path obj)
    stream
    args))

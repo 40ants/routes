@@ -5,12 +5,12 @@
                 #:soft-alist-of)
   (:import-from #:40ants-routes/route
                 #:route
-                #:route-pattern
                 #:route-method)
   (:import-from #:40ants-routes/url-pattern
                 #:url-pattern-pattern)
   (:import-from #:40ants-routes/generics
-                #:match-url))
+                #:match-url
+                #:url-path))
 (in-package #:40ants-routes/matched-route)
 
 
@@ -32,7 +32,7 @@
       (format stream "~S ~S~@[~S~]"
               (route-method route)
               (url-pattern-pattern
-               (route-pattern route))
+               (url-path route))
               (matched-route-parameters obj)))))
 
 
@@ -45,7 +45,7 @@
   ;; MATCH-URL method of URL-PATTERN, because we don't need
   ;; these objects in the routes chain:
   (multiple-value-bind (matchedp parameters)
-      (match-url (route-pattern obj) url)
+      (match-url (url-path obj) url)
     (when matchedp
       ;; Instead of url-pattern we want to return this route object
       (let ((route-with-params
@@ -68,7 +68,7 @@
 
 
 (def-proxy-method route-name)
-(def-proxy-method route-pattern)
+(def-proxy-method url-path)
 (def-proxy-method route-handler)
 (def-proxy-method route-title)
 (def-proxy-method route-method)
