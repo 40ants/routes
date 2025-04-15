@@ -29,7 +29,9 @@
                 #:routesp)
   (:import-from #:40ants-routes/matched-route
                 #:original-route
-                #:matched-route-p))
+                #:matched-route-p)
+  (:import-from #:40ants-routes-tests/fixtures
+                #:*app-routes*))
 (in-package #:40ants-routes-tests/with-url)
 
 
@@ -119,7 +121,6 @@
     (with-url (*app* "/bar/foo/some-post")
       (ok (equal *current-namespace*
                  '("app" "bar" "foo"))))))
-
 (deftest test-no-route-for-url-error ()
   (testing "WITH-URL macro should throw no-route-for-url-error when URL is not found"
     (ok (handler-case
@@ -129,3 +130,10 @@
           (no-route-for-url-error (e)
             (string= (40ants-routes/errors:url e)
                      "/non-existent-url"))))))
+
+
+(deftest test-matched-route-p ()
+  "Test that current-route is set to a matched-route when using with-url."
+  (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"
+    (with-url (*app-routes* "/admin/users/100500")
+      (ok (40ants-routes/matched-route::matched-route-p *current-routes*)))))

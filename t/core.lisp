@@ -118,6 +118,7 @@
 
 
 (deftest test-simple-route-search ()
+  "Test finding routes by name with different namespace configurations."
   (with-url (*app-routes* "/blog/some-post")
     (testing "Blog routes can be found"
       (testing "Without namespace"
@@ -157,6 +158,7 @@
 
 
 (deftest test-simple-route-reverse ()
+  "Test URL generation for routes with different namespace configurations."
   (with-url (*app-routes* "/blog/some-post")
     (testing "Blog routes can be reversed"
       (check-route-url "index"
@@ -185,13 +187,8 @@
                        :slug "foo-bar"))))
 
 
-(deftest test-with-url ()
-  (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"
-    (with-url (*app-routes* "/admin/users/100500")
-      (ok (40ants-routes/matched-route::matched-route-p *current-routes*)))))
-
-
 (deftest test-route-lookup-by-absolute-namespace ()
+  "Test finding routes by absolute namespace."
   (with-url (*app-routes* "/")
     (testing "Lookup by absolute namespaces"
       (check-route "index" :namespace '("app" "blog")
@@ -205,6 +202,7 @@
 
 
 (deftest test-url-generation ()
+  "Test basic URL generation with different namespaces."
   (testing "Basic URL generation"
     (with-url (*app-routes* "/")
       (ok (string= (route-url "index")
@@ -225,6 +223,7 @@
 
 
 (deftest test-namespace-context ()
+  "Test URL generation with different namespace contexts."
   (testing "URL generation with namespace context"
     (with-url (*app-routes* "/")
       (ok (string= (route-url "index")
@@ -244,6 +243,7 @@
 
 
 (deftest test-parameter-validation ()
+  "Test parameter validation for URL generation."
   (testing "Missing parameters cause errors"
     (handler-case
         (progn
@@ -254,6 +254,7 @@
 
 
 (deftest test-breadcrumbs ()
+  "Test breadcrumbs generation."
   (testing "Breadcrumbs generation"
     (with-url (*app-routes* "/admin/users/123")
       (let ((crumbs (get-breadcrumbs "/admin/users/123")))

@@ -20,6 +20,8 @@
 
 
 (deftest test-search-routes-with-namespace ()
+  "Test the internal implementation function that powers route searching.
+   This tests the low-level mechanism for finding routes by namespace."
   (with-url (*app-routes* "/blog/some-post")
     (testing "Blog routes can be found"
       (let ((matched-routes nil))
