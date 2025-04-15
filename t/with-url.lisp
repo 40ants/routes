@@ -7,6 +7,8 @@
   (:import-from #:40ants-routes/with-url
                 #:with-url
                 #:find-route-for-url)
+  (:import-from #:40ants-routes/errors
+                #:no-route-for-url-error)
   (:import-from #:rove
                 #:ng
                 #:testing
@@ -117,3 +119,13 @@
     (with-url (*app* "/bar/foo/some-post")
       (ok (equal *current-namespace*
                  '("app" "bar" "foo"))))))
+
+(deftest test-no-route-for-url-error ()
+  (testing "WITH-URL macro should throw no-route-for-url-error when URL is not found"
+    (ok (handler-case
+            (with-url (*app* "/non-existent-url")
+              (declare (ignore *current-routes*))
+              nil)
+          (no-route-for-url-error (e)
+            (string= (40ants-routes/errors:url e)
+                     "/non-existent-url"))))))

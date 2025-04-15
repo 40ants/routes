@@ -2,6 +2,8 @@
   (:use #:cl)
   (:import-from #:serapeum
                 #:->)
+  (:import-from #:40ants-routes/errors
+                #:no-route-for-url-error)
   (:import-from #:40ants-routes/routes
                 #:routesp
                 #:routes)
@@ -27,7 +29,8 @@
                             included-routes)
                         string)
     (values (or matched-route
-                included-routes)
+                included-routes
+                null)
             (serapeum:soft-list-of (or matched-route
                                        included-routes))
             (serapeum:soft-list-of string)
@@ -62,10 +65,16 @@
 
 
 (defun call-with-url (root-routes url thunk)
-  (multiple-value-bind (*current-routes* *routes-path* *current-namespace*)
+  (multiple-value-bind (matched-route routes-path namespace)
       (find-route-for-url root-routes
                           url)
-    (funcall thunk)))
+    (unless matched-route
+      (error 'no-route-for-url-error :url url))
+    
+    (let ((*current-routes* matched-route)
+          (*routes-path* routes-path)
+          (*current-namespace* namespace))
+      (funcall thunk))))
 
 
 (defmacro with-url ((root-routes url) &body body)

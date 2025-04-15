@@ -2,7 +2,9 @@
   (:use #:cl)
   (:export #:no-common-elements-error
            #:full-namespace
-           #:relative-namespace))
+           #:relative-namespace
+           #:no-route-for-url-error
+           #:url))
 (in-package #:40ants-routes/errors)
 
 
@@ -29,3 +31,11 @@
                      (existing-route condition)
                      (existing-namespace condition)
                      (new-route condition)))))
+
+
+(define-condition no-route-for-url-error (error)
+  ((url :initarg :url
+        :reader url))
+  (:report (lambda (condition stream)
+             (format stream "No route found for URL: ~S"
+                     (url condition)))))
