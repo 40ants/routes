@@ -6,7 +6,6 @@
                 #:find-route)
   (:import-from #:40ants-routes/route
                 #:route-parameters
-                #:route-namespace
                 #:route-name)
   (:import-from #:40ants-routes/url-pattern
                 #:replace-parameters)

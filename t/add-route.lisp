@@ -7,7 +7,8 @@
                 #:ng)
   (:import-from #:40ants-routes/routes
                 #:routes
-                #:children-routes
+                #:children-routes)
+  (:import-from #:40ants-routes/generics
                 #:add-route)
   (:import-from #:40ants-routes/route
                 #:route-name

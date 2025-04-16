@@ -16,6 +16,8 @@
                 #:eval-always)
   (:import-from #:alexandria
                 #:length=)
+  (:import-from #:40ants-routes/generics
+                #:node-namespace)
   (:shadow #:get
            #:delete)
   (:export #:defroutes
@@ -43,7 +45,7 @@
                                       :namespace ,namespace))
 
      ;; In case if we did change route on var redifinition
-     (setf (40ants-routes/routes:routes-namespace ,var-name)
+     (setf (node-namespace ,var-name)
            ,namespace)
      
      (setf (children-routes ,var-name)

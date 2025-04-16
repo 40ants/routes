@@ -2,7 +2,6 @@
   (:use #:cl)
   (:import-from #:40ants-routes/routes
                 #:routes
-                #:routes-namespace
                 #:children-routes)
   (:import-from #:40ants-routes/route
                 #:route-name
@@ -14,6 +13,8 @@
                 #:url-pattern-pattern
                 #:url-pattern)
   (:import-from #:40ants-routes/generics
+                #:has-namespace-p
+                #:node-namespace
                 #:partial-match-url
                 #:match-url
                 #:url-path)
@@ -38,7 +39,7 @@
     (format stream "~S (refers to :namespace ~S)"
             (url-pattern-pattern
              (url-path obj))
-            (routes-namespace obj))))
+            (node-namespace obj))))
 
 
 (defun included-routes-p (obj)
@@ -50,8 +51,12 @@
   (children-routes (original-routes included)))
 
 
-(defmethod routes-namespace ((included included-routes))
-  (routes-namespace (original-routes included)))
+(defmethod has-namespace-p ((obj included-routes))
+  (values t))
+
+
+(defmethod node-namespace ((included included-routes))
+  (node-namespace (original-routes included)))
 
 
 (defmethod match-url ((obj included-routes) (url string) &key on-match)

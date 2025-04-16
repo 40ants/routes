@@ -3,7 +3,10 @@
   (:export #:match-url
            #:partial-match-url
            #:format-url
-           #:url-path))
+           #:url-path
+           #:add-route
+           #:node-namespace
+           #:has-namespace-p))
 (in-package #:40ants-routes/generics)
 
 
@@ -43,3 +46,19 @@
 
 (defgeneric url-path (obj)
   (:documentation "Returns the URL pattern associated with the object."))
+
+
+(defgeneric has-namespace-p (routes)
+  (:documentation "Returns T of node can respond to NODE-NAMESPACE generic-function call.")
+  (:method ((routes t))
+    (values nil)))
+
+
+(defgeneric node-namespace (routes)
+  (:documentation "Returns a string name of node's namepace. Works only for objects for which HAS-NAMESPACE-P returns true."))
+
+
+(defgeneric add-route (routes route-or-routes-to-add &key override)
+  (:documentation "Add a route or included-routes object to the routes collection at runtime.
+If a route with the same path or namespace already exists, an error will be signaled
+unless override is set to true."))

@@ -125,7 +125,6 @@
   (testing "WITH-URL macro should throw no-route-for-url-error when URL is not found"
     (ok (handler-case
             (with-url (*app* "/non-existent-url")
-              (declare (ignore *current-routes*))
               nil)
           (no-route-for-url-error (e)
             (string= (40ants-routes/errors:url e)

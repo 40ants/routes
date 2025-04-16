@@ -7,11 +7,9 @@
                 #:route
                 #:route-name)
   (:import-from #:40ants-routes/routes
-                #:routes-namespace
                 #:routesp
                 #:routes
-                #:children-routes
-                #:collection-namespace)
+                #:children-routes)
   (:import-from #:40ants-routes/included-routes
                 #:included-routes-p
                 #:included-routes
@@ -26,6 +24,8 @@
                 #:->)
   (:import-from #:alexandria
                 #:last-elt)
+  (:import-from #:40ants-routes/generics
+                #:node-namespace)
   (:export #:find-route))
 (in-package #:40ants-routes/find-route)
 
@@ -59,7 +59,7 @@
                                     (cons routes
                                           path)))
                  ((string= namespace-to-search
-                           (routes-namespace routes))
+                           (node-namespace routes))
                   (let ((rest-namespaces (rest namespaces)))
                     (cond
                       (rest-namespaces
@@ -120,7 +120,7 @@
              ;; This is a simplest case, we have to get parent of the current route
              ;; from *routes-path* and search route with the given name among it's
              ;; children:
-             (let* ((parent (second *routes-path*)))
+             (let ((parent (second *routes-path*)))
                (search-child-route-with-name parent name)))
             ;; If absolute namespace was given, then we take the root route
             ;; and start searching down the tree:
@@ -129,9 +129,7 @@
                     (routes (search-routes-with-namespace root namespace
                                                           :on-match on-match)))
                (when routes
-                 (search-child-route-with-name routes name))))
-            (t
-             (error "Namespace should be NIL or in form (:absolute \"foo\" \"bar\").")))))
+                 (search-child-route-with-name routes name)))))))
     (when (and result
                on-match)
       (funcall on-match result))

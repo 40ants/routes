@@ -10,12 +10,15 @@
   (:import-from #:40ants-routes/route
                 #:route)
   (:import-from #:40ants-routes/included-routes
+                #:included-routes-p
                 #:included-routes)
   (:import-from #:40ants-routes/vars
                 #:*current-namespace*
                 #:*routes-path*
                 #:*current-routes*)
   (:import-from #:40ants-routes/generics
+                #:has-namespace-p
+                #:node-namespace
                 #:match-url)
   (:import-from #:40ants-routes/matched-route
                 #:matched-route)
@@ -43,8 +46,13 @@
   (let ((routes-path nil)
         (namespace nil))
     (flet ((collect-matched-route (route)
-             (when (typep route 'routes)
-               (push (40ants-routes/routes::routes-namespace route)
+             (when (and (has-namespace-p route)
+                        ;; We dont need to collect
+                        ;; namespace of INCLUDED-ROUTES,
+                        ;; because it is just duplicates
+                        ;; namespace of the wrapped routes
+                        (not (included-routes-p route)))
+               (push (node-namespace route)
                      namespace))
              (push route routes-path)))
       (declare (dynamic-extent #'collect-matched-route))
