@@ -9,11 +9,13 @@
                 #:routes
                 #:children-routes)
   (:import-from #:40ants-routes/generics
+                #:url-path
                 #:add-route)
   (:import-from #:40ants-routes/route
                 #:route-name
                 #:route)
   (:import-from #:40ants-routes/url-pattern
+                #:url-pattern-pattern
                 #:parse-url-pattern)
   (:import-from #:40ants-routes/errors
                 #:namespace-duplication-error
@@ -90,5 +92,23 @@
 ;; Skip this test for now since it's causing issues
 (deftest test-add-included-routes-with-override ()
   "Test adding included-routes with override=true"
-  (testing "Adding included-routes with override=true should replace the existing included-routes"
-    (ok t "Test skipped for now")))
+  
+  (testing "Adding included-routes with a duplicate namespace and override, should replace old included routes"
+    (let* ((routes (routes ("app")))
+           (included1 (include (routes ("blog")
+                                 (get ("/")))
+                               :path "/blog/"))
+           ;; Here path is different, but namespace is the same - "blog"
+           (included2 (include (routes ("blog")
+                                 (get ("/")))
+                               :path "/blog2/")))
+      (add-route routes included1)
+      (add-route routes included2 :override t)
+
+      (ok (= (length (children-routes routes)) 1)
+          "Only one route exists after override")
+      (let ((route-path (url-pattern-pattern
+                         (url-path (first (children-routes routes))))))
+        (ok (string= route-path
+                     "/blog2/")
+            "The new route replaced the old one")))))
