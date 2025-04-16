@@ -9,6 +9,7 @@
                 #:routes
                 #:children-routes)
   (:import-from #:40ants-routes/generics
+                #:node-namespace
                 #:url-path
                 #:add-route)
   (:import-from #:40ants-routes/route
@@ -75,6 +76,24 @@
           (ok t "Correctly raised namespace-duplication-error"))))))
 
 
+(deftest test-add-route-duplicate-path ()
+  "Test adding included-routes with a duplicate path"
+  (testing "Adding included-routes with a duplicate namespace should signal an error"
+    (let* ((routes (routes ("app")))
+           (route1 (get ("/blog/")))
+           ;; Here path is the same as path of route1
+           (included2 (include (routes ("blog")
+                                 (get ("/")))
+                               :path "/blog/")))
+      (add-route routes route1)
+      (handler-case
+          (progn
+            (add-route routes included2)
+            (ng t "Should have raised a path-duplication-error"))
+        (path-duplication-error ()
+          (ok t "Correctly raised path-duplication-error"))))))
+
+
 (deftest test-add-route-with-override ()
   "Test adding a route with override=true"
   (testing "Adding a route with override=true should replace the existing route"
@@ -90,7 +109,7 @@
 
 
 ;; Skip this test for now since it's causing issues
-(deftest test-add-included-routes-with-override ()
+(deftest test-add-included-routes-with-override-on-namespace-collision ()
   "Test adding included-routes with override=true"
   
   (testing "Adding included-routes with a duplicate namespace and override, should replace old included routes"
@@ -111,4 +130,28 @@
                          (url-path (first (children-routes routes))))))
         (ok (string= route-path
                      "/blog2/")
+            "The new route replaced the old one")))))
+
+
+(deftest test-add-included-routes-with-override-on-path-collision ()
+  "Test adding included-routes with override=true"
+  
+  (testing "Adding included-routes with a duplicate namespace and override, should replace old included routes"
+    (let* ((routes (routes ("app")))
+           (included1 (include (routes ("blog")
+                                 (get ("/")))
+                               :path "/blog/"))
+           ;; Here path is the same, but namespace is the same - "different-blog"
+           (included2 (include (routes ("different-blog")
+                                 (get ("/")))
+                               :path "/blog/")))
+      (add-route routes included1)
+      (add-route routes included2 :override t)
+
+      (ok (= (length (children-routes routes)) 1)
+          "Only one route exists after override")
+
+      (let ((route-namespace (node-namespace (first (children-routes routes)))))
+        (ok (string= route-namespace
+                     "different-blog")
             "The new route replaced the old one")))))

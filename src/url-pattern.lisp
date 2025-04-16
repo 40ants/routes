@@ -10,7 +10,14 @@
   (:import-from #:str
                 #:trim-right
                 #:replace-all)
-  (:import-from #:40ants-routes/generics))
+  (:import-from #:40ants-routes/generics)
+  (:export
+   #:url-pattern
+   #:url-pattern-pattern
+   #:url-pattern-regex
+   #:url-pattern-params
+   #:url-pattern-p
+   #:url-pattern-equal))
 (in-package #:40ants-routes/url-pattern)
 
 
@@ -188,3 +195,16 @@
                                   (replace-parameters obj args))
                 stream)
   (values))
+
+
+(defun url-pattern-p (obj)
+  (typep obj 'url-pattern))
+
+
+(-> url-pattern-equal (url-pattern url-pattern)
+    (values boolean &optional))
+
+(defun url-pattern-equal (left right)
+  "Compares two URL-PATTERN objects"
+  (string= (url-pattern-pattern left)
+           (url-pattern-pattern right)))

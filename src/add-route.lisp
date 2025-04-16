@@ -17,8 +17,45 @@
                 #:included-routes)
   (:import-from #:40ants-routes/errors
                 #:path-duplication-error
-                #:namespace-duplication-error))
+                #:namespace-duplication-error)
+  (:import-from #:serapeum
+                #:soft-list-of
+                #:->)
+  (:import-from #:40ants-routes/url-pattern
+                #:url-pattern-equal
+                #:url-pattern))
 (in-package #:40ants-routes/add-route)
+
+
+(-> search-route-with-path ((soft-list-of (or route
+                                              included-routes))
+                            url-pattern)
+    (values (or null
+                route
+                included-routes)
+            &optional))
+
+(defun search-route-with-path (children path)
+  (find path children
+        :key #'url-path
+        :test #'url-pattern-equal))
+
+
+(-> search-route-with-namespace ((soft-list-of (or route
+                                                   included-routes))
+                                 string)
+    (values (or null
+                route
+                included-routes)
+            &optional))
+
+(defun search-route-with-namespace (children namespace)
+  (when namespace
+    (loop for existing-route in children
+          when (and (has-namespace-p existing-route)
+                    (string= (node-namespace existing-route)
+                             namespace))
+            do (return existing-route))))
 
 
 (defmethod add-route ((routes routes) (route route) &key override)
@@ -27,17 +64,18 @@ If a route with the same path already exists, an error will be signaled
 unless override is set to true."
   (let* ((children (children-routes routes))
          (path (url-path route))
-         (duplicate-route nil))
+         (duplicate-route
+           (search-route-with-path children path)))
     
     ;; Check for path duplication
-    (loop for existing-route in children
-          when (and (routep existing-route)
-                    ;; TODO: vожет убрать princ-to-string?
-                    ;; заменить на url-pattern-pattern
-                    (equal (princ-to-string (url-path existing-route))
-                           (princ-to-string path)))
-            do (setf duplicate-route existing-route)
-               (return))
+    ;; (loop for existing-route in children
+    ;;       when (and (routep existing-route)
+    ;;                 ;; TODO: vожет убрать princ-to-string?
+    ;;                 ;; заменить на url-pattern-pattern
+    ;;                 (equal (princ-to-string (url-path existing-route))
+    ;;                        (princ-to-string path)))
+    ;;         do (setf duplicate-route existing-route)
+    ;;            (return))
     
     (cond
       ;; If duplicate found and override is true, remove the old route
@@ -54,7 +92,8 @@ unless override is set to true."
       
       ;; No duplicate found, just add the route
       (t
-       (setf (children-routes routes) (cons route children))))
+       (setf (children-routes routes)
+             (cons route children))))
     
     route))
 
@@ -74,30 +113,35 @@ If the object has a namespace and a route with the same namespace already exists
 an error will be signaled unless override is true."
   (let* ((children (children-routes routes))
          (namespace (node-namespace route))
-         (duplicate-route nil))
-    
-    ;; Check for namespace duplication if the route has a namespace
-    (when namespace
-      (loop for existing-route in children
-            when (and (has-namespace-p existing-route)
-                      (string= (node-namespace existing-route)
-                               namespace))
-              do (setf duplicate-route existing-route)
-                 (return)))
-    
+         (duplicate-by-path-route
+           (search-route-with-path children (url-path route)))
+         (duplicate-by-namespace-route
+           (search-route-with-namespace children namespace)))
+
     (cond
       ;; If duplicate found and override is true, remove the old route and add the new one
-      ((and duplicate-route override)
+      ((and (or duplicate-by-path-route
+                duplicate-by-namespace-route)
+            override)
        ;; Directly set the slot value to bypass the :around method
        (setf (children-routes routes)
              (cons route
-                   (remove duplicate-route
-                           (children-routes routes)))))
+                   (remove-if (lambda (item)
+                                (or (eql duplicate-by-path-route
+                                         item)
+                                    (eql duplicate-by-namespace-route
+                                         item)))
+                              (children-routes routes)))))
       
       ;; If duplicate found and override is false, signal an error
-      (duplicate-route
+      (duplicate-by-namespace-route
        (error 'namespace-duplication-error
-              :existing-route duplicate-route
+              :existing-route duplicate-by-namespace-route
+              :new-route route
+              :namespace namespace))
+      (duplicate-by-path-route
+       (error 'path-duplication-error
+              :existing-route duplicate-by-path-route
               :new-route route
               :namespace namespace))
       

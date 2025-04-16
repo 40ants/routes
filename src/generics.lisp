@@ -45,7 +45,7 @@
 
 
 (defgeneric url-path (obj)
-  (:documentation "Returns the URL pattern associated with the object."))
+  (:documentation "Returns the 40ANTS-ROUTES/URL-PATTERN::URL-PATTERN associated with the object."))
 
 
 (defgeneric has-namespace-p (routes)
