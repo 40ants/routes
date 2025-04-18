@@ -143,7 +143,7 @@ an error will be signaled unless override is true."
        (error 'path-duplication-error
               :existing-route duplicate-by-path-route
               :new-route route
-              :namespace namespace))
+              :path namespace))
       
       ;; No duplicate found, just add the route
       (t
