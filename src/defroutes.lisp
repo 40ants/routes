@@ -30,7 +30,7 @@
 (in-package #:40ants-routes/defroutes)
 
 
-(defmacro defroutes ((var-name &key namespace)
+(defmacro defroutes ((var-name &key namespace (routes-class 'routes))
                      &body route-definitions)
   "Define a variable holding collection of routes."
   (unless namespace
@@ -41,7 +41,7 @@
     (error "NAMESPACE should be a non-empty string."))
   
   `(eval-always 
-     (defvar ,var-name (make-instance 'routes
+     (defvar ,var-name (make-instance ',routes-class
                                       :namespace ,namespace))
 
      ;; In case if we did change route on var redifinition
@@ -53,7 +53,7 @@
      ,var-name))
 
 
-(defmacro routes ((namespace)
+(defmacro routes ((namespace &key (routes-class 'routes))
                   &body route-definitions)
   "Define a variable holding collection of routes."
   (unless (and (typep namespace 'string)
@@ -62,7 +62,7 @@
 
   (alexandria:with-gensyms (var-name)
     `(let ((,var-name
-             (make-instance 'routes
+             (make-instance ',routes-class
                             :namespace ,namespace)))
        (setf (children-routes ,var-name)
              (list ,@route-definitions))
@@ -70,7 +70,8 @@
 
 
 (eval-always
-  (defun generate-route (http-method path name title handler-body)
+  (defun generate-route (http-method path name title handler-body &key (route-class 'route))
+    "A helper to use in your own macro to create routes"
     (let ((url-pattern (parse-url-pattern path))
           (handler-docstring
             (fmt "Handler for ~S ~S"
@@ -91,7 +92,7 @@
          ;; during macro-expansion time:
          (let ((url-pattern
                  (parse-url-pattern ,path)))
-           (make-instance 'route
+           (make-instance ',route-class
                           :name ,name
                           :title ,title
                           :method ,http-method
@@ -99,17 +100,21 @@
                           :handler #'handler))))))
 
 
-(defmacro get ((path &key name title) &body handler-body)
-  (generate-route :get path name title handler-body))
+(defmacro get ((path &key name title (route-class 'route)) &body handler-body)
+  (generate-route :get path name title handler-body
+                  :route-class route-class))
 
-(defmacro post ((path &key name title) &body handler-body)
-  (generate-route :post path name title handler-body))
+(defmacro post ((path &key name title (route-class 'route)) &body handler-body)
+  (generate-route :post path name title handler-body
+                  :route-class route-class))
 
-(defmacro put ((path &key name title) &body handler-body)
-  (generate-route :put path name title handler-body))
+(defmacro put ((path &key name title (route-class 'route)) &body handler-body)
+  (generate-route :put path name title handler-body
+                  :route-class route-class))
 
-(defmacro delete ((path &key name title) &body handler-body)
-  (generate-route :delete path name title handler-body))
+(defmacro delete ((path &key name title (route-class 'route)) &body handler-body)
+  (generate-route :delete path name title handler-body
+                  :route-class route-class))
 
 
 (-> include (routes &key (:path string))

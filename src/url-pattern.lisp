@@ -17,7 +17,8 @@
    #:url-pattern-regex
    #:url-pattern-params
    #:url-pattern-p
-   #:url-pattern-equal))
+   #:url-pattern-equal
+   #:parse-url-pattern))
 (in-package #:40ants-routes/url-pattern)
 
 
@@ -99,6 +100,7 @@
                    :pattern pattern
                    :regex regex-pattern
                    :params (nreverse params))))
+
 
 (-> match-url (url-pattern string &key (:partialp boolean))
     (values boolean

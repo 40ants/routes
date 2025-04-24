@@ -105,7 +105,12 @@
             &optional))
 
 (defun find-route (name &key namespace on-match)
-  "Find a route by name in the given namespace hierarchy."
+  "Find a route by name in the given namespace hierarchy.
+
+   If route was found, then returns it.
+
+   Additionally, it will call ON-MATCH callable argument
+   with each route node along path to the leaf route."
   (unless *routes-path*
     (error "Use WITH-URL macro to set current routes object."))
 
@@ -127,7 +132,7 @@
             (namespace
              (let* ((root (last-elt *routes-path*))
                     (routes (search-routes-with-namespace root namespace
-                                                          :on-match on-match)))
+                             :on-match on-match)))
                (when routes
                  (search-child-route-with-name routes name)))))))
     (when (and result

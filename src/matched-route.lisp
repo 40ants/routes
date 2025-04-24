@@ -10,7 +10,12 @@
                 #:url-pattern-pattern)
   (:import-from #:40ants-routes/generics
                 #:match-url
-                #:url-path))
+                #:url-path)
+  (:export
+   #:matched-route
+   #:original-route
+   #:matched-route-parameters
+   #:matched-route-p))
 (in-package #:40ants-routes/matched-route)
 
 

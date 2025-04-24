@@ -15,8 +15,7 @@
                 #:namespace-duplication-error
                 #:path-duplication-error)
   (:export #:routes
-           #:children-routes
-           #:add-route))
+           #:children-routes))
 (in-package #:40ants-routes/routes)
 
 

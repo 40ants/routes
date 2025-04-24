@@ -6,7 +6,8 @@
            #:no-route-for-url-error
            #:url
            #:namespace-duplication-error
-           #:path-duplication-error))
+           #:path-duplication-error
+           #:url-resolution-error))
 (in-package #:40ants-routes/errors)
 
 
@@ -55,3 +56,14 @@
   (:report (lambda (condition stream)
              (format stream "No route found for URL: ~S"
                      (url condition)))))
+
+
+(define-condition url-resolution-error (error)
+  ((route-name :initarg :route-name
+               :reader route-name)
+   (namespace :initarg :namespace
+               :reader namespace))
+  (:report (lambda (condition stream)
+             (format stream "Unable to find route with name ~S and namespace ~S."
+                     (route-name condition)
+                     (namespace condition)))))
