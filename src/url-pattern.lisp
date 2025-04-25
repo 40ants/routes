@@ -80,7 +80,8 @@
                  (regex (cond
                           ((string= param-type "string") "([^/]+)")
                           ((string= param-type "int") "(\\d+)")
-                          (t (error "Unknown parameter type: ~A" param-type)))))
+                          ;; Treat it as a custom regex pattern
+                          (t (format nil "(~A)" param-type)))))
             
             ;; Add parameter to the list
             (push (list (intern (string-upcase param-name) :keyword)
@@ -134,11 +135,12 @@
                  for reg-end across reg-ends
                  for (param-name param-type) in params
                  do (push (cons param-name 
-                                (if (string= param-type "int")
-                                    (parse-integer url
-                                                   :start reg-start
-                                                   :end reg-end)
-                                    (subseq url reg-start reg-end)))
+                                (cond
+                                  ((string= param-type "int")
+                                   (parse-integer url
+                                                  :start reg-start
+                                                  :end reg-end))
+                                  (t (subseq url reg-start reg-end))))
                           param-values))
            (values t
                    (nreverse param-values)

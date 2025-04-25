@@ -135,7 +135,7 @@
     (check-matching "/files/<.*:path>"
                     "/files/"
                     t
-                    '((:path . ""))))
+                    '((:path . "")))))
 
 
 (defun check-parameters-replacing (pattern params expected-result)
