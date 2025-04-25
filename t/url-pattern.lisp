@@ -161,4 +161,7 @@
                                 "/blog/foo-bar")
     (check-parameters-replacing "/blog/<string:slug>/comments/<int:thread-id>" '(:slug "foo-bar"
                                                                                  :thread-id 100500)
-                                "/blog/foo-bar/comments/100500")))
+                                "/blog/foo-bar/comments/100500"))
+  (testing "With params and regex in path"
+    (check-parameters-replacing "/blog/<[a-z][a-z0-9-]+:slug>" '(:slug "foo-bar")
+                                "/blog/foo-bar")))
