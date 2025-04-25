@@ -112,6 +112,32 @@
                     '((:slug . "foo-bar")))))
 
 
+(deftest test-regex-pattern-matching ()
+  (testing "With regex patterns in params"
+    ;; Test with wildcard regex pattern
+    (check-matching "/files/<.*:path>"
+                    "/files/some/nested/path/file.txt"
+                    t
+                    '((:path . "some/nested/path/file.txt")))
+    
+    ;; Test with more specific regex pattern (starts with lowercase letter, followed by lowercase letters or numbers)
+    (check-matching "/files/<[a-z][a-z0-9]+:path>"
+                    "/files/abc123"
+                    t
+                    '((:path . "abc123")))
+    
+    ;; Test with more specific regex pattern that should not match
+    (check-matching "/files/<[a-z][a-z0-9]+:path>"
+                    "/files/ABC123"
+                    nil)
+    
+    ;; Test with empty path for wildcard pattern
+    (check-matching "/files/<.*:path>"
+                    "/files/"
+                    t
+                    '((:path . ""))))
+
+
 (defun check-parameters-replacing (pattern params expected-result)
   (let* ((url-pattern (parse-url-pattern pattern))
          (result (replace-parameters url-pattern params))
