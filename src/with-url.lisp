@@ -15,7 +15,7 @@
   (:import-from #:40ants-routes/vars
                 #:*current-namespace*
                 #:*routes-path*
-                #:*current-routes*)
+                #:*current-route*)
   (:import-from #:40ants-routes/generics
                 #:has-namespace-p
                 #:node-namespace
@@ -79,7 +79,7 @@
     (unless matched-route
       (error 'no-route-for-url-error :url url))
     
-    (let ((*current-routes* matched-route)
+    (let ((*current-route* matched-route)
           (*routes-path* routes-path)
           (*current-namespace* namespace))
       (funcall thunk))))

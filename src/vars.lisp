@@ -12,7 +12,7 @@
    Holds a list of namespace names starting from the current route's namespace and ending with root routes node.")
 
 
-(defvar-unbound *current-routes*
+(defvar-unbound *current-route*
   "Current route collection for route resolution.")
 
 

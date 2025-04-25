@@ -19,7 +19,7 @@
                 #:route-method
                 #:route-name)
   (:import-from #:40ants-routes/vars
-                #:*current-routes*)
+                #:*current-route*)
   (:import-from #:40ants-routes/find-route
                 #:find-route)
   (:import-from #:40ants-routes/route-url

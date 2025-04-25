@@ -8,13 +8,16 @@
                 #:url-pattern)
   (:import-from #:40ants-routes/generics
                 #:url-path)
+  (:import-from #:40ants-routes/vars
+                #:*current-route*)
   (:export #:route
            #:route-name
            #:route-handler
            #:route-parameters
            #:route-title
            #:route-method
-           #:routep))
+           #:routep
+           #:current-route))
 (in-package #:40ants-routes/route)
 
 
@@ -64,3 +67,12 @@
    (url-path obj)
    stream
    args))
+
+
+(defun current-route ()
+  "Returns the current route.
+   
+   Should be called only during 40ANTS-ROUTES/WITH-URL:WITH-URL macro body execution."
+  (unless (boundp '*current-route*)
+    (error "CURRENT-ROUTE should be called only during 40ANTS-ROUTES/WITH-URL:WITH-URL macro body execution."))
+  *current-route*)

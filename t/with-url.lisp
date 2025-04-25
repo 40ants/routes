@@ -20,7 +20,7 @@
   (:import-from #:40ants-routes/vars
                 #:*current-namespace*
                 #:*routes-path*
-                #:*current-routes*)
+                #:*current-route*)
   (:import-from #:40ants-routes/included-routes
                 #:included-routes
                 #:included-routes-p
@@ -79,7 +79,7 @@
   (testing "WITH-URL macro should search a route matching given URL"
     (with-url (*app* "/bar/foo/some-post")
       (ng (eql *app*
-               *current-routes*)
+               *current-route*)
           "Current route should not be equal to the root routes object")
       (ok (= (length *routes-path*)
              4))
@@ -135,4 +135,4 @@
   "Test that current-route is set to a matched-route when using with-url."
   (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"
     (with-url (*app-routes* "/admin/users/100500")
-      (ok (40ants-routes/matched-route::matched-route-p *current-routes*)))))
+      (ok (40ants-routes/matched-route::matched-route-p *current-route*)))))
