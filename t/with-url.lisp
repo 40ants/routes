@@ -5,6 +5,7 @@
                           #:include
                           #:get)
   (:import-from #:40ants-routes/with-url
+                #:with-partially-matched-url
                 #:with-url
                 #:find-route-for-url)
   (:import-from #:40ants-routes/errors
@@ -31,7 +32,9 @@
                 #:original-route
                 #:matched-route-p)
   (:import-from #:40ants-routes-tests/fixtures
-                #:*app-routes*))
+                #:*app-routes*)
+  (:import-from #:40ants-routes/route
+                #:current-route))
 (in-package #:40ants-routes-tests/with-url)
 
 
@@ -55,7 +58,7 @@
 
 (defroutes (*app* :namespace "app")
   (get ("/" :name "index")
-       (fmt "App index"))
+    (fmt "App index"))
   (include *bar*
            :path "/bar/"))
 
@@ -121,13 +124,15 @@
     (with-url (*app* "/bar/foo/some-post")
       (ok (equal *current-namespace*
                  '("app" "bar" "foo"))))))
+
+
 (deftest test-no-route-for-url-error ()
   (testing "WITH-URL macro should throw no-route-for-url-error when URL is not found"
     (ok (handler-case
             (with-url (*app* "/non-existent-url")
               nil)
           (no-route-for-url-error (e)
-            (string= (40ants-routes/errors:url e)
+            (string= (40ants-routes/errors:error-url e)
                      "/non-existent-url"))))))
 
 
@@ -135,4 +140,31 @@
   "Test that current-route is set to a matched-route when using with-url."
   (testing "Checking if current-route will be set to the route of \"user\" inside admin interface"
     (with-url (*app-routes* "/admin/users/100500")
-      (ok (40ants-routes/matched-route::matched-route-p *current-route*)))))
+      (ok (40ants-routes/matched-route::matched-route-p (current-route))))))
+
+
+
+
+(deftest test-partial-namespace-is-known-even-if-no-complete-match-found ()
+  (testing "WITH-URL macro should throw no-route-for-url-error when URL is not found"
+    (with-partially-matched-url (*app* "/bar/foo/missing")
+      (ok (equal 40ants-routes/vars::*current-namespace*
+                 '("app" "bar" "foo"))))))
+
+
+(defroutes (*server* :namespace "server")
+  (get ("/blah"))
+  (include *app*
+           :path "/"))
+
+
+(deftest test-partial-namespace-is-known-even-if-no-complete-match-found2 ()
+  "This is similar to previous test, but included route has / prefix.
+
+   Because this time *app* routes is included into server routes with / prefix,
+   we consider we were inside \"app\" routes when did't found /missing route.
+   Thus the namespace should be from two parts (\"server\" \"app\")."
+  (testing "WITH-URL macro should throw no-route-for-url-error when URL is not found"
+    (with-partially-matched-url (*server* "/missing")
+      (ok (equal 40ants-routes/vars::*current-namespace*
+                 '("server" "app"))))))

@@ -17,7 +17,8 @@
            #:route-title
            #:route-method
            #:routep
-           #:current-route))
+           #:current-route
+           #:current-route-p))
 (in-package #:40ants-routes/route)
 
 
@@ -67,6 +68,14 @@
    (url-path obj)
    stream
    args))
+
+
+(defun current-route-p ()
+  "Returns T if there current route matching the URL was found..
+   
+   Should be called only during 40ANTS-ROUTES/WITH-URL:WITH-URL
+   or 40ANTS-ROUTES/WITH-URL:WITH-PARTIALLY-MATCHED-URL macro body execution."
+  (boundp '*current-route*))
 
 
 (defun current-route ()

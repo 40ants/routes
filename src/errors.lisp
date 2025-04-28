@@ -4,10 +4,11 @@
            #:full-namespace
            #:relative-namespace
            #:no-route-for-url-error
-           #:url
+           #:error-url
            #:namespace-duplication-error
            #:path-duplication-error
-           #:url-resolution-error))
+           #:url-resolution-error
+           #:error-routes-path))
 (in-package #:40ants-routes/errors)
 
 
@@ -52,7 +53,10 @@
 
 (define-condition no-route-for-url-error (error)
   ((url :initarg :url
-        :reader url))
+        :reader error-url)
+   (routes-path :initarg :routes-path
+                :reader error-routes-path
+                :documentation "A path of routes corresponding matching to the prefix of the current URL."))
   (:report (lambda (condition stream)
              (format stream "No route found for URL: ~S"
                      (url condition)))))
