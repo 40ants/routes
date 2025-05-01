@@ -51,8 +51,8 @@
           ((and matched-route full-routes-path)
            (with-output-to-string (s)
              (write-char #\/ s)
-             (loop for piece in (nreverse full-routes-path)
-                   do (format-url piece s args))))
+             (loop for 40ants-routes/vars::*current-route* in (nreverse full-routes-path)
+                   do (format-url 40ants-routes/vars::*current-route* s args))))
           (t
            (error 'url-resolution-error
                   :route-name name

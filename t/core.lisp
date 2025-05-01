@@ -196,7 +196,11 @@
             (rove:ng t "Should have raised an argument-missing-error for missing id parameter"))
         (error (e)
           (rove:ok (typep e 'argument-missing-error)
-                   (format nil "Expected argument-missing-error but got ~A" (type-of e))))))))
+                   (format nil "Expected argument-missing-error but got ~A" (type-of e)))
+          (rove:ok (equal (40ants-routes/errors:argument-missing-error-route-name e)
+                          "user"))
+          (rove:ok (equal (40ants-routes/errors:argument-missing-error-parameter e)
+                          :id)))))))
 
 
 (deftest test-route-lookup-by-absolute-namespace ()

@@ -10,7 +10,9 @@
            #:url-resolution-error
            #:error-routes-path
            #:argument-missing-error
-           #:missing-parameter))
+           #:missing-parameter
+           #:argument-missing-error-route-name
+           #:argument-missing-error-parameter))
 (in-package #:40ants-routes/errors)
 
 
@@ -77,9 +79,9 @@
 
 (define-condition argument-missing-error (error)
  ((route-name :initarg :route-name
-              :reader route-name)
+              :reader argument-missing-error-route-name)
   (missing-parameter :initarg :missing-parameter
-                     :reader missing-parameter))
+                     :reader argument-missing-error-parameter))
  (:report (lambda (condition stream)
             (format stream "Missing required parameter ~S for route ~S."
                     (missing-parameter condition)

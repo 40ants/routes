@@ -78,9 +78,8 @@
                  :on-match on-match))))
 
 
-(defmethod 40ants-routes/generics::format-url ((obj included-routes) stream args &optional route-name)
+(defmethod 40ants-routes/generics::format-url ((obj included-routes) stream args)
   (40ants-routes/generics::format-url
    (url-path obj)
    stream
-   args
-   route-name))
+   args))
