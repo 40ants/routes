@@ -77,7 +77,8 @@
                                            #'add-collection-if-needed))))))
 
 
-(defmethod format-url ((obj routes) stream args)
+(defmethod format-url ((obj routes) stream args &optional route-name)
+  (declare (ignore route-name))
   (values))
 
 

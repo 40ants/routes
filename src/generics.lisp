@@ -38,10 +38,12 @@
     a sub-element can be returned in case of match."))
 
 
-(defgeneric format-url (obj stream args)
+(defgeneric format-url (obj stream args &optional route-name)
   (:documentation "Should write a piece of URL to the STREAM substituting arguments from plist ARGS.
-
-                   When called, it should write a piece of URL without starting backslash."))
+                   
+                   When called, it should write a piece of URL without starting backslash.
+                   
+                   The optional ROUTE-NAME parameter is used for error reporting when a required parameter is missing."))
 
 
 (defgeneric url-path (obj)

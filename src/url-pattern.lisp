@@ -11,6 +11,8 @@
                 #:trim-right
                 #:replace-all)
   (:import-from #:40ants-routes/generics)
+  (:import-from #:40ants-routes/errors
+                #:argument-missing-error)
   (:export
    #:url-pattern
    #:url-pattern-pattern
@@ -154,24 +156,30 @@
 (-> replace-parameters (url-pattern list)
     (values string &optional))
 
-(defun replace-parameters (url-pattern args)
+(defun replace-parameters (url-pattern args &optional route-name)
   "Replace parameters in a URL pattern with their values.
    url-pattern: The original URL pattern (e.g., '/<string:slug>')
    params: List of parameter specifications ((name type) ...)
-   args: Property list of parameter values (:name value ...)"
+   args: Property list of parameter values (:name value ...)
+   route-name: Optional route name for error reporting"
   (loop with params = (url-pattern-params url-pattern)
         with pattern = (url-pattern-pattern url-pattern)
         with result = pattern
         for (param-name param-type) in params
         for param-value = (getf args param-name)
-        when param-value
-          do (let ((param-with-type
-                     (format nil "<~A:~A>"
-                             param-type
-                             (string-downcase (symbol-name param-name)))))
-               (setf result (replace-all param-with-type
-                                         (princ-to-string param-value)
-                                         result)))
+        do (if param-value
+               (let ((param-with-type
+                       (format nil "<~A:~A>"
+                               param-type
+                               (string-downcase (symbol-name param-name)))))
+                 (setf result (replace-all param-with-type
+                                           (princ-to-string param-value)
+                                           result)))
+               ;; If parameter is missing, throw an error
+               (when route-name
+                 (error 'argument-missing-error
+                        :route-name route-name
+                        :missing-parameter param-name)))
         finally (return result)))
 
 
@@ -194,9 +202,9 @@
             end-position)))
 
 
-(defmethod 40ants-routes/generics::format-url ((obj url-pattern) stream args)
+(defmethod 40ants-routes/generics::format-url ((obj url-pattern) stream args &optional route-name)
   (write-string (string-left-trim '(#\/)
-                                  (replace-parameters obj args))
+                                  (replace-parameters obj args route-name))
                 stream)
   (values))
 

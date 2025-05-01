@@ -63,11 +63,12 @@
   (typep obj 'route))
 
 
-(defmethod 40ants-routes/generics::format-url ((obj route) stream args)
+(defmethod 40ants-routes/generics::format-url ((obj route) stream args &optional route-name)
   (40ants-routes/generics::format-url
    (url-path obj)
    stream
-   args))
+   args
+   (or route-name (route-name obj))))
 
 
 (defun current-route-p ()

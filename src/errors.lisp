@@ -8,7 +8,9 @@
            #:namespace-duplication-error
            #:path-duplication-error
            #:url-resolution-error
-           #:error-routes-path))
+           #:error-routes-path
+           #:argument-missing-error
+           #:missing-parameter))
 (in-package #:40ants-routes/errors)
 
 
@@ -71,3 +73,14 @@
              (format stream "Unable to find route with name ~S and namespace ~S."
                      (route-name condition)
                      (namespace condition)))))
+
+
+(define-condition argument-missing-error (error)
+ ((route-name :initarg :route-name
+              :reader route-name)
+  (missing-parameter :initarg :missing-parameter
+                     :reader missing-parameter))
+ (:report (lambda (condition stream)
+            (format stream "Missing required parameter ~S for route ~S."
+                    (missing-parameter condition)
+                    (route-name condition)))))

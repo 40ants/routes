@@ -24,6 +24,8 @@
                 #:find-route)
   (:import-from #:40ants-routes/route-url
                 #:route-url)
+  (:import-from #:40ants-routes/errors
+                #:argument-missing-error)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
   (:import-from #:40ants-routes/breadcrumbs
@@ -184,7 +186,17 @@
       (check-route-url "post"
                        "/admin/posts/foo-bar"
                        :namespace '("admin" "posts")
-                       :slug "foo-bar"))))
+                       :slug "foo-bar")))
+  
+  (with-url (*app-routes* "/")
+    (testing "Missing required parameters should raise argument-missing-error"
+      (handler-case
+          (progn
+            (route-url "user" :namespace '("app" "admin" "users"))
+            (rove:ng t "Should have raised an argument-missing-error for missing id parameter"))
+        (error (e)
+          (rove:ok (typep e 'argument-missing-error)
+                   (format nil "Expected argument-missing-error but got ~A" (type-of e))))))))
 
 
 (deftest test-route-lookup-by-absolute-namespace ()
