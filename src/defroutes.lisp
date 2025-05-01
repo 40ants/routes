@@ -24,7 +24,6 @@
   (:shadow #:get
            #:delete)
   (:export #:defroutes
-           #:url
            #:get
            #:post
            #:put

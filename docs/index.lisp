@@ -3,15 +3,8 @@
   (:import-from #:40ants-doc
                 #:defsection
                 #:defsection-copy)
-  (:import-from #:40ants-routes
-                #:defroutes
-                #:url
-                #:include
-                #:route-url
-                #:with-url
-                #:*current-namespace*
-                #:find-route
-                #:get-breadcrumbs)
+  (:import-from #:40ants-doc/autodoc
+                #:defautodoc)
   (:export #:@index
            #:@readme))
 (in-package #:40ants-routes-docs/index)
@@ -22,6 +15,9 @@
                                    "HTTP"
                                    "URL"
                                    "REPL"
+                                   "POST"
+                                   "PUT"
+                                   "GET"
                                    "ASDF"
                                    "API"
                                    "HTML"
@@ -104,35 +100,9 @@ Breadcrumbs can be generated using the `get-breadcrumbs` function:
   (@usage section)
   (@api section))
 
-(defsection @readme (:title "40ants-routes")
-  :export nil
-  
-  "[![](https://github-actions.40ants.com/40ants/routes/matrix.svg?only=ci.run-tests)](https://github.com/40ants/routes/actions)
 
-   Framework agnostic URL routing library for Common Lisp.
-   
-   ## Overview
-   
-   40ants-routes is a framework-agnostic URL routing library for Common Lisp, inspired by Django's URL routing system. It provides a clean and flexible way to define URL routes, generate URLs, and handle URL parameters.
-   
-   ## Features
-   
-   * Define routes with namespaces
-   * Include routes from libraries into applications
-   * Generate URLs based on route names
-   * Handle URL parameters
-   * Generate breadcrumbs
-   * Support for different types of routes (server, application, library)
-   
-   ## Installation
-   
-   ```lisp
-   (ql:quickload :40ants-routes)
-   ```
-   
-   ## Documentation
-   
-   Full documentation is available at [https://40ants.com/routes/](https://40ants.com/routes/).")
+(40ants-doc:defsection-copy @readme @index)
+
 
 (defsection @usage (:title "Usage Examples")
   "### Defining Routes
@@ -186,12 +156,5 @@ Breadcrumbs can be generated using the `get-breadcrumbs` function:
 ; => (((\"/\" . \"Home\") (\"/admin\" . \"Admin\") (\"/admin/users\" . \"Users\") (\"/admin/users/123\" . \"User Profile\")))
 ```")
 
-(defsection @api (:title "API Reference")
-  (defroutes function)
-  (url macro)
-  (include macro)
-  (route-url function)
-  (with-url macro)
-  (*current-namespace* variable)
-  (find-route function)
-  (get-breadcrumbs function))
+(defautodoc @api (:title "API Reference"
+                  :system "40ants-routes"))

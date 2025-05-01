@@ -19,7 +19,6 @@
   (:export #:route
            #:route-name
            #:route-handler
-           #:route-parameters
            #:route-title
            #:route-method
            #:routep
@@ -65,7 +64,7 @@
     (values boolean &optional))
 
 (defun routep (obj)
-  "Checks if object is of type ROUTE"
+  "Checks if OBJ is of ROUTE class."
   (typep obj 'route))
 
 
