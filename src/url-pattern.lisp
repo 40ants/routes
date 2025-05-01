@@ -11,16 +11,13 @@
                 #:trim-right
                 #:replace-all)
   (:import-from #:40ants-routes/generics)
-  (:import-from #:40ants-routes/errors
-                #:argument-missing-error)
-  (:export
-   #:url-pattern
-   #:url-pattern-pattern
-   #:url-pattern-regex
-   #:url-pattern-params
-   #:url-pattern-p
-   #:url-pattern-equal
-   #:parse-url-pattern))
+  (:export #:url-pattern
+           #:url-pattern-pattern
+           #:url-pattern-regex
+           #:url-pattern-params
+           #:url-pattern-p
+           #:url-pattern-equal
+           #:parse-url-pattern))
 (in-package #:40ants-routes/url-pattern)
 
 
@@ -153,40 +150,6 @@
                  nil))))))
 
 
-(-> replace-parameters (url-pattern list)
-    (values string &optional))
-
-(defun replace-parameters (url-pattern args)
-  "Replace parameters in a URL pattern with their values.
-
-   - URL-PATTERN - The original URL pattern (e.g., '/<string:slug>')
-   - ARGS - Property list of parameter values (:name value ...)"
-  (loop with params = (url-pattern-params url-pattern)
-        with pattern = (url-pattern-pattern url-pattern)
-        with result = pattern
-        for (param-name param-type) in params
-        for param-value = (getf args param-name)
-        do (cond
-             (param-value
-              (let ((param-with-type
-                      (format nil "<~A:~A>"
-                              param-type
-                              (string-downcase (symbol-name param-name)))))
-                (setf result (replace-all param-with-type
-                                          (princ-to-string param-value)
-                                          result))))
-             (t
-              ;; If parameter is missing, throw an error
-              (let ((route-name (when (40ants-routes/route:current-route-p)
-                                  (40ants-routes/route:route-name
-                                   (40ants-routes/route:current-route)))))
-                (error 'argument-missing-error
-                       :route-name (or route-name
-                                       "unknown-route-name")
-                       :missing-parameter param-name))))
-        finally (return result)))
-
-
 (defmethod 40ants-routes/generics::match-url ((obj url-pattern) (url string) &key on-match)
   (when on-match
     (error "ON-MATCH argument should not be passed to a method MATCH-URL specialized on URL-PATTERN, because these objects are implementation details and we don't want to expose them in the chain of matched routes."))
@@ -204,13 +167,6 @@
     (declare (ignore parameters))
     (values matched-obj
             end-position)))
-
-
-(defmethod 40ants-routes/generics::format-url ((obj url-pattern) stream args)
-  (write-string (string-left-trim '(#\/)
-                                  (replace-parameters obj args))
-                stream)
-  (values))
 
 
 (defun url-pattern-p (obj)

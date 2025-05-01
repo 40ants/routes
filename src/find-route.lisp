@@ -14,10 +14,6 @@
                 #:included-routes-p
                 #:included-routes
                 #:original-routes)
-  (:import-from #:split-sequence
-                #:split-sequence)
-  (:import-from #:40ants-routes/url-pattern
-                #:match-url)
   (:import-from #:serapeum
                 #:length<=
                 #:soft-list-of

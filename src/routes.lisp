@@ -8,9 +8,6 @@
                 #:has-namespace-p)
   (:import-from #:serapeum
                 #:dict)
-  (:import-from #:40ants-routes/route
-                #:routep
-                #:route)
   (:import-from #:40ants-routes/errors
                 #:namespace-duplication-error
                 #:path-duplication-error)

@@ -3,12 +3,6 @@
   (:import-from #:40ants-routes/routes
                 #:routes
                 #:children-routes)
-  (:import-from #:40ants-routes/route
-                #:route-name
-                #:route-parameters
-                #:route-title
-                #:route-method
-                #:route-handler)
   (:import-from #:40ants-routes/url-pattern
                 #:url-pattern-pattern
                 #:url-pattern)

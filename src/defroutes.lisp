@@ -18,6 +18,9 @@
                 #:length=)
   (:import-from #:40ants-routes/generics
                 #:node-namespace)
+  (:import-from #:str
+                #:ensure-suffix
+                #:ensure-prefix)
   (:shadow #:get
            #:delete)
   (:export #:defroutes
@@ -121,9 +124,9 @@
     (values included-routes))
 
 (defun include (routes &key (path "/"))
-  (let ((path (str:ensure-prefix
+  (let ((path (ensure-prefix
                "/"
-               (str:ensure-suffix "/" path))))
+               (ensure-suffix "/" path))))
     (make-instance 'included-routes
                    :original-collection routes
                    :path (parse-url-pattern path))))

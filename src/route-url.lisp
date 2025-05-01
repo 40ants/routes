@@ -4,16 +4,6 @@
                 #:*current-namespace*)
   (:import-from #:40ants-routes/find-route
                 #:find-route)
-  (:import-from #:40ants-routes/route
-                #:route-parameters
-                #:route-name)
-  (:import-from #:40ants-routes/url-pattern
-                #:replace-parameters)
-  (:import-from #:cl-ppcre
-                #:regex-replace
-                #:regex-replace-all)
-  (:import-from #:alexandria
-                #:remove-from-plistf)
   (:import-from #:40ants-routes/generics
                 #:format-url
                 #:url-path)
