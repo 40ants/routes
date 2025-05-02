@@ -68,7 +68,7 @@
                 :documentation "A path of routes corresponding matching to the prefix of the current URL."))
   (:report (lambda (condition stream)
              (format stream "No route found for URL: ~S"
-                     (url condition)))))
+                     (error-url condition)))))
 
 
 (define-condition url-resolution-error (error)
