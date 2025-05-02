@@ -8,7 +8,7 @@
                 #:parse-url-pattern)
   (:import-from #:serapeum
                 #:fmt)
-  (:import-from #:40ants-routes/url-pattern
+  (:import-from #:40ants-routes/route
                 #:replace-parameters))
 (in-package #:40ants-routes-tests/url-pattern)
 
