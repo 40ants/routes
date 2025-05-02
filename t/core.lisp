@@ -5,12 +5,6 @@
                 #:ok
                 #:testing
                 #:ng)
-  (:shadowing-import-from #:40ants-routes/defroutes
-                          #:defroutes
-                          #:get
-                          #:post
-                          #:put
-                          #:include)
   (:import-from #:serapeum
                 #:fmt)
   (:import-from #:alexandria
@@ -18,8 +12,6 @@
   (:import-from #:40ants-routes/route
                 #:route-method
                 #:route-name)
-  (:import-from #:40ants-routes/vars
-                #:*current-route*)
   (:import-from #:40ants-routes/find-route
                 #:find-route)
   (:import-from #:40ants-routes/route-url
@@ -97,16 +89,10 @@
                       args)))
       (cond
         (missingp
-         (ng url
-             (if url
-                 "URL expected to be missing, but it was found"
-                 "URL was not found")))
+         (ng url))
         ;; Should be found
         (t
-         (ok url
-             (if url
-                 "URL was found"
-                 "URL was not found"))
+         (ok url)
          
          (ok (string= url
                       expected-url)
