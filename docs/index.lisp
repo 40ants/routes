@@ -113,6 +113,33 @@
    Routes, defined by this 40ANTS-ROUTES/DEFROUTES:DEFROUTES are stored in `*blog-routes*` variable
    and can be used either to 40ANTS-ROUTES/DEFROUTES:INCLUDE these routes into the route hierarchy,
    or to search a route, matched to the URL. See section @MATCHING-THE-URL.
+
+   Here's an example demonstrating how to use an integer URL parameter:
+
+   ```lisp
+   (defroutes (*article-routes* :namespace \"articles\")
+     (get (\"/\" :name \"index\")
+          (format t \"Handler for articles index was called.\"))
+     (get (\"/<int:id>\" :name \"article\")
+          (format t \"Handler for article with ID ~D was called.\"
+                  id)))
+   ```
+
+   In this example, the route will match URLs like `/123` and the argument ID will be parsed as an integer.
+
+   You can also capture the rest of the URL as a parameter using the `.*` regex pattern:
+
+   ```lisp
+   (defroutes (*file-routes* :namespace \"files\")
+     (get (\"/\" :name \"index\")
+          (format t \"Handler for files index was called.\"))
+     (get (\"/<.*:path>\" :name \"file\")
+          (format t \"Handler for file at path ~S was called.\"
+                  path)))
+   ```
+
+   This will match URLs like `/documents/reports/annual/2023.pdf` and capture the entire path
+   `documents/reports/annual/2023.pdf` as the PATH argument.
 ")
 
 
