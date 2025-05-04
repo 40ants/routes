@@ -5,7 +5,8 @@
                 #:defsection-copy)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
-  (:import-from #:40ants-routes/handler)
+  (:import-from #:40ants-routes/handler
+                #:call-handler)
   (:import-from #:40ants-routes/defroutes
                 #:defroutes
                 #:include)
@@ -20,12 +21,17 @@
 (in-package #:40ants-routes-docs/index)
 
 
+(defparameter *disable-linter-for-these-imports*
+  '(route-url with-url defroutes call-handler))
+
+
 (defmethod docs-config ((system (eql (asdf:find-system "40ants-routes-docs"))))
   ;; 40ANTS-DOC-THEME-40ANTS system will bring
   ;; as dependency a full 40ANTS-DOC but we don't want
   ;; unnecessary dependencies here:
   #+quicklisp
-  (ql:quickload "40ants-doc-theme-40ants")
+  (uiop:symbol-call :ql :quickload
+                    "40ants-doc-theme-40ants")
   #-quicklisp
   (asdf:load-system "40ants-doc-theme-40ants")
   
@@ -89,6 +95,8 @@
                              #:post)
      (:import-from #:40ants-routes/route-url
                    #:route-url)
+     (:import-from #:40ants-routes/handler
+                   #:call-handler)
      (:import-from #:40ants-routes/with-url
                    #:with-partially-matched-url
                    #:with-url))
@@ -135,22 +143,22 @@
 
    Then in your web-application you might setup the context in which this route
    processing should happen. Use 40ANTS-ROUTES/WITH-URL:WITH-URL or 40ANTS-ROUTES/WITH-URL:WITH-PARTIALLY-MATCHED-URL
-   macros to setup the context. Inside the context you can use 40ANTS-ROUTES/HANDLER:CALL-HANDLER function to call
+   macros to setup the context. Inside the context you can use CALL-HANDLER function to call
    a body of the route, matched to the URL:
 
 
    ```lisp
 
    TEST-ROUTES> (with-url (*app-routes* \"/blog/some-post\")
-                  (40ants-routes/handler:call-handler))
+                  (call-handler))
    Handler for blog post \"some-post\" was called.
 
    TEST-ROUTES> (with-url (*app-routes* \"/blog/\")
-                  (40ants-routes/handler:call-handler))
+                  (call-handler))
    Handler for blog index was called.
 
    TEST-ROUTES> (with-url (*app-routes* \"/\")
-                  (40ants-routes/handler:call-handler))
+                  (call-handler))
    Handler for application's index page.
 
    ```
@@ -159,7 +167,7 @@
    error if there is no route matching the whole URL, but 40ANTS-ROUTES/WITH-URL:WITH-PARTIALLY-MATCHED-URL will
    try to do the best it can.
 
-   So, inside the 40ANTS-ROUTES/WITH-URL:WITH-URL body you can use 40ANTS-ROUTES/HANDLER:CALL-HANDLER
+   So, inside the 40ANTS-ROUTES/WITH-URL:WITH-URL body you can use CALL-HANDLER
    always, while inside the 40ANTS-ROUTES/WITH-URL:WITH-PARTIALLY-MATCHED-URL macro handler should be called only if
    40ANTS-ROUTES/ROUTE:CURRENT-ROUTE-P function returns T.
 ")
@@ -168,7 +176,7 @@
 (defsection @generating-urls (:title "Generating URLs")
   "Another feature of `40ants-routes` is URL generation.
    URLs can be generated using the 40ANTS-ROUTES/ROUTE-URL:ROUTE-URL function. Like
-   40ANTS-ROUTES/HANDLER:CALL-HANDLER, it should be called when URL context is available.
+   CALL-HANDLER, it should be called when URL context is available.
 
    In our application routes tree there are two `index` routes, but we can get paths to both of them
    using namespaces. Route's namespace is defined as a list of names from the root route, given
@@ -232,7 +240,7 @@
 
    ```lisp
    TEST-ROUTES> (with-url (*app-routes* \"/blog/some-post\")
-                  (40ants-routes/handler:call-handler))
+                  (call-handler))
    Handler for blog post \"some-post\" was called.To edit post go to \"/blog/some-post/edit\".
    ```
 
