@@ -5,6 +5,7 @@
   (:export #:get-breadcrumbs))
 (in-package #:40ants-routes/breadcrumbs)
 
+
 (defun get-breadcrumbs (url)
   "Generate breadcrumbs for a URL."
   (let ((result nil)

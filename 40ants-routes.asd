@@ -9,17 +9,17 @@
   :class :40ants-asdf-system
   :defsystem-depends-on ("40ants-asdf-system")
   :pathname "src"
-  :depends-on ("40ants-routes/core"
-               "40ants-routes/route"
-               "40ants-routes/route-collection"
-               "40ants-routes/included-route"
+  :depends-on ("40ants-routes/route"
+               "40ants-routes/routes"
+               "40ants-routes/included-routes"
                "40ants-routes/url-pattern"
-               "40ants-routes/with-routes"
-               "40ants-routes/registry"
+               "40ants-routes/with-url"
                "40ants-routes/find-route"
                "40ants-routes/defroutes"
                "40ants-routes/route-url"
                "40ants-routes/breadcrumbs"
+               "40ants-routes/utils"
+               "40ants-routes/add-route"
                "cl-ppcre"
                "split-sequence")
   :in-order-to ((test-op (test-op "40ants-routes-tests"))))
