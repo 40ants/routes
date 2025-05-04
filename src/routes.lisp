@@ -12,7 +12,9 @@
                 #:namespace-duplication-error
                 #:path-duplication-error)
   (:export #:routes
-           #:children-routes))
+           #:children-routes
+           #:node-namespace
+           #:routesp))
 (in-package #:40ants-routes/routes)
 
 
@@ -35,6 +37,7 @@
 
 
 (defun routesp (obj)
+  "Checks if object is of class ROUTES."
   (typep obj 'routes))
 
 

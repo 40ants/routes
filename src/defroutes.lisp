@@ -27,14 +27,28 @@
            #:get
            #:post
            #:put
-           #:include
-           #:routes))
+           #:include))
 (in-package #:40ants-routes/defroutes)
 
 
-(defmacro defroutes ((var-name &key namespace (routes-class 'routes))
+(defmacro defroutes ((var-name &key namespace (routes-class '40ants-routes/routes:routes))
                      &body route-definitions)
-  "Define a variable holding collection of routes."
+  "Define a variable holding collection of routes and binds it to a variable VAR-NAME.
+
+   This macro acts like a DEFVAR - if there is already an 40ANTS-ROUTES/ROUTES:ROUTES
+   object bound to the variable, then it is not replaced, but updated inplace.
+   This allows to change routes on the fly even if they were included into some routes
+   hierarchy.
+
+   You can use ROUTES-CLASS argument to supply you own class, inherited from ROUTES.
+   This way it might be possible to special processing for these routes, for example,
+   inject some special code for representing this routes in the \"breadcrumbs\".
+
+   Use GET, POST, PUT, DELETE macros in ROUTE-DEFINITIONS forms.
+
+   See more examples how to define routes in the
+   40ANTS-ROUTES-DOCS/INDEX::@DEFINING-ROUTES section."
+  
   (unless namespace
     (error "NAMESPACE is required argument."))
      
@@ -55,9 +69,10 @@
      ,var-name))
 
 
-(defmacro routes ((namespace &key (routes-class 'routes))
+(defmacro routes ((namespace &key (routes-class '40ants-routes/routes:routes))
                   &body route-definitions)
-  "Define a variable holding collection of routes."
+  "Define a variable holding collection of routes the same way
+   as 40ANTS-ROUTES/DEFROUTES:DEFROUTES does, but do not bind these routes to the variable."
   (unless (and (typep namespace 'string)
                (not (length= 0 namespace)))
     (error "NAMESPACE should be a non-empty string."))
@@ -119,7 +134,7 @@
                   :route-class route-class))
 
 
-(-> include (routes &key (:path string))
+(-> include (40ants-routes/routes:routes &key (:path string))
     (values included-routes))
 
 (defun include (routes &key (path "/"))

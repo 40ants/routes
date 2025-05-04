@@ -1,8 +1,7 @@
 (uiop:define-package #:40ants-routes/utils
   (:use #:cl)
   (:import-from #:40ants-routes/errors
-                #:no-common-elements-error)
-  (:export #:make-new-namespace))
+                #:no-common-elements-error))
 (in-package #:40ants-routes/utils)
 
 
