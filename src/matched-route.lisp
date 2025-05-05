@@ -66,8 +66,11 @@
 
 (eval-always
   (defmacro def-proxy-method (name)
-    (let ((method-name (find-symbol (symbol-name name)
-                                    (find-package "40ANTS-ROUTES/ROUTE"))))
+    (let ((method-name (or
+                        (find-symbol (symbol-name name)
+                                     (find-package "40ANTS-ROUTES/ROUTE"))
+                        (find-symbol (symbol-name name)
+                                     (find-package "40ANTS-ROUTES/GENERICS")))))
       `(defmethod ,method-name ((obj matched-route))
          (,method-name (original-route obj))))))
 
@@ -77,3 +80,5 @@
 (def-proxy-method route-handler)
 (def-proxy-method route-title)
 (def-proxy-method route-method)
+(def-proxy-method get-route-breadcrumbs)
+

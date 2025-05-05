@@ -21,11 +21,25 @@
     (fmt "Blog post: ~A" slug)))
 
 
+(defun get-user-name (&key id &allow-other-keys)
+  (cond
+    ((= id 123)
+     "Petya")
+    ((= id 42)
+     "Vasya")
+    (t
+     "Unknown user")))
+
+
 ;; Define test routes for an admin library
 (defroutes (*admin-users-routes* :namespace "users")
   (post ("/" :name "users" :title "Users")
     (fmt "Users list"))
-  (get ("/<int:id>" :name "user" :title "User Profile")
+  (get ("/<int:id>"
+        :name "user"
+        ;; Example of using a function for retrieving
+        ;; route title in runtime:
+        :title #'get-user-name)
     (fmt "User profile: ~A" id))
   (put ("/<int:id>" :name "user-update" :title "Update User")
     (fmt "Update user profile: ~A" id)))
@@ -49,7 +63,7 @@
 
 ;; Define test routes for an application
 (defroutes (*app-routes* :namespace "app")
-  (get ("/" :name "index" :title "Main Page")
+  (get ("/" :name "index" :title "Home")
     (fmt "App index"))
   (include *blog-routes*
            :path "/blog/")
