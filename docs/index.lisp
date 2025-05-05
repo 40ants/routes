@@ -276,13 +276,142 @@
 ")
 
 
-(defsection @generating-breadcrumbs (:title "Generating Breadcrumbs (WORK IN PROGRESS)")
-  "Breadcrumbs can be generated using the `get-breadcrumbs` function:
+(defsection @generating-breadcrumbs (:title "Generating Breadcrumbs")
+  "Breadcrumbs can be generated using the 40ANTS-ROUTES/BREADCRUMBS:GET-BREADCRUMBS function. This function returns a list of 40ANTS-ROUTES/BREADCRUMBS:BREADCRUMB objects that represent the path from the root to the current page.
+
+Each 40ANTS-ROUTES/BREADCRUMBS:BREADCRUMB object has the following properties:
+- The URL path to the breadcrumb (accessible via 40ANTS-ROUTES/BREADCRUMBS:BREADCRUMB-PATH)
+- The display title for the breadcrumb (accessible via 40ANTS-ROUTES/BREADCRUMBS:BREADCRUMB-TITLE)
+- The route object associated with the breadcrumb (accessible via 40ANTS-ROUTES/BREADCRUMBS:BREADCRUMB-ROUTE)
+
+To use breadcrumbs, you need to define routes with titles:
 
 ```lisp
-(get-breadcrumbs \"/admin/users/123\")
-; => (((\"/\" . \"Home\") (\"/admin\" . \"Admin\") (\"/admin/users\" . \"Users\") (\"/admin/users/123\" . \"User Profile\")))
-```")
+
+(defroutes (*admin-users-routes* :namespace \"users\")
+  (post (\"/\" :name \"users\"
+         :title \"Users\")
+    (format nil \"Users list\"))
+  (get (\"/<string:username>\"
+        :name \"user\"
+        :title \"User Profile\")
+    (format nil \"User profile: ~A\" username)))
+
+
+(defroutes (*admin-routes* :namespace \"admin\")
+  (get (\"/\" :name \"admin-index\" :title \"Admin\")
+    (format nil \"Admin index\"))
+  (include *admin-users-routes*
+           :path \"/users/\"))
+
+
+(defroutes (*app-routes* :namespace \"app\")
+  (get (\"/\" :name \"index\" :title \"Home\")
+    (format nil \"App index\"))
+  (include *admin-routes*
+           :path \"/admin/\"))
+
+```
+
+Then, you can generate breadcrumbs for a specific URL:
+
+```lisp
+
+TEST-ROUTES> (with-url (*app-routes* \"/admin/users/john\")
+               (let ((crumbs (40ants-routes/breadcrumbs:get-breadcrumbs)))
+                 ;; This way you can get all paths or titles:
+                 (values
+                  (mapcar #'40ants-routes/breadcrumbs:breadcrumb-path crumbs)
+                  (mapcar #'40ants-routes/breadcrumbs:breadcrumb-title crumbs))))
+(\"/\" \"/admin/\" \"/admin/users/\" \"/admin/users/john\")
+(\"Home\" \"Admin\" \"Users\" \"User Profile\")
+
+```
+
+or to generate an HTML code like this:
+
+```lisp
+
+TEST-ROUTES> (with-url (*app-routes* \"/admin/users/john\")
+               (let ((crumbs (40ants-routes/breadcrumbs:get-breadcrumbs)))
+                 (format t \"<nav aria-label=\\\"breadcrumb\\\">~%\")
+                 (format t \"  <ol class=\\\"breadcrumb\\\">~%\")
+                 (loop for crumb in crumbs
+                       for last-p = (eq crumb (car (last crumbs)))
+                       do (format t \"    <li class=\\\"breadcrumb-item~:[~; active~]\\\"~:[~; aria-current=\\\"page\\\"~]>~%\" 
+                                  last-p last-p)
+                          (if last-p
+                              (format t \"      ~A~%\" (40ants-routes/breadcrumbs:breadcrumb-title crumb))
+                              (format t \"      <a href=\\\"~A\\\">~A</a>~%\" 
+                                      (40ants-routes/breadcrumbs:breadcrumb-path crumb) 
+                                      (40ants-routes/breadcrumbs:breadcrumb-title crumb)))
+                          (format t \"    </li>~%\"))
+                 (format t \"  </ol>~%\")
+                 (format t \"</nav>~%\")))
+<nav aria-label=\"breadcrumb\">
+  <ol class=\"breadcrumb\">
+    <li class=\"breadcrumb-item\">
+      <a href=\"/\">Home</a>
+    </li>
+    <li class=\"breadcrumb-item\">
+      <a href=\"/admin/\">Admin</a>
+    </li>
+    <li class=\"breadcrumb-item\">
+      <a href=\"/admin/users/\">Users</a>
+    </li>
+    <li class=\"breadcrumb-item active\" aria-current=\"page\">
+      User Profile
+    </li>
+  </ol>
+</nav>
+
+```
+
+For more advanced usage, you can also use functions as route titles to generate dynamic titles based on URL parameters. This is demonstrated in the test file:
+
+First, you need to define a function which will accept an arguments extracted from URL:
+
+```lisp
+(defun get-user-name (&key username &allow-other-keys)
+  \"A function for retrieving user display names based on username parameter\"
+  (cond
+    ((string= username \"john\")
+     \"John Smith\")
+    ((string= username \"jane\")
+     \"Jane Doe\")
+    (t
+     (format nil \"User: ~A\" username))))
+```
+
+Then redefine routes, to use this function as TITLE argument of the route:
+
+```
+(defroutes (*admin-users-routes* :namespace \"users\")
+  (post (\"/\" :name \"users\" :title \"Users\")
+    (format nil \"Users list\"))
+  (get (\"/<string:username>\"
+        :name \"user\"
+        ;; Example of using a function for retrieving
+        ;; route title dynamically at runtime:
+        :title #'get-user-name)
+    (format nil \"User profile: ~A\" username)))
+```
+
+And now you will get a real user's name as the last breadcrumb title:
+
+```lisp
+
+TEST-ROUTES> (with-url (*app-routes* \"/admin/users/john\")
+               (let ((crumbs (40ants-routes/breadcrumbs:get-breadcrumbs)))
+                 (values
+                  (mapcar #'40ants-routes/breadcrumbs:breadcrumb-path crumbs)
+                  (mapcar #'40ants-routes/breadcrumbs:breadcrumb-title crumbs))))
+(\"/\" \"/admin/\" \"/admin/users/\" \"/admin/users/john\")
+(\"Home\" \"Admin\" \"Users\" \"John Smith\")
+
+```
+
+This makes it easy to create meaningful breadcrumb navigation that adapts to the content being displayed.")
 
 
 (defsection @usage (:title "Usage Examples")
@@ -295,3 +424,4 @@
 
 (defautodoc @api (:title "API Reference"
                   :system "40ants-routes"))
+
