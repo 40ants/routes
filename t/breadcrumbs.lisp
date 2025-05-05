@@ -5,19 +5,6 @@
                 #:ok
                 #:testing
                 #:ng)
-  (:import-from #:serapeum
-                #:fmt)
-  (:import-from #:alexandria
-                #:remove-from-plistf)
-  (:import-from #:40ants-routes/route
-                #:route-method
-                #:route-name)
-  (:import-from #:40ants-routes/find-route
-                #:find-route)
-  (:import-from #:40ants-routes/route-url
-                #:route-url)
-  (:import-from #:40ants-routes/errors
-                #:argument-missing-error)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
   (:import-from #:40ants-routes/breadcrumbs
@@ -25,9 +12,7 @@
                 #:breadcrumb-path
                 #:get-breadcrumbs)
   (:import-from #:40ants-routes-tests/fixtures
-                #:*app-routes*
-                #:*blog-routes*
-                #:*admin-routes*))
+                #:*app-routes*))
 (in-package #:40ants-routes-tests/breadcrumbs)
 
 

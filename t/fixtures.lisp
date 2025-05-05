@@ -1,6 +1,7 @@
 (uiop:define-package #:40ants-routes-tests/fixtures
   (:use #:cl)
   (:import-from #:serapeum
+                #:eval-always
                 #:fmt)
   (:shadowing-import-from #:40ants-routes/defroutes
                           #:defroutes
@@ -11,6 +12,19 @@
 (in-package #:40ants-routes-tests/fixtures)
 
 
+(eval-always
+  (defun get-user-name (&key id &allow-other-keys)
+    "A function for retrieving user names"
+    (cond
+      ((= id 123)
+       "Petya")
+      ((= id 42)
+       "Vasya")
+      (t
+       "Unknown user"))))
+
+
+
 ;; Define test routes for a blog library
 (defroutes (*blog-routes* :namespace "blog")
   (get ("/" :name "index"
@@ -19,16 +33,6 @@
   (get ("/<string:slug>" :name "post"
                          :title "Post")
     (fmt "Blog post: ~A" slug)))
-
-
-(defun get-user-name (&key id &allow-other-keys)
-  (cond
-    ((= id 123)
-     "Petya")
-    ((= id 42)
-     "Vasya")
-    (t
-     "Unknown user")))
 
 
 ;; Define test routes for an admin library

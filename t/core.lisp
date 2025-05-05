@@ -20,8 +20,6 @@
                 #:argument-missing-error)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
-  (:import-from #:40ants-routes/breadcrumbs
-                #:get-breadcrumbs)
   (:import-from #:40ants-routes-tests/fixtures
                 #:*app-routes*
                 #:*blog-routes*

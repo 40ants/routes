@@ -1,14 +1,10 @@
 (uiop:define-package #:40ants-routes/breadcrumbs
   (:use #:cl)
-  (:import-from #:split-sequence
-                #:split-sequence)
   (:import-from #:40ants-routes/route
                 #:route-title
                 #:route)
   (:import-from #:serapeum
                 #:->)
-  (:import-from #:40ants-routes/url-pattern
-                #:url-pattern-pattern)
   (:import-from #:40ants-routes/generics
                 #:format-url
                 #:match-url
