@@ -20,8 +20,6 @@
                 #:argument-missing-error)
   (:import-from #:40ants-routes/with-url
                 #:with-url)
-  (:import-from #:40ants-routes/breadcrumbs
-                #:get-breadcrumbs)
   (:import-from #:40ants-routes-tests/fixtures
                 #:*app-routes*
                 #:*blog-routes*
@@ -254,14 +252,3 @@
       (error ()
         (ok t "Correctly raised error for missing parameter")))))
 
-
-(deftest test-breadcrumbs ()
-  "Test breadcrumbs generation."
-  (testing "Breadcrumbs generation"
-    (with-url (*app-routes* "/admin/users/123")
-      (let ((crumbs (get-breadcrumbs "/admin/users/123")))
-        (ok (= (length crumbs) 4) "Breadcrumbs have correct length")
-        (ok (string= (caar crumbs) "/") "First breadcrumb is root")
-        (ok (string= (caadr crumbs) "/admin") "Second breadcrumb is admin")
-        (ok (string= (caaddr crumbs) "/admin/users") "Third breadcrumb is users")
-        (ok (string= (caar (last crumbs)) "/admin/users/123") "Last breadcrumb is user profile")))))

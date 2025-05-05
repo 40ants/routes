@@ -6,7 +6,8 @@
            #:url-path
            #:add-route
            #:node-namespace
-           #:has-namespace-p))
+           #:has-namespace-p
+           #:get-route-breadcrumbs))
 (in-package #:40ants-routes/generics)
 
 
@@ -62,3 +63,17 @@
   (:documentation "Add a route or included-routes object to the routes collection at runtime.
 If a route with the same path or namespace already exists, an error will be signaled
 unless override is set to true."))
+
+
+(defgeneric get-route-breadcrumbs (node)
+  (:documentation "Returns a list of breadcrumbs associated with given routes node.
+
+                   NODE argument could have 40ANTS-ROUTES/ROUTE:ROUTE class, 40ANTS-ROUTES/ROUTES:ROUTES class or an object of other
+                   class bound to some object of 40ANTS-ROUTES/ROUTE:ROUTE class.
+
+                   For objects of class 40ANTS-ROUTES/ROUTES:ROUTES usually the method return breadcrumbs of the
+                   route having the `/` path.
+
+                   Method can return from zero to N objects of 40ANTS-ROUTES/BREADCRUMBS:BREADCRUMB class.
+                   A returning of multiple breadcrumbs can be useful if route matches to some filename in a nested directory
+                   and you want to give an ability to navigate into intermediate directories."))
