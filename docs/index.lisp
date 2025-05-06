@@ -165,7 +165,7 @@
 ")
 
 
-(defsection @matching-the-url (:title "Marching the URL")
+(defsection @matching-the-url (:title "Matching the URL")
   "Imagine, user have opened the URL with a path like this `/blog/some-post`.
 
    Then in your web-application you might setup the context in which this route
