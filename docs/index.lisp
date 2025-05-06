@@ -63,7 +63,7 @@
 * Including routes from libraries into applications.
 * Matching URL while extracting parameters from it.
 * Generating URLs based on route names.
-* Generating breadcrumbs (Work In Progress!).
+* Generating breadcrumbs.
 
 ## Installation
 
