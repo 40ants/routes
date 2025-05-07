@@ -2,6 +2,18 @@
 
 # 40ants-routes - Framework agnostic URL routing library
 
+<a id="40-ants-routes-asdf-system-details"></a>
+
+## 40ANTS-ROUTES ASDF System Details
+
+* Description: Framework agnostic `URL` routing library.
+* Licence: Unlicense
+* Author: Alexander Artemenko <svetlyak.40wt@gmail.com>
+* Homepage: [https://40ants.com/routes][7261]
+* Bug tracker: [https://github.com/40ants/routes/issues][54bf]
+* Source control: [GIT][6959]
+* Depends on: [alexandria][8236], [cl-ppcre][49b9], [serapeum][c41d], [split-sequence][3dcd], [str][ef7f]
+
 <a id="overview"></a>
 
 ## Overview
@@ -359,7 +371,7 @@ This makes it easy to create meaningful breadcrumb navigation that adapts to the
 
 <a id="x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FBREADCRUMBS-22-29-20PACKAGE-29"></a>
 
-#### [package](19da) `40ants-routes/breadcrumbs`
+#### [package](12b0) `40ants-routes/breadcrumbs`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FBREADCRUMBS-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -371,21 +383,21 @@ This makes it easy to create meaningful breadcrumb navigation that adapts to the
 
 <a id="x-2840ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-20CLASS-29"></a>
 
-###### [class](bc55) `40ants-routes/breadcrumbs:breadcrumb` ()
+###### [class](34bb) `40ants-routes/breadcrumbs:breadcrumb` ()
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-PATH-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-29-29"></a>
 
-###### [reader](464a) `40ants-routes/breadcrumbs:breadcrumb-path` (breadcrumb) (:path)
+###### [reader](6a2a) `40ants-routes/breadcrumbs:breadcrumb-path` (breadcrumb) (:path)
 
 <a id="x-2840ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-ROUTE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-29-29"></a>
 
-###### [reader](97bd) `40ants-routes/breadcrumbs:breadcrumb-route` (breadcrumb) (:route)
+###### [reader](9db7) `40ants-routes/breadcrumbs:breadcrumb-route` (breadcrumb) (:route)
 
 <a id="x-2840ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-TITLE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-29-29"></a>
 
-###### [reader](2b8a) `40ants-routes/breadcrumbs:breadcrumb-title` (breadcrumb) (:title)
+###### [reader](8781) `40ants-routes/breadcrumbs:breadcrumb-title` (breadcrumb) (:title)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FBREADCRUMBS-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -393,13 +405,13 @@ This makes it easy to create meaningful breadcrumb navigation that adapts to the
 
 <a id="x-2840ANTS-ROUTES-2FBREADCRUMBS-3AGET-BREADCRUMBS-20FUNCTION-29"></a>
 
-##### [function](a8fa) `40ants-routes/breadcrumbs:get-breadcrumbs`
+##### [function](ffa9) `40ants-routes/breadcrumbs:get-breadcrumbs`
 
 Generate breadcrumbs list for the current `URL` set by [`40ants-routes/with-url:with-url`][1c5e] macro.
 
 <a id="x-2840ANTS-ROUTES-2FBREADCRUMBS-3AMAKE-BREADCRUMB-20FUNCTION-29"></a>
 
-##### [function](60ad) `40ants-routes/breadcrumbs:make-breadcrumb` title
+##### [function](4958) `40ants-routes/breadcrumbs:make-breadcrumb` title
 
 Creates a breadcrumb item.
 
@@ -409,7 +421,7 @@ Creates a breadcrumb item.
 
 <a id="x-28-23A-28-2823-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FDEFROUTES-22-29-20PACKAGE-29"></a>
 
-#### [package](dcd0) `40ants-routes/defroutes`
+#### [package](2f35) `40ants-routes/defroutes`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FDEFROUTES-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -417,7 +429,7 @@ Creates a breadcrumb item.
 
 <a id="x-2840ANTS-ROUTES-2FDEFROUTES-3AINCLUDE-20FUNCTION-29"></a>
 
-##### [function](d399) `40ants-routes/defroutes:include` routes &key (path "/")
+##### [function](716e) `40ants-routes/defroutes:include` routes &key (path "/")
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FDEFROUTES-3FMacros-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -425,7 +437,7 @@ Creates a breadcrumb item.
 
 <a id="x-2840ANTS-ROUTES-2FDEFROUTES-3ADEFROUTES-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29"></a>
 
-##### [macro](f901) `40ants-routes/defroutes:defroutes` (var-name &key namespace (routes-class 'routes)) &body route-definitions
+##### [macro](4898) `40ants-routes/defroutes:defroutes` (var-name &key namespace (routes-class 'routes)) &body route-definitions
 
 Define a variable holding collection of routes and binds it to a variable `VAR-NAME`.
 
@@ -445,15 +457,15 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FDEFROUTES-3AGET-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29"></a>
 
-##### [macro](ab8b) `40ants-routes/defroutes:get` (path &key name title (route-class 'route)) &body handler-body
+##### [macro](a170) `40ants-routes/defroutes:get` (path &key name title (route-class 'route)) &body handler-body
 
 <a id="x-2840ANTS-ROUTES-2FDEFROUTES-3APOST-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29"></a>
 
-##### [macro](f0b7) `40ants-routes/defroutes:post` (path &key name title (route-class 'route)) &body handler-body
+##### [macro](a4fc) `40ants-routes/defroutes:post` (path &key name title (route-class 'route)) &body handler-body
 
 <a id="x-2840ANTS-ROUTES-2FDEFROUTES-3APUT-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29"></a>
 
-##### [macro](6bae) `40ants-routes/defroutes:put` (path &key name title (route-class 'route)) &body handler-body
+##### [macro](93d1) `40ants-routes/defroutes:put` (path &key name title (route-class 'route)) &body handler-body
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FERRORS-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -461,7 +473,7 @@ See more examples how to define routes in the
 
 <a id="x-28-23A-28-2820-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FERRORS-22-29-20PACKAGE-29"></a>
 
-#### [package](40a3) `40ants-routes/errors`
+#### [package](ab52) `40ants-routes/errors`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FERRORS-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -473,17 +485,17 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AARGUMENT-MISSING-ERROR-20CONDITION-29"></a>
 
-###### [condition](08e9) `40ants-routes/errors:argument-missing-error` (error)
+###### [condition](2a55) `40ants-routes/errors:argument-missing-error` (error)
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AARGUMENT-MISSING-ERROR-PARAMETER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3AARGUMENT-MISSING-ERROR-29-29"></a>
 
-###### [reader](08e9) `40ants-routes/errors:argument-missing-error-parameter` (argument-missing-error) (:missing-parameter)
+###### [reader](2a55) `40ants-routes/errors:argument-missing-error-parameter` (argument-missing-error) (:missing-parameter)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AARGUMENT-MISSING-ERROR-ROUTE-NAME-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3AARGUMENT-MISSING-ERROR-29-29"></a>
 
-###### [reader](08e9) `40ants-routes/errors:argument-missing-error-route-name` (argument-missing-error) (:route-name)
+###### [reader](2a55) `40ants-routes/errors:argument-missing-error-route-name` (argument-missing-error) (:route-name)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FERRORS-24NAMESPACE-DUPLICATION-ERROR-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -491,21 +503,21 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3ANAMESPACE-DUPLICATION-ERROR-20CONDITION-29"></a>
 
-###### [condition](1502) `40ants-routes/errors:namespace-duplication-error` (error)
+###### [condition](2767) `40ants-routes/errors:namespace-duplication-error` (error)
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AEXISTING-NAMESPACE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3ANAMESPACE-DUPLICATION-ERROR-29-29"></a>
 
-###### [reader](1502) `40ants-routes/errors:existing-namespace` (namespace-duplication-error) (:namespace)
+###### [reader](2767) `40ants-routes/errors:existing-namespace` (namespace-duplication-error) (:namespace)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AEXISTING-ROUTE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3ANAMESPACE-DUPLICATION-ERROR-29-29"></a>
 
-###### [reader](1502) `40ants-routes/errors:existing-route` (namespace-duplication-error) (:existing-route)
+###### [reader](2767) `40ants-routes/errors:existing-route` (namespace-duplication-error) (:existing-route)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3ANEW-ROUTE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3ANAMESPACE-DUPLICATION-ERROR-29-29"></a>
 
-###### [reader](1502) `40ants-routes/errors:new-route` (namespace-duplication-error) (:new-route)
+###### [reader](2767) `40ants-routes/errors:new-route` (namespace-duplication-error) (:new-route)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FERRORS-24NO-COMMON-ELEMENTS-ERROR-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -513,17 +525,17 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3ANO-COMMON-ELEMENTS-ERROR-20CONDITION-29"></a>
 
-###### [condition](4cb0) `40ants-routes/errors:no-common-elements-error` (error)
+###### [condition](b64e) `40ants-routes/errors:no-common-elements-error` (error)
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AFULL-NAMESPACE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3ANO-COMMON-ELEMENTS-ERROR-29-29"></a>
 
-###### [reader](4cb0) `40ants-routes/errors:full-namespace` (no-common-elements-error) (:full-namespace)
+###### [reader](b64e) `40ants-routes/errors:full-namespace` (no-common-elements-error) (:full-namespace)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3ARELATIVE-NAMESPACE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3ANO-COMMON-ELEMENTS-ERROR-29-29"></a>
 
-###### [reader](4cb0) `40ants-routes/errors:relative-namespace` (no-common-elements-error) (:relative-namespace)
+###### [reader](b64e) `40ants-routes/errors:relative-namespace` (no-common-elements-error) (:relative-namespace)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FERRORS-24NO-ROUTE-FOR-URL-ERROR-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -531,17 +543,17 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3ANO-ROUTE-FOR-URL-ERROR-20CONDITION-29"></a>
 
-###### [condition](adc2) `40ants-routes/errors:no-route-for-url-error` (error)
+###### [condition](0567) `40ants-routes/errors:no-route-for-url-error` (error)
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AERROR-ROUTES-PATH-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3ANO-ROUTE-FOR-URL-ERROR-29-29"></a>
 
-###### [reader](adc2) `40ants-routes/errors:error-routes-path` (no-route-for-url-error) (:routes-path)
+###### [reader](0567) `40ants-routes/errors:error-routes-path` (no-route-for-url-error) (:routes-path)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AERROR-URL-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3ANO-ROUTE-FOR-URL-ERROR-29-29"></a>
 
-###### [reader](adc2) `40ants-routes/errors:error-url` (no-route-for-url-error) (:url)
+###### [reader](0567) `40ants-routes/errors:error-url` (no-route-for-url-error) (:url)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FERRORS-24PATH-DUPLICATION-ERROR-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -549,21 +561,21 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3APATH-DUPLICATION-ERROR-20CONDITION-29"></a>
 
-###### [condition](4fd4) `40ants-routes/errors:path-duplication-error` (error)
+###### [condition](d69c) `40ants-routes/errors:path-duplication-error` (error)
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AEXISTING-PATH-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3APATH-DUPLICATION-ERROR-29-29"></a>
 
-###### [reader](4fd4) `40ants-routes/errors:existing-path` (path-duplication-error) (:path)
+###### [reader](d69c) `40ants-routes/errors:existing-path` (path-duplication-error) (:path)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AEXISTING-ROUTE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3APATH-DUPLICATION-ERROR-29-29"></a>
 
-###### [reader](4fd4) `40ants-routes/errors:existing-route` (path-duplication-error) (:existing-route)
+###### [reader](d69c) `40ants-routes/errors:existing-route` (path-duplication-error) (:existing-route)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3ANEW-ROUTE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3APATH-DUPLICATION-ERROR-29-29"></a>
 
-###### [reader](4fd4) `40ants-routes/errors:new-route` (path-duplication-error) (:new-route)
+###### [reader](d69c) `40ants-routes/errors:new-route` (path-duplication-error) (:new-route)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FERRORS-24URL-RESOLUTION-ERROR-3FCLASS-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -571,17 +583,17 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AURL-RESOLUTION-ERROR-20CONDITION-29"></a>
 
-###### [condition](bc3e) `40ants-routes/errors:url-resolution-error` (error)
+###### [condition](77ff) `40ants-routes/errors:url-resolution-error` (error)
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3ANAMESPACE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3AURL-RESOLUTION-ERROR-29-29"></a>
 
-###### [reader](bc3e) `40ants-routes/errors:namespace` (url-resolution-error) (:namespace)
+###### [reader](77ff) `40ants-routes/errors:namespace` (url-resolution-error) (:namespace)
 
 <a id="x-2840ANTS-ROUTES-2FERRORS-3AROUTE-NAME-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FERRORS-3AURL-RESOLUTION-ERROR-29-29"></a>
 
-###### [reader](bc3e) `40ants-routes/errors:route-name` (url-resolution-error) (:route-name)
+###### [reader](77ff) `40ants-routes/errors:route-name` (url-resolution-error) (:route-name)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FFIND-ROUTE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -589,7 +601,7 @@ See more examples how to define routes in the
 
 <a id="x-28-23A-28-2824-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FFIND-ROUTE-22-29-20PACKAGE-29"></a>
 
-#### [package](f9018) `40ants-routes/find-route`
+#### [package](9b6e) `40ants-routes/find-route`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FFIND-ROUTE-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -597,7 +609,7 @@ See more examples how to define routes in the
 
 <a id="x-2840ANTS-ROUTES-2FFIND-ROUTE-3AFIND-ROUTE-20FUNCTION-29"></a>
 
-##### [function](7a04) `40ants-routes/find-route:find-route` name &key namespace on-match
+##### [function](b833) `40ants-routes/find-route:find-route` name &key namespace on-match
 
 Find a route by name in the given namespace hierarchy.
 
@@ -612,7 +624,7 @@ with each route node along path to the leaf route.
 
 <a id="x-28-23A-28-2822-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FGENERICS-22-29-20PACKAGE-29"></a>
 
-#### [package](b6da) `40ants-routes/generics`
+#### [package](971e) `40ants-routes/generics`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FGENERICS-3FGenerics-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -620,7 +632,7 @@ with each route node along path to the leaf route.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AADD-ROUTE-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](bb80) `40ants-routes/generics:add-route` routes route-or-routes-to-add &key override
+##### [generic-function](c361) `40ants-routes/generics:add-route` routes route-or-routes-to-add &key override
 
 Add a route or included-routes object to the routes collection at runtime.
 If a route with the same path or namespace already exists, an error will be signaled
@@ -628,7 +640,7 @@ unless override is set to true.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AFORMAT-URL-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](3320) `40ants-routes/generics:format-url` obj stream args
+##### [generic-function](0b01) `40ants-routes/generics:format-url` obj stream args
 
 Should write a piece of `URL` to the `STREAM` substituting arguments from plist `ARGS`.
 
@@ -636,7 +648,7 @@ When called, it should write a piece of `URL` without starting backslash.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AGET-ROUTE-BREADCRUMBS-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](7b00) `40ants-routes/generics:get-route-breadcrumbs` node
+##### [generic-function](71a3) `40ants-routes/generics:get-route-breadcrumbs` node
 
 Returns a list of breadcrumbs associated with given routes node.
 
@@ -652,13 +664,13 @@ and you want to give an ability to navigate into intermediate directories.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AHAS-NAMESPACE-P-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](c2c8) `40ants-routes/generics:has-namespace-p` routes
+##### [generic-function](3de6) `40ants-routes/generics:has-namespace-p` routes
 
 Returns T of node can respond to [`node-namespace`][db92] generic-function call.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AMATCH-URL-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](382b) `40ants-routes/generics:match-url` obj url &key on-match
+##### [generic-function](338f) `40ants-routes/generics:match-url` obj url &key on-match
 
 Checks for complete match of the object to `URL`.
 
@@ -675,13 +687,13 @@ function with `OBJ` as a single argument.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3ANODE-NAMESPACE-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](0ac3) `40ants-routes/generics:node-namespace` routes
+##### [generic-function](7451) `40ants-routes/generics:node-namespace` routes
 
 Returns a string name of node's namepace. Works only for objects for which [`has-namespace-p`][3eec] returns true.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3APARTIAL-MATCH-URL-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](70c6) `40ants-routes/generics:partial-match-url` obj url
+##### [generic-function](89d3) `40ants-routes/generics:partial-match-url` obj url
 
 Tests of obj matches to the a prefix of `URL`.
 
@@ -694,7 +706,7 @@ a sub-element can be returned in case of match.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AURL-PATH-20GENERIC-FUNCTION-29"></a>
 
-##### [generic-function](c48b) `40ants-routes/generics:url-path` obj
+##### [generic-function](7cb3) `40ants-routes/generics:url-path` obj
 
 Returns the [`40ants-routes/url-pattern:url-pattern`][a13f] associated with the object.
 
@@ -704,7 +716,7 @@ Returns the [`40ants-routes/url-pattern:url-pattern`][a13f] associated with the 
 
 <a id="x-28-23A-28-2821-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FHANDLER-22-29-20PACKAGE-29"></a>
 
-#### [package](66e9) `40ants-routes/handler`
+#### [package](ec48) `40ants-routes/handler`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FHANDLER-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -712,7 +724,7 @@ Returns the [`40ants-routes/url-pattern:url-pattern`][a13f] associated with the 
 
 <a id="x-2840ANTS-ROUTES-2FHANDLER-3ACALL-HANDLER-20FUNCTION-29"></a>
 
-##### [function](b9b8) `40ants-routes/handler:call-handler`
+##### [function](b3e0) `40ants-routes/handler:call-handler`
 
 Calls a handler of current route.
 
@@ -724,7 +736,7 @@ Should be called only during [`40ants-routes/with-url:with-url`][1c5e] macro bod
 
 <a id="x-28-23A-28-2829-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FINCLUDED-ROUTES-22-29-20PACKAGE-29"></a>
 
-#### [package](dd48) `40ants-routes/included-routes`
+#### [package](880f) `40ants-routes/included-routes`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FINCLUDED-ROUTES-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -736,19 +748,19 @@ Should be called only during [`40ants-routes/with-url:with-url`][1c5e] macro bod
 
 <a id="x-2840ANTS-ROUTES-2FINCLUDED-ROUTES-3AINCLUDED-ROUTES-20CLASS-29"></a>
 
-###### [class](2c58) `40ants-routes/included-routes:included-routes` ()
+###### [class](fa1b) `40ants-routes/included-routes:included-routes` ()
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FINCLUDED-ROUTES-3AORIGINAL-ROUTES-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FINCLUDED-ROUTES-3AINCLUDED-ROUTES-29-29"></a>
 
-###### [reader](f04c) `40ants-routes/included-routes:original-routes` (included-routes) (:original-collection)
+###### [reader](4cae) `40ants-routes/included-routes:original-routes` (included-routes) (:original-collection)
 
 The original collection that was included
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AURL-PATH-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FINCLUDED-ROUTES-3AINCLUDED-ROUTES-29-29"></a>
 
-###### [reader](fa03) `40ants-routes/generics:url-path` (included-routes) (:path)
+###### [reader](aed7) `40ants-routes/generics:url-path` (included-routes) (:path)
 
 Path to add to all routes in the collection
 
@@ -758,7 +770,7 @@ Path to add to all routes in the collection
 
 <a id="x-2840ANTS-ROUTES-2FINCLUDED-ROUTES-3AINCLUDED-ROUTES-P-20FUNCTION-29"></a>
 
-##### [function](ce92) `40ants-routes/included-routes:included-routes-p` obj
+##### [function](d081) `40ants-routes/included-routes:included-routes-p` obj
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FMATCHED-ROUTE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -766,7 +778,7 @@ Path to add to all routes in the collection
 
 <a id="x-28-23A-28-2827-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FMATCHED-ROUTE-22-29-20PACKAGE-29"></a>
 
-#### [package](e4ea) `40ants-routes/matched-route`
+#### [package](622b) `40ants-routes/matched-route`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FMATCHED-ROUTE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -778,19 +790,19 @@ Path to add to all routes in the collection
 
 <a id="x-2840ANTS-ROUTES-2FMATCHED-ROUTE-3AMATCHED-ROUTE-20CLASS-29"></a>
 
-###### [class](4c82) `40ants-routes/matched-route:matched-route` ()
+###### [class](0008) `40ants-routes/matched-route:matched-route` ()
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FMATCHED-ROUTE-3AMATCHED-ROUTE-PARAMETERS-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FMATCHED-ROUTE-3AMATCHED-ROUTE-29-29"></a>
 
-###### [reader](7279) `40ants-routes/matched-route:matched-route-parameters` (matched-route) (:parameters = nil)
+###### [reader](1aff) `40ants-routes/matched-route:matched-route-parameters` (matched-route) (:parameters = nil)
 
 Parameters extracted from the `URL` pattern as alist where keys are parameter names and values - parameter types.
 
 <a id="x-2840ANTS-ROUTES-2FMATCHED-ROUTE-3AORIGINAL-ROUTE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FMATCHED-ROUTE-3AMATCHED-ROUTE-29-29"></a>
 
-###### [reader](06fb) `40ants-routes/matched-route:original-route` (matched-route) (:original-route)
+###### [reader](391c) `40ants-routes/matched-route:original-route` (matched-route) (:original-route)
 
 The original [`route`][377c] object which has been matched.
 
@@ -800,7 +812,7 @@ The original [`route`][377c] object which has been matched.
 
 <a id="x-2840ANTS-ROUTES-2FMATCHED-ROUTE-3AMATCHED-ROUTE-P-20FUNCTION-29"></a>
 
-##### [function](7b7e) `40ants-routes/matched-route:matched-route-p` obj
+##### [function](c606) `40ants-routes/matched-route:matched-route-p` obj
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FROUTE-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -808,7 +820,7 @@ The original [`route`][377c] object which has been matched.
 
 <a id="x-28-23A-28-2819-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FROUTE-22-29-20PACKAGE-29"></a>
 
-#### [package](8963) `40ants-routes/route`
+#### [package](83df) `40ants-routes/route`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FROUTE-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -820,37 +832,37 @@ The original [`route`][377c] object which has been matched.
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3AROUTE-20CLASS-29"></a>
 
-###### [class](29e8) `40ants-routes/route:route` ()
+###### [class](d8ad) `40ants-routes/route:route` ()
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3AROUTE-HANDLER-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FROUTE-3AROUTE-29-29"></a>
 
-###### [reader](b27d) `40ants-routes/route:route-handler` (route) (:handler)
+###### [reader](a6df) `40ants-routes/route:route-handler` (route) (:handler)
 
 Function to handle the route
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3AROUTE-METHOD-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FROUTE-3AROUTE-29-29"></a>
 
-###### [reader](58f3) `40ants-routes/route:route-method` (route) (:method = :get)
+###### [reader](e45c) `40ants-routes/route:route-method` (route) (:method = :get)
 
 `HTTP` method (`GET`, `POST`, `PUT`, etc.)
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3AROUTE-NAME-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FROUTE-3AROUTE-29-29"></a>
 
-###### [reader](28af) `40ants-routes/route:route-name` (route) (:name)
+###### [reader](de54) `40ants-routes/route:route-name` (route) (:name)
 
 Name of the route
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3AROUTE-TITLE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FROUTE-3AROUTE-29-29"></a>
 
-###### [reader](4f04) `40ants-routes/route:route-title` (route) (:title = nil)
+###### [reader](eb56) `40ants-routes/route:route-title` (route) (:title = nil)
 
 Title for breadcrumbs
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3AURL-PATH-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FROUTE-3AROUTE-29-29"></a>
 
-###### [reader](df4c) `40ants-routes/generics:url-path` (route) (:pattern)
+###### [reader](7fc7) `40ants-routes/generics:url-path` (route) (:pattern)
 
 `URL` pattern
 
@@ -860,7 +872,7 @@ Title for breadcrumbs
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3ACURRENT-ROUTE-20FUNCTION-29"></a>
 
-##### [function](9c1a) `40ants-routes/route:current-route`
+##### [function](67a6) `40ants-routes/route:current-route`
 
 Returns the current route.
 
@@ -868,7 +880,7 @@ Should be called only during [`40ants-routes/with-url:with-url`][1c5e] macro bod
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3ACURRENT-ROUTE-P-20FUNCTION-29"></a>
 
-##### [function](0e98) `40ants-routes/route:current-route-p`
+##### [function](20c0) `40ants-routes/route:current-route-p`
 
 Returns T if there current route matching the `URL` was found..
 
@@ -877,7 +889,7 @@ or [`40ants-routes/with-url:with-partially-matched-url`][1a23] macro body execut
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-3AROUTEP-20FUNCTION-29"></a>
 
-##### [function](87de) `40ants-routes/route:routep` obj
+##### [function](dacd) `40ants-routes/route:routep` obj
 
 Checks if `OBJ` is of [`route`][377c] class.
 
@@ -887,7 +899,7 @@ Checks if `OBJ` is of [`route`][377c] class.
 
 <a id="x-28-23A-28-2823-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FROUTE-URL-22-29-20PACKAGE-29"></a>
 
-#### [package](dbc0) `40ants-routes/route-url`
+#### [package](f276) `40ants-routes/route-url`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FROUTE-URL-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -895,7 +907,7 @@ Checks if `OBJ` is of [`route`][377c] class.
 
 <a id="x-2840ANTS-ROUTES-2FROUTE-URL-3AROUTE-URL-20FUNCTION-29"></a>
 
-##### [function](f8b2) `40ants-routes/route-url:route-url` name &rest args &key namespace &allow-other-keys
+##### [function](7811) `40ants-routes/route-url:route-url` name &rest args &key namespace &allow-other-keys
 
 Generate a `URL` for a named route with the given parameters.
 
@@ -905,7 +917,7 @@ Generate a `URL` for a named route with the given parameters.
 
 <a id="x-28-23A-28-2820-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FROUTES-22-29-20PACKAGE-29"></a>
 
-#### [package](7347) `40ants-routes/routes`
+#### [package](8535) `40ants-routes/routes`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FROUTES-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -917,19 +929,19 @@ Generate a `URL` for a named route with the given parameters.
 
 <a id="x-2840ANTS-ROUTES-2FROUTES-3AROUTES-20CLASS-29"></a>
 
-###### [class](50e3) `40ants-routes/routes:routes` ()
+###### [class](91cd) `40ants-routes/routes:routes` ()
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FROUTES-3ACHILDREN-ROUTES-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FROUTES-3AROUTES-29-29"></a>
 
-###### [reader](fe37) `40ants-routes/routes:children-routes` (routes) (:children = nil)
+###### [reader](33f5) `40ants-routes/routes:children-routes` (routes) (:children = nil)
 
 List of children in this collection.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3ANODE-NAMESPACE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FROUTES-3AROUTES-29-29"></a>
 
-###### [reader](11fe) `40ants-routes/generics:node-namespace` (routes) (:namespace)
+###### [reader](828c) `40ants-routes/generics:node-namespace` (routes) (:namespace)
 
 Namespace of this routes collection.
 
@@ -937,13 +949,13 @@ Namespace of this routes collection.
 
 <a id="x-2840ANTS-ROUTES-2FROUTES-3ACHILDREN-ROUTES-20-2840ANTS-DOC-2FLOCATIVES-3AACCESSOR-2040ANTS-ROUTES-2FROUTES-3AROUTES-29-29"></a>
 
-###### [accessor](fe37) `40ants-routes/routes:children-routes` (routes) (:children = nil)
+###### [accessor](33f5) `40ants-routes/routes:children-routes` (routes) (:children = nil)
 
 List of children in this collection.
 
 <a id="x-2840ANTS-ROUTES-2FGENERICS-3ANODE-NAMESPACE-20-2840ANTS-DOC-2FLOCATIVES-3AACCESSOR-2040ANTS-ROUTES-2FROUTES-3AROUTES-29-29"></a>
 
-###### [accessor](11fe) `40ants-routes/generics:node-namespace` (routes) (:namespace)
+###### [accessor](828c) `40ants-routes/generics:node-namespace` (routes) (:namespace)
 
 Namespace of this routes collection.
 
@@ -953,7 +965,7 @@ Namespace of this routes collection.
 
 <a id="x-2840ANTS-ROUTES-2FROUTES-3AROUTESP-20FUNCTION-29"></a>
 
-##### [function](4d87) `40ants-routes/routes:routesp` obj
+##### [function](0e1b) `40ants-routes/routes:routesp` obj
 
 Checks if object is of class [`routes`][cce3].
 
@@ -963,7 +975,7 @@ Checks if object is of class [`routes`][cce3].
 
 <a id="x-2840ANTS-ROUTES-2FROUTES-3AROUTES-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29"></a>
 
-##### [macro](025c) `40ants-routes/routes:routes` (namespace &key (routes-class 'routes)) &body route-definitions
+##### [macro](1e7f) `40ants-routes/routes:routes` (namespace &key (routes-class 'routes)) &body route-definitions
 
 Define a variable holding collection of routes the same way
 as [`40ants-routes/defroutes:defroutes`][3455] does, but do not bind these routes to the variable.
@@ -974,7 +986,7 @@ as [`40ants-routes/defroutes:defroutes`][3455] does, but do not bind these route
 
 <a id="x-28-23A-28-2825-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FURL-PATTERN-22-29-20PACKAGE-29"></a>
 
-#### [package](3f03) `40ants-routes/url-pattern`
+#### [package](3e82) `40ants-routes/url-pattern`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FURL-PATTERN-3FClasses-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -986,23 +998,23 @@ as [`40ants-routes/defroutes:defroutes`][3455] does, but do not bind these route
 
 <a id="x-2840ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-20CLASS-29"></a>
 
-###### [class](ac4c) `40ants-routes/url-pattern:url-pattern` ()
+###### [class](50b6) `40ants-routes/url-pattern:url-pattern` ()
 
 **Readers**
 
 <a id="x-2840ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-PARAMS-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-29-29"></a>
 
-###### [reader](236d) `40ants-routes/url-pattern:url-pattern-params` (url-pattern) (:params)
+###### [reader](47ab) `40ants-routes/url-pattern:url-pattern-params` (url-pattern) (:params)
 
 Alist with parameter types
 
 <a id="x-2840ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-PATTERN-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-29-29"></a>
 
-###### [reader](01c5) `40ants-routes/url-pattern:url-pattern-pattern` (url-pattern) (:pattern)
+###### [reader](f356) `40ants-routes/url-pattern:url-pattern-pattern` (url-pattern) (:pattern)
 
 <a id="x-2840ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-REGEX-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-29-29"></a>
 
-###### [reader](9152) `40ants-routes/url-pattern:url-pattern-regex` (url-pattern) (:regex)
+###### [reader](1716) `40ants-routes/url-pattern:url-pattern-regex` (url-pattern) (:regex)
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FURL-PATTERN-3FFunctions-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -1010,7 +1022,7 @@ Alist with parameter types
 
 <a id="x-2840ANTS-ROUTES-2FURL-PATTERN-3APARSE-URL-PATTERN-20FUNCTION-29"></a>
 
-##### [function](091b) `40ants-routes/url-pattern:parse-url-pattern` pattern
+##### [function](d605) `40ants-routes/url-pattern:parse-url-pattern` pattern
 
 Parse a `URL` pattern and extract parameter specifications.
 
@@ -1018,13 +1030,13 @@ Returns an object of class [`url-pattern`][a13f].
 
 <a id="x-2840ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-EQUAL-20FUNCTION-29"></a>
 
-##### [function](9d97) `40ants-routes/url-pattern:url-pattern-equal` left right
+##### [function](3a6d) `40ants-routes/url-pattern:url-pattern-equal` left right
 
 Compares two [`url-pattern`][a13f] objects
 
 <a id="x-2840ANTS-ROUTES-2FURL-PATTERN-3AURL-PATTERN-P-20FUNCTION-29"></a>
 
-##### [function](dd18) `40ants-routes/url-pattern:url-pattern-p` obj
+##### [function](2e07) `40ants-routes/url-pattern:url-pattern-p` obj
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-4040ANTS-ROUTES-2FWITH-URL-3FPACKAGE-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -1032,7 +1044,7 @@ Compares two [`url-pattern`][a13f] objects
 
 <a id="x-28-23A-28-2822-29-20BASE-CHAR-20-2E-20-2240ANTS-ROUTES-2FWITH-URL-22-29-20PACKAGE-29"></a>
 
-#### [package](20da) `40ants-routes/with-url`
+#### [package](9630) `40ants-routes/with-url`
 
 <a id="x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-7C-4040ANTS-ROUTES-2FWITH-URL-3FMacros-SECTION-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
@@ -1040,7 +1052,7 @@ Compares two [`url-pattern`][a13f] objects
 
 <a id="x-2840ANTS-ROUTES-2FWITH-URL-3AWITH-PARTIALLY-MATCHED-URL-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29"></a>
 
-##### [macro](db53) `40ants-routes/with-url:with-partially-matched-url` (root-routes url) &body body
+##### [macro](8d4b) `40ants-routes/with-url:with-partially-matched-url` (root-routes url) &body body
 
 Execute body with the current routes object corresponding to a given `URL` argument.
 
@@ -1053,11 +1065,12 @@ might return `NIL` when `URL` was not fully matched by [`with-partially-matched-
 
 <a id="x-2840ANTS-ROUTES-2FWITH-URL-3AWITH-URL-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29"></a>
 
-##### [macro](638f) `40ants-routes/with-url:with-url` (root-routes url) &body body
+##### [macro](141d) `40ants-routes/with-url:with-url` (root-routes url) &body body
 
 Execute body with the current routes object corresponding to a given `URL` argument.
 
 
+[7261]: https://40ants.com/routes
 [e419]: https://40ants.com/routes/#x-2840ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-20CLASS-29
 [3f6e]: https://40ants.com/routes/#x-2840ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-PATH-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-29-29
 [920e]: https://40ants.com/routes/#x-2840ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-ROUTE-20-2840ANTS-DOC-2FLOCATIVES-3AREADER-2040ANTS-ROUTES-2FBREADCRUMBS-3ABREADCRUMB-29-29
@@ -1082,78 +1095,85 @@ Execute body with the current routes object corresponding to a given `URL` argum
 [1c5e]: https://40ants.com/routes/#x-2840ANTS-ROUTES-2FWITH-URL-3AWITH-URL-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29
 [d39a]: https://40ants.com/routes/#x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-40DEFINING-ROUTES-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
 [af0d]: https://40ants.com/routes/#x-2840ANTS-ROUTES-DOCS-2FINDEX-3A-3A-40MATCHING-THE-URL-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29
-[19da]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/breadcrumbs.lisp#L1
-[bc55]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/breadcrumbs.lisp#L35
-[464a]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/breadcrumbs.lisp#L36
-[2b8a]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/breadcrumbs.lisp#L39
-[97bd]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/breadcrumbs.lisp#L42
-[60ad]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/breadcrumbs.lisp#L84
-[a8fa]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/breadcrumbs.lisp#L92
-[dcd0]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/defroutes.lisp#L1
-[ab8b]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/defroutes.lisp#L120
-[f0b7]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/defroutes.lisp#L124
-[6bae]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/defroutes.lisp#L128
-[d399]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/defroutes.lisp#L140
-[f901]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/defroutes.lisp#L34
-[025c]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/defroutes.lisp#L72
-[40a3]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/errors.lisp#L1
-[4cb0]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/errors.lisp#L24
-[1502]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/errors.lisp#L35
-[4fd4]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/errors.lisp#L49
-[adc2]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/errors.lisp#L63
-[bc3e]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/errors.lisp#L74
-[08e9]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/errors.lisp#L85
-[f9018]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/find-route.lisp#L1
-[7a04]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/find-route.lisp#L103
-[b6da]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L1
-[382b]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L14
-[70c6]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L30
-[3320]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L42
-[c48b]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L48
-[c2c8]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L52
-[0ac3]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L58
-[bb80]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L62
-[7b00]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/generics.lisp#L68
-[66e9]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/handler.lisp#L1
-[b9b8]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/handler.lisp#L15
-[dd48]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/included-routes.lisp#L1
-[2c58]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/included-routes.lisp#L20
-[f04c]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/included-routes.lisp#L21
-[fa03]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/included-routes.lisp#L25
-[ce92]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/included-routes.lisp#L39
-[e4ea]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/matched-route.lisp#L1
-[4c82]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/matched-route.lisp#L22
-[06fb]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/matched-route.lisp#L23
-[7279]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/matched-route.lisp#L27
-[7b7e]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/matched-route.lisp#L44
-[dbc0]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route-url.lisp#L1
-[f8b2]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route-url.lisp#L27
-[8963]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L1
-[29e8]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L30
-[28af]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L31
-[df4c]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L35
-[b27d]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L39
-[4f04]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L43
-[58f3]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L48
-[87de]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L66
-[0e98]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L78
-[9c1a]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/route.lisp#L86
-[7347]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/routes.lisp#L1
-[50e3]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/routes.lisp#L21
-[fe37]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/routes.lisp#L22
-[11fe]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/routes.lisp#L26
-[4d87]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/routes.lisp#L39
-[3f03]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L1
-[dd18]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L172
-[9d97]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L179
-[ac4c]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L24
-[01c5]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L25
-[9152]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L28
-[236d]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L31
-[091b]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/url-pattern.lisp#L46
-[20da]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/with-url.lisp#L1
-[db53]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/with-url.lisp#L112
-[638f]: https://github.com/40ants/routes/blob/04f3c21f7ea7055593ddc9bd1db6683b5154baac/src/with-url.lisp#L86
+[6959]: https://github.com/40ants/routes
+[12b0]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/breadcrumbs.lisp#L1
+[34bb]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/breadcrumbs.lisp#L35
+[6a2a]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/breadcrumbs.lisp#L36
+[8781]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/breadcrumbs.lisp#L39
+[9db7]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/breadcrumbs.lisp#L42
+[4958]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/breadcrumbs.lisp#L84
+[ffa9]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/breadcrumbs.lisp#L92
+[2f35]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/defroutes.lisp#L1
+[a170]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/defroutes.lisp#L120
+[a4fc]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/defroutes.lisp#L124
+[93d1]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/defroutes.lisp#L128
+[716e]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/defroutes.lisp#L140
+[4898]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/defroutes.lisp#L34
+[1e7f]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/defroutes.lisp#L72
+[ab52]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/errors.lisp#L1
+[b64e]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/errors.lisp#L24
+[2767]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/errors.lisp#L35
+[d69c]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/errors.lisp#L49
+[0567]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/errors.lisp#L63
+[77ff]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/errors.lisp#L74
+[2a55]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/errors.lisp#L85
+[9b6e]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/find-route.lisp#L1
+[b833]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/find-route.lisp#L103
+[971e]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L1
+[338f]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L14
+[89d3]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L30
+[0b01]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L42
+[7cb3]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L48
+[3de6]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L52
+[7451]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L58
+[c361]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L62
+[71a3]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/generics.lisp#L68
+[ec48]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/handler.lisp#L1
+[b3e0]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/handler.lisp#L15
+[880f]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/included-routes.lisp#L1
+[fa1b]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/included-routes.lisp#L20
+[4cae]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/included-routes.lisp#L21
+[aed7]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/included-routes.lisp#L25
+[d081]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/included-routes.lisp#L39
+[622b]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/matched-route.lisp#L1
+[0008]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/matched-route.lisp#L22
+[391c]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/matched-route.lisp#L23
+[1aff]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/matched-route.lisp#L27
+[c606]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/matched-route.lisp#L44
+[f276]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route-url.lisp#L1
+[7811]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route-url.lisp#L27
+[83df]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L1
+[d8ad]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L30
+[de54]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L31
+[7fc7]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L35
+[a6df]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L39
+[eb56]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L43
+[e45c]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L48
+[dacd]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L66
+[20c0]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L78
+[67a6]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/route.lisp#L86
+[8535]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/routes.lisp#L1
+[91cd]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/routes.lisp#L21
+[33f5]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/routes.lisp#L22
+[828c]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/routes.lisp#L26
+[0e1b]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/routes.lisp#L39
+[3e82]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L1
+[2e07]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L172
+[3a6d]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L179
+[50b6]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L24
+[f356]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L25
+[1716]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L28
+[47ab]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L31
+[d605]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/url-pattern.lisp#L46
+[9630]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/with-url.lisp#L1
+[8d4b]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/with-url.lisp#L112
+[141d]: https://github.com/40ants/routes/blob/5f54b055b4e5bd00cccfcfef847b5e6349691115/src/with-url.lisp#L86
+[54bf]: https://github.com/40ants/routes/issues
+[8236]: https://quickdocs.org/alexandria
+[49b9]: https://quickdocs.org/cl-ppcre
+[c41d]: https://quickdocs.org/serapeum
+[3dcd]: https://quickdocs.org/split-sequence
+[ef7f]: https://quickdocs.org/str
 
 * * *
 ###### [generated by [40ANTS-DOC](https://40ants.com/doc/)]
