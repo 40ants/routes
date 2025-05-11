@@ -23,7 +23,9 @@
            #:route-method
            #:routep
            #:current-route
-           #:current-route-p))
+           #:current-route-p
+           #:url-pattern
+           #:url-path))
 (in-package #:40ants-routes/route)
 
 
@@ -32,10 +34,10 @@
          :type string
          :reader route-name
          :documentation "Name of the route")
-  (pattern :initarg :pattern
-           :type url-pattern
-           :reader url-path
-           :documentation "URL pattern")
+   (pattern :initarg :pattern
+            :type url-pattern
+            :reader url-path
+            :documentation "URL pattern")
    (handler :initarg :handler
             :reader route-handler
             :type function
