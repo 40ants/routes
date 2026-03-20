@@ -91,12 +91,19 @@
 
 (defun get-breadcrumbs ()
   "Generate breadcrumbs list for the current URL set by 40ANTS-ROUTES/WITH-URL:WITH-URL macro."
-  (let ((*breadcrumbs-path* nil))
-    (loop for node in (reverse *routes-path*)
+  (let ((*breadcrumbs-path* nil)
+        (nodes (reverse *routes-path*)))
+    (loop with results = nil
+          for node in nodes
           for breadcrumbs = (get-route-breadcrumbs node)
-          appending (uiop:ensure-list breadcrumbs)
-          ;; Other routes paths should be based on the previos nodes
-          do (push node *breadcrumbs-path*))))
+          when breadcrumbs
+            ;; Other routes paths should be based on the previos nodes
+            do (loop for new-crumb in (uiop:ensure-list breadcrumbs)
+                     do (pushnew new-crumb results
+                                 :test #'string-equal
+                                 :key #'breadcrumb-path))
+               (push node *breadcrumbs-path*)
+          finally (return (nreverse results)))))
 
 
 (defmethod get-route-breadcrumbs :around ((obj t))
@@ -116,13 +123,18 @@
          (title (etypecase title
                   (string title)
                   (function
-                   (unless (40ants-routes/route:current-route-p)
-                     (error "Function as a route title can be resolved only when URL was fully matched by WITH-URL or WITH-PARTIALLY-MATCHED-URL macro body execution."))
-                   (apply title
-                          (alist-plist
-                           (matched-route-parameters
-                            (40ants-routes/route:current-route))))))))
-    (make-breadcrumb title)))
+                     (unless (40ants-routes/route:current-route-p)
+                       (error "Function as a route title can be resolved only when URL was fully matched by WITH-URL or WITH-PARTIALLY-MATCHED-URL macro body execution."))
+                     (apply title
+                            (alist-plist
+                             (matched-route-parameters
+                              (40ants-routes/route:current-route)))))
+                  ;; There may be untitled routes,
+                  ;; we want just skip them
+                  (null
+                     nil))))
+    (when title
+      (make-breadcrumb title))))
 
 
 (defmethod get-route-breadcrumbs ((obj included-routes))

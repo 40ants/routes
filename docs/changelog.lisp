@@ -8,6 +8,8 @@
 (defchangelog (:ignore-words ("URL"
                               "ASDF"
                               "HTTP"))
+  (0.4.1 2026-03-21
+         "Duplicate breadcrumbs, returned by 40ANTS-ROUTES/BREADCRUMBS:GET-BREADCRUMBS were fixed.")
   (0.4.0 2025-05-04
          "First public release.")
   (0.3.0 2025-04-06
