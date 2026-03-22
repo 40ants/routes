@@ -6,12 +6,12 @@
 
 
 (defchangelog (:ignore-words ("URL"
-                               "ASDF"
-                               "HTTP"))
-  0.5.0 2026-03-21
+                              "ASDF"
+                              "HTTP"))
+  (0.5.0 2026-03-21
          "Changes:
           * Added 40ANTS-ROUTES/DEFROUTES:EXTEND-ROUTES macro to extend a routes collection bound to a variable without creating a new collection")
-  0.4.1 2026-03-21
+  (0.4.1 2026-03-21
          "Duplicate breadcrumbs, returned by 40ANTS-ROUTES/BREADCRUMBS:GET-BREADCRUMBS were fixed.")
   (0.4.0 2025-05-04
          "First public release.")
