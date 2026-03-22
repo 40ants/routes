@@ -9,10 +9,14 @@
                 #:routes
                 #:defroutes
                 #:extend-routes)
-  (:import-from #:40ants-routes/routes
+  (:import-from #:40ants-routes/route
+                #:route-names
                 #:children-routes)
   (:import-from #:40ants-routes/with-url
+                #:with-url
                 #:find-route-for-url)
+  (:import-from #:40ants-routes/handler
+                #:call-handler)
   (:shadowing-import-from #:40ants-routes/defroutes
                           #:get
                           #:post
@@ -30,8 +34,8 @@
 
 
 (defun call-route (routes url)
-  (40ants-routes/with-url:with-url (routes url)
-    (40ants-routes/handler:call-handler)))
+  (with-url (routes url)
+    (call-handler)))
 
 
 (deftest test-extend-routes-adds-new-routes ()
@@ -61,7 +65,7 @@
     (let ((route (find-route-for-url routes "/old")))
       (ok route "Old route should still be found by old name")
       (when route
-        (ok (string= (40ants-routes/route:route-name route)
+        (ok (string= (route-name route)
                      "new-old")
             "Route name should be updated")))
     
