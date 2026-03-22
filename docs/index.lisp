@@ -56,6 +56,8 @@
   "
 ## Overview
 
+[![SAFE-HAND MADE CODE](https://img.shields.io/badge/SAFE-HAND%20MADE%20CODE-32CD32)](https://github.com/40ants/ai-badges)
+
 40ants-routes is a framework-agnostic URL routing library for Common Lisp, inspired by Django's URL routing system. It provides a clean and flexible way to define URL routes, generate URLs, and handle URL parameters.
 
 ## Features

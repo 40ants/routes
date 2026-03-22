@@ -18,6 +18,7 @@
                "40ants-routes/defroutes"
                "40ants-routes/route-url"
                "40ants-routes/breadcrumbs"
+               "40ants-routes/handler"
                "40ants-routes/utils"
                "40ants-routes/add-route"
                "cl-ppcre"

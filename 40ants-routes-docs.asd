@@ -9,4 +9,5 @@
   :pathname "docs"
   :depends-on ("40ants-routes"
                "40ants-routes-docs/index"
+               "40ants-routes-docs/changelog"
                "40ants-doc"))
