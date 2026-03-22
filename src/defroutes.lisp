@@ -15,6 +15,7 @@
                 #:fmt
                 #:eval-always)
   (:import-from #:alexandria
+                #:with-gensyms
                 #:length=)
   (:import-from #:40ants-routes/generics
                 #:node-namespace)
@@ -27,7 +28,8 @@
            #:get
            #:post
            #:put
-           #:include))
+           #:include
+           #:extend-routes))
 (in-package #:40ants-routes/defroutes)
 
 
@@ -71,19 +73,43 @@
 
 (defmacro routes ((namespace &key (routes-class '40ants-routes/routes:routes))
                   &body route-definitions)
-  "Define a variable holding collection of routes the same way
+  "Creates an object holding collection of routes the same way
    as 40ANTS-ROUTES/DEFROUTES:DEFROUTES does, but do not bind these routes to the variable."
   (unless (and (typep namespace 'string)
                (not (length= 0 namespace)))
     (error "NAMESPACE should be a non-empty string."))
 
-  (alexandria:with-gensyms (var-name)
+  (with-gensyms (var-name)
     `(let ((,var-name
              (make-instance ',routes-class
                             :namespace ,namespace)))
        (setf (children-routes ,var-name)
              (list ,@route-definitions))
        ,var-name)))
+
+
+(defmacro extend-routes ((var-name)
+                         &body route-definitions)
+  "Extends a routes collection bound to a given VAR-NAME argument.
+
+   This macro works like DEFROUTES macro or ROUTES macro, but instead of creating of
+   a new routes collection, it adds given routes definition to a given routes collection.
+
+   If a collection already have a route with equal path, it will be replaced by a new route definition."
+  `(eval-always
+     (let* ((routes-to-add
+              (list ,@route-definitions))
+            (old-routes (40ants-routes/routes:children-routes ,var-name))
+            (filtered (remove-if (lambda (route)
+                                   (member (40ants-routes/route:url-path route)
+                                           routes-to-add
+                                           :test #'40ants-routes/url-pattern:url-pattern-equal
+                                           :key #'40ants-routes/route:url-path))
+                                 old-routes))
+            (new-routes (append routes-to-add
+                                filtered)))
+       (setf (40ants-routes/routes:children-routes ,var-name)
+             new-routes))))
 
 
 (eval-always
