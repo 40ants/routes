@@ -10,7 +10,8 @@
                 #:defroutes
                 #:extend-routes)
   (:import-from #:40ants-routes/route
-                #:route-names
+                #:route-name)
+  (:import-from #:40ants-routes/routes
                 #:children-routes)
   (:import-from #:40ants-routes/with-url
                 #:with-url
