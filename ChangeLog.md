@@ -2,6 +2,16 @@
 
 # ChangeLog
 
+<a id="x-2840ANTS-ROUTES-DOCS-2FCHANGELOG-3A-3A-7C0-2E5-2E1-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
+
+## 0.5.1 (2026-05-09)
+
+<a id="fixes"></a>
+
+### Fixes
+
+* Function [`40ants-routes/breadcrumbs:get-breadcrumbs`][bd21] now return breadcrumbs only if current path fully matches some route.
+
 <a id="x-2840ANTS-ROUTES-DOCS-2FCHANGELOG-3A-3A-7C0-2E5-2E0-7C-2040ANTS-DOC-2FLOCATIVES-3ASECTION-29"></a>
 
 ## 0.5.0 (2026-03-21)
