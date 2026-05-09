@@ -91,19 +91,20 @@
 
 (defun get-breadcrumbs ()
   "Generate breadcrumbs list for the current URL set by 40ANTS-ROUTES/WITH-URL:WITH-URL macro."
-  (let ((*breadcrumbs-path* nil)
-        (nodes (reverse *routes-path*)))
-    (loop with results = nil
-          for node in nodes
-          for breadcrumbs = (get-route-breadcrumbs node)
-          when breadcrumbs
-            ;; Other routes paths should be based on the previos nodes
-            do (loop for new-crumb in (uiop:ensure-list breadcrumbs)
-                     do (pushnew new-crumb results
-                                 :test #'string-equal
-                                 :key #'breadcrumb-path))
-               (push node *breadcrumbs-path*)
-          finally (return (nreverse results)))))
+  (when (40ants-routes/route:current-route-p)
+    (let ((*breadcrumbs-path* nil)
+          (nodes (reverse *routes-path*)))
+      (loop with results = nil
+            for node in nodes
+            for breadcrumbs = (get-route-breadcrumbs node)
+            when breadcrumbs
+              ;; Other routes paths should be based on the previos nodes
+              do (loop for new-crumb in (uiop:ensure-list breadcrumbs)
+                       do (pushnew new-crumb results
+                                   :test #'string-equal
+                                   :key #'breadcrumb-path))
+                 (push node *breadcrumbs-path*)
+            finally (return (nreverse results))))))
 
 
 (defmethod get-route-breadcrumbs :around ((obj t))

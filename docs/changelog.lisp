@@ -8,6 +8,10 @@
 (defchangelog (:ignore-words ("URL"
                               "ASDF"
                               "HTTP"))
+  (0.5.1 2026-05-09
+         "# Fixes
+
+          * Function 40ANTS-ROUTES/BREADCRUMBS:GET-BREADCRUMBS now return breadcrumbs only if current path fully matches some route.")
   (0.5.0 2026-03-21
          "Changes:
           * Added 40ANTS-ROUTES/DEFROUTES:EXTEND-ROUTES macro to extend a routes collection bound to a variable without creating a new collection")
