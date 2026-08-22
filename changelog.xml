@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rss version="2.0">
+    <channel>
+        <title>40ants-routes-docs ChangeLog</title>
+        <link>https://40ants.com/routes/</link>
+        <generator>xml-emitter</generator>
+        <language>en-us</language>
+        <item>
+            <title>0.5.1  (2026-05-09)</title>
+            <description>&lt;h1 id=&quot;fixes&quot;&gt;Fixes&lt;/h1&gt;&lt;ul&gt;&lt;li&gt;&lt;p&gt;Function &lt;a href=&quot;https://40ants.com/routes/#x-2840ANTS-ROUTES-2FBREADCRUMBS-3AGET-BREADCRUMBS-20FUNCTION-29&quot; data-document=&quot;https://40ants.com/routes/&quot; data-node=&quot;x-2840ANTS-ROUTES-2FBREADCRUMBS-3AGET-BREADCRUMBS-20FUNCTION-29&quot;&gt;&lt;code&gt;40ants-routes/breadcrumbs:get-breadcrumbs&lt;/code&gt;&lt;/a&gt; now return breadcrumbs only if current path fully matches some route.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.5.0  (2026-03-21)</title>
+            <description>&lt;p&gt;Changes:
+* Added &lt;a href=&quot;https://40ants.com/routes/#x-2840ANTS-ROUTES-2FDEFROUTES-3AEXTEND-ROUTES-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29&quot; data-document=&quot;https://40ants.com/routes/&quot; data-node=&quot;x-2840ANTS-ROUTES-2FDEFROUTES-3AEXTEND-ROUTES-20-2840ANTS-DOC-2FLOCATIVES-3AMACRO-29-29&quot;&gt;&lt;code&gt;40ants-routes/defroutes:extend-routes&lt;/code&gt;&lt;/a&gt; macro to extend a routes collection bound to a variable without creating a new collection&lt;/p&gt;</description>
+            <pubDate>Sat, 21 Mar 2026 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.4.1  (2026-03-21)</title>
+            <description>&lt;p&gt;Duplicate breadcrumbs, returned by &lt;a href=&quot;https://40ants.com/routes/#x-2840ANTS-ROUTES-2FBREADCRUMBS-3AGET-BREADCRUMBS-20FUNCTION-29&quot; data-document=&quot;https://40ants.com/routes/&quot; data-node=&quot;x-2840ANTS-ROUTES-2FBREADCRUMBS-3AGET-BREADCRUMBS-20FUNCTION-29&quot;&gt;&lt;code&gt;40ants-routes/breadcrumbs:get-breadcrumbs&lt;/code&gt;&lt;/a&gt; were fixed.&lt;/p&gt;</description>
+            <pubDate>Sat, 21 Mar 2026 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.4.0  (2025-05-04)</title>
+            <description>&lt;p&gt;First public release.&lt;/p&gt;</description>
+            <pubDate>Sun, 04 May 2025 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.3.0  (2025-04-06)</title>
+            <description>&lt;p&gt;Changes:
+* Renamed &lt;code&gt;with-routes-context&lt;/code&gt; to &lt;code&gt;with-routes&lt;/code&gt; and modified it to take a routes object as an argument instead of a namespace string
+* Refactored the codebase by splitting &lt;code&gt;core.lisp&lt;/code&gt; into multiple files for better organization and maintainability&lt;/p&gt;</description>
+            <pubDate>Sun, 06 Apr 2025 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.2.0  (2025-04-06)</title>
+            <description>&lt;p&gt;Changes:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;p&gt;Modified &lt;code&gt;include&lt;/code&gt; to create an &lt;code&gt;included-route&lt;/code&gt; proxy object instead of modifying the parent of the included collection&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Added &lt;code&gt;included-route-original-collection&lt;/code&gt; accessor to get the original collection from an included route&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Removed the &lt;code&gt;parent&lt;/code&gt; slot from the &lt;code&gt;route-collection&lt;/code&gt; class as it&apos;s no longer needed&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Sun, 06 Apr 2025 00:00:00 +0000</pubDate>
+        </item>
+        <item>
+            <title>0.1.0  (2024-04-05)</title>
+            <description>&lt;p&gt;Initial version:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;p&gt;Define routes with namespaces&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Include routes from libraries into applications&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Generate &lt;code&gt;URL&lt;/code&gt;s based on route names&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Handle &lt;code&gt;URL&lt;/code&gt; parameters&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Generate breadcrumbs&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Support for different types of routes (server, application, library)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;</description>
+            <pubDate>Fri, 05 Apr 2024 00:00:00 +0000</pubDate>
+        </item>
+    </channel>
+</rss>
